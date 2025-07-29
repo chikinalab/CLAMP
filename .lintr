@@ -1,0 +1,14 @@
+linters: linters_with_defaults(
+    # https://contributions.bioconductor.org/r-code.html
+    indentation_linter = lintr::indentation_linter(4), # Use 4 spaces for indenting. No tabs.
+    line_length_linter = lintr::line_length_linter(80), # No lines longer than 80 characters.
+    object_usage_linter = NULL,
+    object_name_linter = lintr::object_name_linter(styles = c("CamelCase", "camelCase")), # Use camelCase: initial lower case, then alternate case between words.
+    infix_spaces_linter = lintr::infix_spaces_linter(),  # spacing around operators
+    commented_code_linter = lintr::commented_code_linter(),  # detect commented-out code
+    todo_comment_linter = lintr::todo_comment_linter()       # flag TODOs
+  )
+exclusions: list(
+    "data-raw/",
+    "inst/"
+  )
