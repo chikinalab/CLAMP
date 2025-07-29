@@ -1,0 +1,8 @@
+^\.github$
+^\.vscode$
+^\.lintr$
+^_pkgdown\.yml$
+^docs
+^envs
+^output
+^scripts
