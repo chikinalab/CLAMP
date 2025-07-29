@@ -521,10 +521,9 @@ crossVal <- function(plierRes, priorMat, priorMatcv) {
 #' constraints on \code{Z}. Convergence is assessed via relative change in \code{B}.
 #'
 #' @export
-PLIERbase <- function(
-        Y, k, svdres = NULL, L1 = NULL, L2 = NULL,
-        Zpos = T, max.iter = 200, tol = 5e-4, trace = F,
-        rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20, cutoff = 0) {
+PLIERbase <- function(Y, k, svdres = NULL, L1 = NULL, L2 = NULL,
+    Zpos = T, max.iter = 200, tol = 5e-4, trace = F,
+    rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20, cutoff = 0) {
     # message("Checking type")
     # Detect matrix type
     is_fbm <- inherits(Y, "FBM")
