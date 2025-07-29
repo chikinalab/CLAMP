@@ -8,9 +8,13 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5)
 Imports: bigstatsr, dplyr, glmnet, irlba, Matrix, rlang, rsvd
-Suggests: knitr, pkgdown
+Suggests: 
+    knitr,
+    pkgdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://mchikina.github.io/PLIER2/, https://github.com/mchikina/PLIER2
 BugReports: https://github.com/mchikina/PLIER2/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
