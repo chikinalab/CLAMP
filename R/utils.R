@@ -483,10 +483,11 @@ zscorePLIER2 <- function(Y_filtered, rowStats) {
 #'   \item{rowStats}{List with row_means & row_variances for fbm_filtered.}
 #'   \item{kept_rows}{Integer vector of original row indices that were retained.}
 #' @export
-preprocessPLIER2FBM <- function(fbm,
-    mean_cutoff = NULL,
-    var_cutoff = NULL,
-    backingfile = NULL) {
+preprocessPLIER2FBM <- function(
+        fbm,
+        mean_cutoff = NULL,
+        var_cutoff = NULL,
+        backingfile = NULL) {
     # 1. Choose base names
     base_bk <- if (is.null(backingfile)) paste0(fbm$backingfile, "_preproc") else backingfile
 
