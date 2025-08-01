@@ -4,6 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/mchikina/PLIER2)](https://github.com/mchikina/mchikina/PLIER2)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check-bioc](https://github.com/mchikina/PLIER2/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/mchikina/PLIER2/actions)
+[![R-CMD-check](https://github.com/chikinalab/PLIER2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/chikinalab/PLIER2/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Bioconductor release status
