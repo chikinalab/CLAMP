@@ -972,6 +972,7 @@ PLIERfull <- function(
         if (is.null(plier.base.result)) {
             plier.base.result <- PLIERbase(Y, k = k)
         }
+        u.iter <- 2
     } else {
         message("using provided PLIERbase result")
 
@@ -1043,7 +1044,10 @@ PLIERfull <- function(
             if (iter >= iter.full && num.U.updates < max.U.updates & iter %% 2 == 1) {
                 #  Updating U
                 if (any(Zraw < 0)) {
-                    stop()
+                    stop("PLIERfull: Unexpected negative values detected in Zraw matrix. ",
+                         "This indicates a problem with the matrix factorization process. ",
+                         "Please check your input data for negative values, verify preprocessing steps, ",
+                         "and consider adjusting algorithm parameters (L1, L2) if the issue persists.")
                 }
                 if (refitAll || num.U.updates %% 5 == 0) {
                     Uprev <- NULL
