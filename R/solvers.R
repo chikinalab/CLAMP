@@ -27,7 +27,15 @@ row_cor <- function(A, B) {
     B_centered <- B_mat - rowMeans(B_mat)
     num <- rowSums(A_centered * B_centered)
     den <- sqrt(rowSums(A_centered^2) * rowSums(B_centered^2))
-    num / den
+    
+    # Handle division by zero (when one or both rows have zero variance)
+    result <- num / den
+    
+    # Set correlations to 0 for rows with zero variance in either matrix
+    zero_var <- (den == 0 | is.na(den) | !is.finite(den))
+    result[zero_var] <- 0
+    
+    result
 }
 
 #' Matrix multiplication with support for FBM objects
@@ -113,11 +121,39 @@ rotateSVD <- function(svdres) {
 #' @param keepVals If \code{TRUE}, retains original values above the cutoff; otherwise, sets them to 1.
 #' @return A modified matrix with only top entries retained per column.
 binarizeTop <- function(Z, top, keepVals = TRUE) {
+    # Input validation
+    if (nrow(Z) == 0) {
+        stop("binarizeTop: Cannot operate on empty matrix")
+    }
+    if (top <= 0) {
+        stop("binarizeTop: 'top' must be positive")
+    }
+    if (top > nrow(Z)) {
+        stop(paste("binarizeTop: 'top' (", top, ") cannot be greater than number of rows (", nrow(Z), ")", sep = ""))
+    }
+    
     for (i in seq_len(ncol(Z))) {
-        cutoff <- sort(Z[, i], decreasing = TRUE)[top + 1]
-        if (cutoff == 0) {
-            cutoff <- min(Z[Z[, i] > 0, i])
+        sorted_vals <- sort(Z[, i], decreasing = TRUE)
+        
+        # Bounds check for top + 1
+        if (top + 1 <= length(sorted_vals)) {
+            cutoff <- sorted_vals[top + 1]
+        } else {
+            # If top >= nrow(Z), keep all values
+            cutoff <- min(Z[, i])
         }
+        
+        # Handle the case where cutoff is 0
+        if (is.na(cutoff) || cutoff == 0) {
+            positive_vals <- Z[Z[, i] > 0, i]
+            if (length(positive_vals) > 0) {
+                cutoff <- min(positive_vals)
+            } else {
+                # All values are <= 0, don't modify this column
+                next
+            }
+        }
+        
         Z[Z[, i] < cutoff, i] <- 0
         if (!keepVals) Z[Z[, i] > 0, i] <- 1
     }
@@ -291,13 +327,9 @@ solveU <- function(
 
     U <- as.matrix(U)
 
-    return(list(U = U))
-
     message("Number of annotated columns is ", sum(Matrix::colSums(U) > 0))
 
-    rownames(U) <- colnames(priorMat)
-    colnames(U) <- paste0("LV", seq_len(ncol(U)))
-    return(U)
+    return(list(U = U))
 }
 
 #' Compute Chat matrix from prior annotation
@@ -750,13 +782,14 @@ PLIERbase <- function(
         }
     }
     rownames(B) <- colnames(Z) <- paste0("LV", seq_len(k))
-    return(list(B = B, Z = Z, Zraw = Zraw, L1 = L1, L2 = L2))
-
+    
     if (ncores > 1) {
         # restore previous state
         options(bigstatsr.check.parallel.blas = TRUE)
         options(default.nproc.blas = blas_nproc)
     }
+    
+    return(list(B = B, Z = Z, Zraw = Zraw, L1 = L1, L2 = L2))
 }
 
 #' Full PLIER model with prior information and cross-validation
@@ -1214,13 +1247,13 @@ projectPLIER <- function(PLIERres, newdata, scale = 1, ncores = 1) {
     # Solve the regularized system
     B <- solve(ZtZ + L2k) %*% ZY
 
-    return(B)
-
     if (ncores > 1) {
         # restore previous state
         options(bigstatsr.check.parallel.blas = TRUE)
         options(default.nproc.blas = blas_nproc)
     }
+
+    return(B)
 }
 
 ## Refactored PC estimation functions
