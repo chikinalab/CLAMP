@@ -324,14 +324,7 @@ RAM—using the `cpmCLAMPFBM()` function from **CLAMP**:
 ## 2. Load HDF5 expression
 
 ```{r hdf5-load, message=FALSE}
-<<<<<<< HEAD
-# waiting for bioconductor data package
-# alz_path <- system.file("extdata", "human_gene_v2.5_alz.h5", package = "CLAMPData")
-
-alz_path <- here("extdata", "human_gene_v2.5_alz.h5")
-=======
 alz_path <- system.file("extdata", "human_gene_v2.5_alz.h5", package = "CLAMPData")
->>>>>>> 4a6a32006624b942c847becd71f73baf7dedfed6
 h5 <- H5File$new(alz_path, mode = "r")
 expr_mat <- t(h5[["data/expression"]]$read())
 genes <- h5[["meta/genes/symbol"]]$read()
