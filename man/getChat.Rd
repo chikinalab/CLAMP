@@ -7,15 +7,32 @@
 getChat(priorMat, scale = TRUE)
 }
 \arguments{
-\item{priorMat}{A numeric or sparse matrix (features × pathways) containing prior annotations.}
+\item{priorMat}{A numeric or sparse matrix (features x pathways) containing prior annotations.}
 
-\item{scale}{Logical; if \code{TRUE} (default), standardizes the columns of \code{priorMat} before computing \code{Chat}.}
+\item{scale}{Logical; if \code{TRUE} (default), standardizes the columns of \code{priorMat}
+before computing \code{Chat}.}
 }
 \value{
-A numeric matrix \code{Chat} of dimensions (pathways × features).
+A numeric matrix \code{Chat} of dimensions (pathways x features).
 }
 \description{
 Computes the transformation matrix \code{Chat} used to map from observed data to latent space,
 based on a pseudo-inverse of the prior annotation matrix. Optionally standardizes the columns
 of \code{priorMat} before computing.
+}
+\examples{
+# simple toy prior: 3 features x 2 pathways
+priorMat <- matrix(
+    c(
+        1, 0, 1,
+        0, 1, 0
+    ),
+    nrow = 3, ncol = 2,
+    dimnames = list(
+        paste0("gene", seq_len(3)),
+        paste0("path", seq_len(2))
+    )
+)
+# compute Chat (2 pathways x 3 features)
+Chat <- getChat(priorMat)
 }

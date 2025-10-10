@@ -22,3 +22,11 @@ num.pc(data, method = c("elbow", "permutation"), B = 20, seed = NULL)
 \description{
 Estimate number of principal components via elbow or permutation method
 }
+\examples{
+# generate a small random matrix: 5 features x 10 samples
+mat <- matrix(rnorm(5 * 10), nrow = 5)
+# fast elbow estimate
+num.pc(mat, method = "elbow")
+# slower permutation estimate (use fewer perms for example speed)
+num.pc(mat, method = "permutation", B = 5)
+}

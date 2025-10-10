@@ -4,21 +4,23 @@
 \alias{cleanFBM}
 \title{Clean a Filebacked Big Matrix (FBM) by log-transforming and handling NAs}
 \usage{
-cleanFBM(fbm)
+cleanFBM(fbm, ncores = 1)
 }
 \arguments{
 \item{fbm}{A \code{bigmemory::FBM} or \code{bigstatsr::FBM} object.}
+
+\item{ncores}{Integer; number of cores to use for parallel operations (default 1).}
 }
 \value{
 A list with:
 \describe{
-\item{\code{max_value}}{The maximum value encountered in the FBM (after log transformation if applied).}
-\item{\code{had_na}}{Logical indicating whether any NA values were found and filled.}
+\item{max_value}{The maximum value encountered in the FBM (after log transformation if applied).}
+\item{had_na}{Logical indicating whether any NA values were found and filled.}
 }
 }
 \description{
 This function inspects an FBM to determine if log-transformation is needed (based on value range)
-and whether NA values are present. If the maximum value is ≥ 100, it applies a log2(x + 1)
+and whether NA values are present. If the maximum value is >= 100, it applies a log2(x + 1)
 transformation in-place. If any NA values are detected, they are replaced with 0.
 }
 \details{

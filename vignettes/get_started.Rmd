@@ -1,13 +1,13 @@
 ---
-title: "Analyzing human whole blood RNA-Seq data with PLIER2"
+title: "Analyzing human whole blood RNA-Seq data with CLAMP"
 author: "Marc Subirana-Granés and Maria Chikina"
-package: PLIER2
+package: CLAMP
 output: 
   BiocStyle::html_document:
     fig_width: 7
     fig_height: 5
 vignette: >
-  %\VignetteIndexEntry{Analyzing human whole blood RNA-Seq data with PLIER2}
+  %\VignetteIndexEntry{Analyzing human whole blood RNA-Seq data with CLAMP}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 )
 
 library(dplyr)
-library(PLIER2)
+library(CLAMP)
 library(rsvd)
 library(glmnet)
 library(Matrix)
@@ -37,15 +37,25 @@ library(Matrix)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(DT)
+
+ext <- system.file("extdata", package = "CLAMP")
+out_dir <- rappdirs::user_cache_dir("CLAMP")
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+ext
 ```
 
 ```{r logo, echo=FALSE, eval=TRUE, out.width='40%'}
-knitr::include_graphics("../man/figures/plier2.png", dpi = 800)
+knitr::include_graphics("../man/figures/clamp.png", dpi = 800)
 ```
 
 # Introduction
 
-The **PLIER2** package provides a two-stage framework to extract interpretable latent variables from high-dimensional transcriptomic data. It combines a standard matrix decomposition (PLIERbase) with pathway-guided factor refinement (PLIERfull), enabling:
+The CLAMP (**C**ompressed **L**atent-variable **A**pproach for **M**assive data **P**rocessing) 
+package provides a two-stage framework to extract interpretable latent
+variables from high-dimensional transcriptomic data.
+It combines a standard matrix decomposition (CLAMPbase) with
+pathway-guided factor refinement (CLAMPfull), enabling:
 
 1. **Dimensionality reduction** of gene expression matrices  
 2. **Incorporation of prior knowledge** (e.g., Gene Ontology or MSigDB)  
@@ -53,11 +63,11 @@ The **PLIER2** package provides a two-stage framework to extract interpretable l
 
 ## Workflow overview
 
-```{r plier2-workflow-flowchart, echo=FALSE, message=FALSE, warning=FALSE, out.width='90%'}
+```{r CLAMP-workflow, include=FALSE, warning=FALSE, out.width='90%'}
 library(DiagrammeR)
 
-grViz('  
- digraph PLIER2_pipeline {
+grViz('
+ digraph CLAMP_pipeline {
    graph [layout=dot, rankdir=TB, splines=ortho]
 
    // ---- Inputs & Priors (gray) ----
@@ -69,19 +79,19 @@ grViz('
 
    // ---- Functions (white) ----
    node [shape=rectangle, style=filled, fillcolor=White]
-   preDF      [label="preprocessPLIER2()"]
-   zDF        [label="zscorePLIER2()"]
+   preDF      [label="preprocessCLAMP()"]
+   zDF        [label="zscoreCLAMP()"]
    svdDF      [label="rsvd()"]
-   preFBM     [label="preprocessPLIER2FBM()"]
-   zFBM       [label="zscorePLIER2FBM()"]
+   preFBM     [label="preprocessCLAMPFBM()"]
+   zFBM       [label="zscoreCLAMPFBM()"]
    svdFBM     [label="big_randomSVD()"]
    numpc      [label="num.pc()"]
    gmtList    [label="gmtListToSparseMat()"]
    matchPaths [label="getMatchedPathwayMat()"]
    chatFunc   [label="getChat()"]
-   base       [label="PLIERbase()"]
-   full       [label="PLIERfull()"]
-   dotplot    [label="dotplotPLIER()"]
+   base       [label="CLAMPbase()"]
+   full       [label="CLAMPfull()"]
+   dotplot    [label="dotplotCLAMP()"]
 
    // ---- Outputs (light‑blue tabs) ----
    node [shape=tab, style=filled, fillcolor=LightBlue]
@@ -91,31 +101,31 @@ grViz('
    filteredFBM  [label="FBM_filtered, rowStats"]
    zscoredFBM   [label="FBM_zscored"]
    svdres2      [label="svdres"]
-   PLIER_K      [label="PLIER_K"]
-   baseResult   [label="PLIERbase.result"]
+   CLAMP_K      [label="CLAMP_K"]
+   baseResult   [label="CLAMPbase.result"]
    Chat         [label="Chat"]
    Zmat         [label="Z"]
    Bmat         [label="B"]
    summaryTbl   [label="summary"]
    Umat         [label="U"]
-   dotImg       [label="PLIER dot plot"]
+   dotImg       [label="CLAMP dot plot"]
 
    // ---- In‑memory branch ----
    DF -> preDF -> filtered -> zDF -> zscored -> svdDF -> svdres1 -> base -> baseResult -> full
    // ---- On‑disk branch ----
    H5 -> preFBM -> filteredFBM -> zFBM -> zscoredFBM -> svdFBM -> svdres2 -> base
    // ---- num.pc() branch ----
-   svdres1 -> numpc -> PLIER_K -> full
+   svdres1 -> numpc -> CLAMP_K -> full
    svdres2 -> numpc
-   // ---- Connect PLIER_K to PLIERbase too ----
-   PLIER_K -> base
+   // ---- Connect CLAMP_K to CLAMPbase too ----
+   CLAMP_K -> base
    // ---- Prior‑knowledge branch ----
    GO -> gmtList; MSIGDB -> gmtList; GTEx -> gmtList
    gmtList -> matchPaths -> chatFunc -> Chat
    Chat -> full
-   // ---- PLIERfull outputs & dotplot ----
+   // ---- CLAMPfull outputs & dotplot ----
    full -> Zmat; full -> Bmat; full -> summaryTbl -> dotplot; full -> Umat
-   // ---- Connect dotplotPLIER() to your tab node ----
+   // ---- Connect dotplotCLAMP() to your tab node ----
    dotplot -> dotImg
  }')
 ```
@@ -125,10 +135,12 @@ grViz('
 We provide three self-contained examples:
 
 1. **Data-frame example (whole blood):**  
-   A small dataset loaded entirely into memory. Shows basic preprocessing, z-scoring, and running PLIER2 without on-disk storage.  
+   A small dataset loaded entirely into memory. Shows basic preprocessing,
+    z-scoring, and running CLAMP without on-disk storage.  
 
 2. **HDF5 example (Alzheimer’s brain):**  
-   Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object, and process larger datasets using the FBM interface.
+   Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object,
+    and process larger datasets using the FBM interface.
 
 3. **Table example (pancreatic islets):**  
    Illustrates reading a tab-delimited count file and comparing conditions via the B matrix.
@@ -138,8 +150,8 @@ Each example follows these steps:
 1. **Load & preprocess data** (filter by mean/variance, then z-score)  
 2. **Prepare pathway annotations** via `getGMT()` and construct the prior matrix  
 3. **Compute SVD** (in-memory or file-backed) and infer model dimension `k`  
-4. **Run PLIERbase** to initialize latent variables  
-5. **Run PLIERfull** to refine with pathway priors and obtain summary statistics  
+4. **Run CLAMPbase** to initialize latent variables  
+5. **Run CLAMPfull** to refine with pathway priors and obtain summary statistics  
 
 # Example 1: In-memory data.frame (Whole Blood)
 
@@ -148,35 +160,37 @@ Each example follows these steps:
 In this chunk, we load the whole-blood expression matrix.
 
 ```{r load-data, message=FALSE}
-# Load required libraries and data
-library(PLIER2)
+data("dataWholeBlood") # expression matrix
 
-data("dataWholeBlood")      # expression matrix
-
-dim(dataWholeBlood)  # genes x samples
-head(dataWholeBlood)  # genes x samples
+dim(dataWholeBlood) # genes x samples
+head(dataWholeBlood) # genes x samples
 ```
 
 ## 2. Preprocess and z-score
 
-We filter genes by mean_expression ≥ 0.5 and variance ≥ 0.1, then apply z-score normalization.
+We first CPM-normalize the data (when needed), filter for genes with mean expression ≥ 0.5 
+and variance ≥ 0.1, and then apply z-score normalization.
 
-```{r preprocess, message=FALSE}
+```{r preprocess, message=TRUE}
+#  CPM normalization
+dataWholeBlood_cpm <- cpmCLAMP(dataWholeBlood)
+
 # Filter and compute row statistics
-prep_wb <- preprocessPLIER2(
-  Y = dataWholeBlood,
-  mean_cutoff = 0.5,
-  var_cutoff  = 0.1
+prep_wb <- preprocessCLAMP(
+    Y = dataWholeBlood_cpm,
+    mean_cutoff = 0.5,
+    var_cutoff = 0.1
 )
 
 # Extract filtered matrix and rowStats
 wb_Y_filtered <- prep_wb$Y_filtered
-wb_rowStats   <- prep_wb$rowStats
+wb_rowStats <- prep_wb$rowStats
+
 
 # Z-score normalization
-wb_Y_z <- zscorePLIER2(
-  Y_filtered = wb_Y_filtered,
-  rowStats    = wb_rowStats
+wb_Y_z <- zscoreCLAMP(
+    Y_filtered = wb_Y_filtered,
+    rowStats = wb_rowStats
 )
 ```
 
@@ -186,77 +200,75 @@ Compute a robust SVD on the normalized matrix and infer the optimal number of la
 
 ```{r svd-k, message=TRUE}
 # Determine SVD k
-n_genes   <- nrow(wb_Y_z)
+n_genes <- nrow(wb_Y_z)
 n_samples <- ncol(wb_Y_z)
-SVD_K_wd     <- min(n_genes, n_samples) - 1
+SVD_K_wd <- min(n_genes, n_samples) - 1
 message("Using SVD K = ", SVD_K_wd)
 
 # Compute full SVD
-set.seed(1)
 
 dataWholeBlood.svd <- rsvd(dataWholeBlood, k = SVD_K_wd)
 
 wb_svdRes <- rsvd(
-  wb_Y_z,
-  k = SVD_K_wd
+    wb_Y_z,
+    k = SVD_K_wd
 )
 ```
 
-## 4. Estimate K for PLIER 
+## 4. Estimate K for CLAMP 
 
 Estimate k via permutation/elbow method
 
-```{r PLIER-k, message=TRUE}
-PLIER_K_wb <- num.pc(data = wb_Y_z)
-message("Inferred PLIER K = ", PLIER_K_wb)
+```{r CLAMP-k, message=TRUE}
+CLAMP_K_wb <- num.pc(data = wb_Y_z)
+message("Inferred CLAMP K = ", CLAMP_K_wb)
 ```
 
-## 5. PLIERbase initialization
+## 5. CLAMPbase initialization
 
-First, we initialize latent variables using `PLIERbase`, which performs matrix factorization without priors.
+First, we initialize latent variables using `CLAMPbase`, which performs matrix factorization without priors.
 
-```{r PLIERbase, message=FALSE}
-wb_baseRes <- PLIERbase(
-  Y      = wb_Y_z,
-  k      = PLIER_K_wb,
-  svdres = wb_svdRes,
-  trace  = TRUE
+```{r CLAMPbase, message=FALSE}
+wb_baseRes <- CLAMPbase(
+    Y      = wb_Y_z,
+    k      = CLAMP_K_wb,
+    svdres = wb_svdRes,
+    trace  = TRUE
 )
 ```
 
 ## 6. Prepare pathway priors
 
-Next, we build a prior matrix from curated gene sets and compute the Chat object for `PLIERfull`.
+Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
 
 ```{r priors, message=FALSE}
 wb_gmtList <- list(
-  GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
-  BP            = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
-  MSigDB        = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+    GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
+    BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
+    MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
 )
 wb_pathMat <- gmtListToSparseMat(wb_gmtList)
 wb_matched <- getMatchedPathwayMat(wb_pathMat, rownames(wb_Y_z))
 wb_chatObj <- getChat(wb_matched)
 ```
 
-## 7. PLIERfull
+## 7. CLAMPfull
 
-Finally, we refine the base model by integrating pathway priors using `PLIERfull`, which applies cross-validation.
+Finally, we refine the base model by integrating pathway priors using `CLAMPfull`, 
+which applies cross-validation.
 
-```{r PLIERfull, message=FALSE}
-
-wb_fullRes <- PLIERfull(
-  Y                 = wb_Y_z,
-  priorMat          = as.matrix(wb_matched),
-  svdres            = wb_svdRes,
-  plier.base.result = wb_baseRes,
-  Chat              = wb_chatObj,
-  k                 = wb_k_pl,
-  doCrossval        = TRUE,
-  trace             = TRUE,
-  max.U.updates=50
+```{r CLAMPfull, message=FALSE}
+wb_fullRes <- CLAMPfull(
+    Y                 = wb_Y_z,
+    priorMat          = as.matrix(wb_matched),
+    svdres            = wb_svdRes,
+    clamp.base.result = wb_baseRes,
+    Chat              = wb_chatObj,
+    k                 = wb_k_pl,
+    doCrossval        = TRUE,
+    trace             = TRUE,
+    max.U.updates     = 50
 )
-
 ```
 
 ## 8. Display significant latent variables
@@ -264,24 +276,32 @@ wb_fullRes <- PLIERfull(
 ```{r summary-table}
 # Display significant latent variables
 wb_summary_df <- as.data.frame(wb_fullRes$summary) %>%
-  filter(FDR < 0.05 & AUC > 0.7) %>%
-  arrange(desc(AUC)) %>% 
-  dplyr::rename(LV='LV index') %>% 
-  dplyr::mutate(LV=paste0('LV', LV)) %>% 
-  dplyr::select(LV, pathway, FDR, AUC)
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::arrange(FDR) %>%
+    dplyr::rename(LV = "LV_index") %>%
+    dplyr::mutate(LV = paste0("LV", LV)) %>%
+    dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
-  wb_summary_df,
-  filter   = "top",        
-  options  = list(
-    pageLength = 10,       
-    autoWidth  = TRUE),
-  rownames = FALSE,
-  class    = "stripe hover compact") %>%
-  formatSignif(c("AUC", "FDR"), 3)
+    wb_summary_df,
+    filter = "top",
+    options = list(
+        pageLength = 10,
+        autoWidth  = TRUE
+    ),
+    rownames = FALSE,
+    class = "stripe hover compact"
+) %>%
+    formatSignif(c("AUC", "FDR"), 3)
 ```
 
-In whole‑blood RNA‑Seq, PLIER2 latent variables recapitulate core immune and hematopoietic pathways, most notably Type I, α, and γ interferon signaling, nd reflect erythroid activity via heme metabolism. The “Whole Blood Male 70–79 Up” gene set captures transcriptional signatures in peripheral blood.
+In whole-blood RNA-Seq, CLAMP latent variables recapitulate heme metabolism, 
+mitochondrial ATP synthesis coupled electron transport (GO:0042775) and 
+oxidative phosphorylation (GO:0006119), pathways essential for oxygen delivery and energy 
+generation in blood. Heme metabolism reflects erythroid lineage activity and hemoglobin production in 
+red blood cell precursors, while the mitochondrial ATP synthesis and oxidative phosphorylation components 
+capture the bioenergetic demands of leukocytes and platelets during immune activation and hemostatic processes.
+The “Whole Blood Male 70–79 Up” gene set captures transcriptional signatures in peripheral blood.
 
 # Example 2: File-Backed Matrix (Alzheimer’s Brain)
 
@@ -296,10 +316,22 @@ bk_paths <- paste0(fbm_base, c(".bk", ".bk_preproc.bk", ".bk_preproc_filtered.bk
 file.remove(bk_paths[file.exists(bk_paths)])
 ```
 
+### Computing CPM on a File-Backed Matrix (FBM)
+
+For file-backed matrices (FBMs), you can compute counts-per-million (CPM) in-place—without loading the entire dataset into
+RAM—using the `cpmCLAMPFBM()` function from **CLAMP**:
+
 ## 2. Load HDF5 expression
 
 ```{r hdf5-load, message=FALSE}
-alz_path <- here('data/get_started/human_gene_v2.5_alz.h5')
+<<<<<<< HEAD
+# waiting for bioconductor data package
+# alz_path <- system.file("extdata", "human_gene_v2.5_alz.h5", package = "CLAMPData")
+
+alz_path <- here("extdata", "human_gene_v2.5_alz.h5")
+=======
+alz_path <- system.file("extdata", "human_gene_v2.5_alz.h5", package = "CLAMPData")
+>>>>>>> 4a6a32006624b942c847becd71f73baf7dedfed6
 h5 <- H5File$new(alz_path, mode = "r")
 expr_mat <- t(h5[["data/expression"]]$read())
 genes <- h5[["meta/genes/symbol"]]$read()
@@ -315,32 +347,34 @@ rownames(expr_mat) <- genes
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 alzFBM <- FBM(nrow = nrow(expr_mat), ncol = ncol(expr_mat), backingfile = fbm_base)
 blk <- 1000
-for(i in seq_len(ceiling(nrow(expr_mat)/blk))){
-  rows <- ((i-1)*blk+1):min(i*blk, nrow(expr_mat))
-  alzFBM[rows, ] <- expr_mat[rows, , drop = FALSE]
+
+for (i in seq_len(ceiling(nrow(expr_mat) / blk))) {
+    rows <- ((i - 1) * blk + 1):min(i * blk, nrow(expr_mat))
+    alzFBM[rows, ] <- expr_mat[rows, , drop = FALSE]
 }
 ```
 
-## 4. Preprocess and z‑score FBM
+## 4. CPM, preprocess and z‑score FBM
 
 ```{r fbm-preprocess, message=FALSE}
-prep_alz <- preprocessPLIER2FBM(
-  fbm        = alzFBM,
-  mean_cutoff= 0.5,
-  var_cutoff = 0.1
+prep_alz <- preprocessCLAMPFBM(
+    fbm = alzFBM,
+    mean_cutoff = 0.5,
+    var_cutoff = 0.1
 )
+
 alz_fbm_filt <- prep_alz$fbm_filtered
 alz_rowStats <- prep_alz$rowStats
-zscorePLIER2FBM(alz_fbm_filt, alz_rowStats)
+zscoreCLAMPFBM(alz_fbm_filt, alz_rowStats)
 alz_genes <- genes[prep_alz$kept_rows]
 ```
 
 ## 5. SVD computation and SVD K estimation
 
 ```{r fbm-svd, message=TRUE}
-g_fb       <- nrow(alz_fbm_filt)
+g_fb <- nrow(alz_fbm_filt)
 samples_fb <- ncol(alz_fbm_filt)
-SVD_K_alz  <- min(g_fb, samples_fb) - 1
+SVD_K_alz <- min(g_fb, samples_fb) - 1
 
 message("Using SVD K = ", SVD_K_alz)
 
@@ -348,21 +382,21 @@ set.seed(1)
 alz_svdRes <- big_randomSVD(alz_fbm_filt, k = SVD_K_alz)
 ```
 
-## 6. Estimate K for PLIER
+## 6. Estimate K for CLAMP
 
-```{r fbm-PLIER-k, message=TRUE}
-PLIER_K_alz <- num.pc(list(d = alz_svdRes$d))
-message("Inferred PLIER K = ", PLIER_K_alz)
+```{r fbm-CLAMP-k, message=TRUE}
+CLAMP_K_alz <- num.pc(list(d = alz_svdRes$d))
+message("Inferred CLAMP K = ", CLAMP_K_alz)
 ```
 
-## 7. PLIERbase initialization
+## 7. CLAMPbase initialization
 
-```{r fbm-PLIERbase, message=FALSE}
-alz_baseRes <- PLIERbase(
-  Y      = alz_fbm_filt,
-  k      = PLIER_K_alz,
-  svdres = alz_svdRes,
-  trace  = TRUE
+```{r fbm-CLAMPbase, message=FALSE}
+alz_baseRes <- CLAMPbase(
+    Y      = alz_fbm_filt,
+    k      = CLAMP_K_alz,
+    svdres = alz_svdRes,
+    trace  = TRUE
 )
 ```
 
@@ -370,9 +404,9 @@ alz_baseRes <- PLIERbase(
 
 ```{r fbm-priors, message=FALSE}
 alz_gmtList <- list(
-  GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
-  BP            = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
-  MSigDB        = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+    GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
+    BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
+    MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
 )
 
 alz_pathMat <- gmtListToSparseMat(alz_gmtList)
@@ -380,64 +414,78 @@ alz_matched <- getMatchedPathwayMat(alz_pathMat, alz_genes)
 alz_chatObj <- getChat(alz_matched)
 ```
 
-## 9. PLIERfull
+## 9. CLAMPfull
 
-```{r fbm-PLIERfull, message=FALSE}
-alz_fullRes <- PLIERfull(
-  Y                 = alz_fbm_filt,
-  priorMat          = as.matrix(alz_matched),
-  svdres            = alz_svdRes,
-  plier.base.result = alz_baseRes,
-  Chat              = alz_chatObj,
-  k                 = PLIER_K_alz,
-  doCrossval        = TRUE,
-  trace             = TRUE,
-  max.U.updates=50
+```{r fbm-CLAMPfull, message=FALSE}
+alz_fullRes <- CLAMPfull(
+    Y                 = alz_fbm_filt,
+    priorMat          = as.matrix(alz_matched),
+    svdres            = alz_svdRes,
+    clamp.base.result = alz_baseRes,
+    Chat              = alz_chatObj,
+    k                 = CLAMP_K_alz,
+    doCrossval        = TRUE,
+    trace             = TRUE,
+    max.U.updates     = 50
 )
 ```
 
 ## 10. Display significant latent variables
-
 ```{r fbm-summary}
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
-  filter(FDR < 0.05 & AUC > 0.7) %>%
-  arrange(FDR) %>% 
-  dplyr::rename(LV='LV index') %>% 
-  dplyr::mutate(LV=paste0('LV', LV)) %>% 
-  dplyr::select(LV, pathway, FDR, AUC)
+    filter(FDR < 0.1 & AUC > 0.6) %>%
+    arrange(FDR) %>%
+    dplyr::rename(LV = "LV_index") %>%
+    dplyr::mutate(LV = paste0("LV", LV)) %>%
+    dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
-  alz_summary_df,
-  filter   = "top",        
-  options  = list(
-    pageLength = 10,       
-    autoWidth  = TRUE),
-  rownames = FALSE,
-  class    = "stripe hover compact") %>%
-  formatSignif(c("AUC", "FDR"), 3)
+    alz_summary_df,
+    filter = "top",
+    options = list(
+        pageLength = 10,
+        autoWidth  = TRUE
+    ),
+    rownames = FALSE,
+    class = "stripe hover compact"
+) %>%
+    formatSignif(c("AUC", "FDR"), 3)
 ```
 
-For the Alzheimer’s brain dataset, the leading latent variable matches the GTEx tissue signature “Brain - Spinal Cord (Cervical C-1) Male 50-59 Up” confirming tissue specificity in neuroanatomical context. Additional enriched processes include: Potassium Ion Transmembrane Transport, which emphasizes neuronal excitability and ion homeostasis; Aerobic Electron Transport Chain, reflecting mitochondrial function and bioenergetics; Regulation of Dendrite Development, highlighting synaptic remodeling and neural connectivity; and Ubiquitin‑Dependent Proteolysis, indicating protein quality control mechanisms relevant to neurodegeneration.
+For the Alzheimer’s brain dataset, the leading latent variable matches the GTEx tissue signature “Brain - Spinal Cord 
+(Cervical C-1) Male 50-59 Up” confirming tissue specificity in neuroanatomical context. Additional enriched processes 
+include: Potassium Ion Transmembrane Transport, which emphasizes neuronal excitability and ion homeostasis;
+Aerobic Electron Transport Chain, reflecting mitochondrial function and bioenergetics; Regulation of Dendrite Development,
+ highlighting synaptic remodeling and neural connectivity; and Ubiquitin‑Dependent Proteolysis, indicating protein quality
+  control mechanisms relevant to neurodegeneration.
 
 # Example 3: Tab-Delimited Count File (Pancreatic Islets)
 
-In this example, we apply the in‑memory PLIER2 workflow to RNA‑Seq count data from GEO accession **GSE164416** (Wigger *et al.* 2021; “Multi‑omics profiling of living human pancreatic islet donors reveals heterogeneous beta cell trajectories towards type 2 diabetes”, DOI: 10.1038/s42255-021-00420-9). After preprocessing the raw counts and fitting the PLIER2 model, we perform a differential analysis of latent‑variable activities to compare non‑diabetic (ND) and type 2 diabetic (T2D) samples.
+In this example, we apply the in‑memory CLAMP workflow to RNA‑Seq count data from GEO accession **GSE164416** 
+(Wigger *et al.* 2021; “Multi‑omics profiling of living human pancreatic islet donors reveals heterogeneous beta-cell
+trajectories towards type 2 diabetes”, DOI: 10.1038/s42255-021-00420-9). After preprocessing the raw counts and fitting
+the CLAMP model, we perform a differential analysis of latent‑variable activities to compare non‑diabetic (ND) and type 2
+diabetic (T2D) samples.
 
 ## 1. Load count data and map gene symbols
 
 ```{r islet-load, message=FALSE}
-islet_df <- read.table(
-  here('data/get_started/GSE164416_DP_htseq_counts.txt'),
-  header = TRUE, stringsAsFactors = FALSE
-)
+<<<<<<< HEAD
+# waiting for bioconductor data package
+# islet_file <- system.file("extdata", "GSE164416_DP_htseq_counts.txt.gz", package = "CLAMPData")
 
-islet_df$symbol <- mapIds(
-  org.Hs.eg.db,
-  keys = islet_df$ensembl,
-  column = "SYMBOL",
-  keytype = "ENSEMBL",
-  multiVals = "first"
-)
+islet_file <- here("extdata", "GSE164416_DP_htseq_counts.txt.gz")
+=======
+islet_file <- system.file("extdata", "GSE164416_DP_htseq_counts.txt.gz", package = "CLAMPData")
+>>>>>>> 4a6a32006624b942c847becd71f73baf7dedfed6
+
+islet_df <- read.table( islet_file, header = TRUE, stringsAsFactors = FALSE ) 
+
+islet_df$symbol <- mapIds( org.Hs.eg.db,
+                           keys = islet_df$ensembl,
+                           column = "SYMBOL",
+                           keytype = "ENSEMBL",
+                           multiVals = "first" )
 
 islet_df <- islet_df[!is.na(islet_df$symbol), ]
 ```
@@ -455,51 +503,52 @@ expr$symbol <- NULL
 expr <- as.matrix(expr)
 ```
 
-## 3. Preprocess and z-score
+## 3. CPM, preprocess and z-score
 
 ```{r islet-preprocess, message=FALSE}
-prep_is <- preprocessPLIER2(
-  Y = expr,
-  mean_cutoff = 0.5,
-  var_cutoff  = 0.1
+prep_is <- preprocessCLAMP(
+    Y = expr,
+    mean_cutoff = 0.5,
+    var_cutoff = 0.1
 )
-iso_Yf   <- prep_is$Y_filtered
+
+iso_Yf <- prep_is$Y_filtered
 iso_rowS <- prep_is$rowStats
-iso_Yz   <- zscorePLIER2(Y_filtered = iso_Yf, rowStats = iso_rowS)
+iso_Yz <- zscoreCLAMP(Y_filtered = iso_Yf, rowStats = iso_rowS)
 ```
 
 ## 4. SVD computation and SVD K estimation
 
 ```{r islet-svd, message=TRUE}
 # Determine SVD k for islet data
-n_genes_is   <- nrow(iso_Yz)
+n_genes_is <- nrow(iso_Yz)
 n_samples_is <- ncol(iso_Yz)
-SVD_K_is     <- min(n_genes_is, n_samples_is) - 1
+SVD_K_is <- min(n_genes_is, n_samples_is) - 1
 message("Using SVD K = ", SVD_K_is)
 
 # Compute SVD with determined k
-set.seed(1)
+
 islet_svdRes <- rsvd(
-  iso_Yz,
-  k = SVD_K_is
+    iso_Yz,
+    k = SVD_K_is
 )
 ```
 
-## 5. Estimate K for PLIER
+## 5. Estimate K for CLAMP
 
 ```{r islet-k, message=TRUE}
-PLIER_K_is <- num.pc(data = iso_Yz)
-message("Inferred PLIER k = ", PLIER_K_is)
+CLAMP_K_is <- num.pc(data = iso_Yz)
+message("Inferred CLAMP k = ", CLAMP_K_is)
 ```
 
-## 6. PLIERbase initialization
+## 6. CLAMPbase initialization
 
-```{r islet-PLIERbase, message=FALSE}
-islet_baseRes <- PLIERbase(
-  Y      = iso_Yz,
-  k      = PLIER_K_is,
-  svdres = islet_svdRes,
-  trace  = TRUE
+```{r islet-CLAMPbase, message=FALSE}
+islet_baseRes <- CLAMPbase(
+    Y      = iso_Yz,
+    k      = CLAMP_K_is,
+    svdres = islet_svdRes,
+    trace  = TRUE
 )
 ```
 
@@ -507,28 +556,29 @@ islet_baseRes <- PLIERbase(
 
 ```{r islet-priors, message=FALSE}
 islet_gmtList <- list(
-  GTEx_Tissues          = getGMT('https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023'),
-  Diabetes_Perturbations = getGMT('https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022'),
-  MSigDB_Hallmark       = getGMT('https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020')
+    GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
+    Diabetes_Perturbations = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"),
+    MSigDB_Hallmark = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
 )
+
 islet_pathMat <- gmtListToSparseMat(islet_gmtList)
 islet_matched <- getMatchedPathwayMat(islet_pathMat, rownames(iso_Yz))
 islet_chatObj <- getChat(islet_matched)
 ```
 
-## 8. PLIERfull
+## 8. CLAMPfull
 
-```{r islet-PLIERfull, message=FALSE}
-islet_fullRes <- PLIERfull(
-  Y                 = iso_Yz,
-  priorMat          = as.matrix(islet_matched),
-  svdres            = islet_svdRes,
-  plier.base.result = islet_baseRes,
-  Chat              = islet_chatObj,
-  k                 = PLIER_K_is,
-  doCrossval        = TRUE,
-  trace             = TRUE,
-  max.U.updates=50
+```{r islet-CLAMPfull, message=FALSE}
+islet_fullRes <- CLAMPfull(
+    Y                 = iso_Yz,
+    priorMat          = as.matrix(islet_matched),
+    svdres            = islet_svdRes,
+    clamp.base.result = islet_baseRes,
+    Chat              = islet_chatObj,
+    k                 = CLAMP_K_is,
+    doCrossval        = TRUE,
+    trace             = TRUE,
+    max.U.updates     = 50
 )
 ```
 
@@ -536,87 +586,119 @@ islet_fullRes <- PLIERfull(
 
 ```{r islet-summary}
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
-  filter(FDR < 0.05 & AUC > 0.7) %>%
-  arrange(desc(AUC)) %>% 
-  dplyr::rename(LV='LV index') %>% 
-  dplyr::mutate(LV=paste0('LV', LV)) %>% 
-  dplyr::select(LV, pathway, FDR, AUC)
+    filter(FDR < 0.05 & AUC > 0.7) %>%
+    arrange(FDR) %>%
+    dplyr::rename(LV = "LV_index") %>%
+    dplyr::mutate(LV = paste0("LV", LV)) %>%
+    dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
-  islet_summary_df,
-  filter   = "top",        
-  options  = list(
-    pageLength = 10,       
-    autoWidth  = TRUE),
-  rownames = FALSE,
-  class    = "stripe hover compact") %>%
-  formatSignif(c("AUC", "FDR"), 3)
+    islet_summary_df,
+    filter = "top",
+    options = list(
+        pageLength = 10,
+        autoWidth  = TRUE
+    ),
+    rownames = FALSE,
+    class = "stripe hover compact"
+) %>%
+    formatSignif(c("AUC", "FDR"), 3)
 ```
 
-In pancreatic islet RNA‑Seq, PLIER2 latent variables robustly capture islet-specific endocrine and metabolic programs. The top latent variable aligns with the GTEx “Pancreas Female 30-39 Up” signature, confirming tissue specificity. Enrichment of Myc Targets V1 and TNF‑α Signaling via NF‑κB reflects proliferative and inflammatory pathways active in islets. Protein Secretion and Oxidative Phosphorylation underline secretory and mitochondrial metabolic functions. The diabetic islet gene sets (GSE41203 NonObeseDiab Islets DN, GSE94846 PAX8-Overexpression Islet Up) highlight pathological and developmental perturbations associated with diabetes.
+In pancreatic islet RNA‑Seq, CLAMP latent variables robustly capture islet-specific endocrine and metabolic programs.
+The top latent variable aligns with the GTEx “Pancreas Female 30-39 Up” signature, confirming tissue specificity. 
+Enrichment of Myc Targets V1 and TNF‑α Signaling via NF‑κB reflects proliferative and inflammatory pathways active in islets.
+Protein Secretion and Oxidative Phosphorylation underline secretory and mitochondrial metabolic functions.
+The diabetic islet gene sets (GSE41203 NonObeseDiab Islets DN, GSE94846 PAX8-Overexpression Islet Up)
+highlight pathological and developmental perturbations associated with diabetes.
 
 ## 10. Differential latent-variable expression between conditions
 
-Rows of the B matrix correspond to LVs and columns to samples. By grouping samples by condition (ND vs T2D), we compute average LV expression per group to identify LVs that differ between healthy and diabetic islets
+Rows of the B matrix correspond to LVs and columns to samples. By grouping samples by condition (ND vs T2D),
+we compute average LV expression per group to identify LVs that differ between healthy and diabetic islets
 
 ```{r islet-diff, message=FALSE}
 B_df <- as.data.frame(as.matrix(islet_fullRes$B)) %>%
-  dplyr::mutate(LV = rownames(.))
+    dplyr::mutate(LV = rownames(.))
 
-iselt_metadata <- read.csv(here('data/get_started/islets_metadata.csv'), header = TRUE)
+# waiting for bioconductor data package
+# islet_meta <- system.file("extdata", "islets_metadata.csv", package = "PLIER2Data")
+
+islet_meta <- here("extdata", "islets_metadata.csv")
+
+iselt_metadata <- read.csv(islet_meta, header = TRUE)
 
 sample_types <- iselt_metadata %>%
-  dplyr::mutate(
-    id   = as.character(id),
-    type = as.character(type)
-  )
+    dplyr::mutate(
+        id   = as.character(id),
+        type = as.character(type)
+    )
 
-sample_cols  <- setdiff(colnames(B_df), "LV")
-nd_cols      <- intersect(sample_cols, sample_types$id[sample_types$type == "ND"])
-other_cols   <- intersect(sample_cols, sample_types$id[sample_types$type != "ND"])
+sample_cols <- setdiff(colnames(B_df), "LV")
+nd_cols <- intersect(sample_cols, sample_types$id[sample_types$type == "ND"])
+other_cols <- intersect(sample_cols, sample_types$id[sample_types$type != "ND"])
 
 if (length(nd_cols) == 0 || length(other_cols) == 0) {
-  stop("No matching ND or non-ND sample columns found")
+    stop("No matching ND or non-ND sample columns found")
 }
 
 lv_stats_all_vs_nd <- B_df %>%
-  dplyr::rowwise() %>%
-  dplyr::mutate(
-    Mean_ND   = mean(dplyr::c_across(dplyr::all_of(nd_cols))),
-    Mean_All  = mean(dplyr::c_across(dplyr::all_of(other_cols))),
-    Mean_Diff = Mean_All - Mean_ND,
-    P_Value   = stats::wilcox.test(
-      dplyr::c_across(dplyr::all_of(nd_cols)),
-      dplyr::c_across(dplyr::all_of(other_cols))
-    )$p.value
-  ) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(FDR = stats::p.adjust(P_Value, method = "fdr")) %>%
-  dplyr::select(LV, Mean_ND, Mean_All, Mean_Diff, P_Value, FDR) %>%
-  dplyr::arrange(FDR)
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+        Mean_ND = mean(dplyr::c_across(dplyr::all_of(nd_cols))),
+        Mean_All = mean(dplyr::c_across(dplyr::all_of(other_cols))),
+        Mean_Diff = Mean_All - Mean_ND,
+        P_Value = stats::wilcox.test(
+            dplyr::c_across(dplyr::all_of(nd_cols)),
+            dplyr::c_across(dplyr::all_of(other_cols))
+        )$p.value
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(FDR = stats::p.adjust(P_Value, method = "fdr")) %>%
+    dplyr::select(LV, Mean_ND, Mean_All, Mean_Diff, P_Value, FDR) %>%
+    dplyr::arrange(FDR)
 
 sig_lv_all_vs_nd <- lv_stats_all_vs_nd %>%
-  dplyr::filter(FDR < 0.05)
+    dplyr::filter(FDR < 0.05)
 
-sig_pathway <- islet_summary_df %>% 
-  dplyr::filter(FDR<0.05 & AUC > 0.7) %>% 
-  dplyr::filter(LV %in% sig_lv_all_vs_nd$LV) %>% 
-  dplyr::arrange(FDR) %>% 
-  dplyr::select(LV, pathway, FDR, AUC)
+sig_pathway <- islet_summary_df %>%
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::filter(LV %in% sig_lv_all_vs_nd$LV) %>%
+    dplyr::arrange(FDR) %>%
+    dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
-  sig_pathway,
-  filter   = "top",        
-  options  = list(
-    pageLength = 10,       
-    autoWidth  = TRUE),
-  rownames = FALSE,
-  class    = "stripe hover compact"
+    sig_pathway,
+    filter = "top",
+    options = list(
+        pageLength = 10,
+        autoWidth  = TRUE
+    ),
+    rownames = FALSE,
+    class = "stripe hover compact"
 ) %>%
-  formatSignif(c("AUC", "FDR"), 3)
+    formatSignif(c("AUC", "FDR"), 3)
 ```
 
-Differential latent-variable expression highlights diabetes-related inflammation and pancreatic specificity. LV8 enriched for TNF‑α signaling via NF‑κB and cytokine-response pathways, reflecting inflammatory β‑cell stress. LV3, associated with adipose and CBP‑KO islet gene sets, suggests metabolic adaptation in disease. LV2 captures changes in α‑ versus β‑cell composition. Enrichment of pancreas-specific GTEx signatures (e.g., “Pancreas Female 30–39 Up”) further confirms tissue relevance of these latent variables.
+Differential latent-variable expression highlights diabetes-related inflammation and pancreatic specificity.
+LV8 enriched for TNF‑α signaling via NF‑κB and cytokine-response pathways, reflecting inflammatory β‑cell stress.
+LV3, associated with adipose and CBP‑KO islet gene sets, suggests metabolic adaptation in disease.
+LV2 captures changes in α‑ versus β‑cell composition. Enrichment of pancreas-specific GTEx signatures
+(e.g., “Pancreas Female 30–39 Up”) further confirms tissue relevance of these latent variables.
+
+# Parallelization in CLAMP
+
+CLAMP supports multi-core parallelization for computationally intensive operations, particularly when working with large datasets and file-backed matrices (FBMs).
+The `ncores` parameter can be used in several key functions to speed up processing.
+
+The following CLAMP functions accept an `ncores` parameter:
+
+- `CLAMPbase()` - Core matrix factorization
+- `CLAMPfull()` - Full CLAMP model with pathway integration
+- `projectCLAMP()` - Project new data into existing CLAMP space
+- `preprocessCLAMPFBM()` - Preprocess file-backed matrices
+- `zscoreCLAMPFBM()` - Z-score file-backed matrices
+- `cpmCLAMPFBM()` - CPM normalization for file-backed matrices
 
 # Session Information
 

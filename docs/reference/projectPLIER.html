@@ -58,7 +58,7 @@ new datasets with matched genes.</p>
 
 
 <dt id="arg-newdata">newdata<a class="anchor" aria-label="anchor" href="#arg-newdata"></a></dt>
-<dd><p>A gene expression matrix (genes × samples) to be projected. Must have the same genes (rows) as <code>PLIERres$Z</code>.
+<dd><p>A gene expression matrix (genes x samples) to be projected. Must have the same genes (rows) as <code>PLIERres$Z</code>.
 Can be a standard matrix, sparse matrix, or FBM/big.matrix.</p></dd>
 
 
@@ -68,7 +68,7 @@ Can be a standard matrix, sparse matrix, or FBM/big.matrix.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A matrix <code>B</code> of projected latent loadings (LVs × samples) for the new dataset.</p>
+    <p>A matrix <code>B</code> of projected latent loadings (LVs x samples) for the new dataset.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -77,12 +77,30 @@ Can be a standard matrix, sparse matrix, or FBM/big.matrix.</p></dd>
 If <code>newdata</code> is a Filebacked Big Matrix (FBM), the computation is optimized using <code><a href="https://privefl.github.io/bigstatsr/reference/big_cprodMat.html" class="external-link">bigstatsr::big_cprodMat()</a></code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># fit a tiny PLIER model for projection</span></span></span>
+<span class="r-in"><span><span class="va">Y0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span><span class="op">*</span><span class="fl">3</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="PLIERbase.html">PLIERbase</a></span><span class="op">(</span><span class="va">Y0</span>, k <span class="op">=</span> <span class="fl">2</span>, max.iter <span class="op">=</span> <span class="fl">1</span>, trace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ****</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing SVD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L1 is set to 0.840633045609829"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L2 is set to 2.52189913682949"</span>
+<span class="r-in"><span><span class="co"># new data with same 5 genes</span></span></span>
+<span class="r-in"><span><span class="va">newY</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span><span class="op">*</span><span class="fl">2</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">projB</span> <span class="op">&lt;-</span> <span class="fu">projectPLIER</span><span class="op">(</span><span class="va">base</span>, newdata <span class="op">=</span> <span class="va">newY</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># check dimensions: 2 latent vars x 2 samples</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">projB</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 2</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Marc Subirana-Granes, Maria Chikina.</p>
 </div>
 
 <div class="pkgdown-footer-right">

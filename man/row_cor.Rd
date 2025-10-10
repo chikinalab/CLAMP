@@ -15,5 +15,6 @@ row_cor(A, B)
 A numeric vector of correlations, one per row.
 }
 \description{
-Computes the Pearson correlation for each row between matrices \code{A} and \code{B}.
+Computes the Pearson correlation for each row between matrices
+\code{A} and \code{B}.
 }

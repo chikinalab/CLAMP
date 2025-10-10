@@ -7,7 +7,7 @@
 getAUCstats(summary)
 }
 \arguments{
-\item{summary}{A data frame with \code{LV index} and \code{AUC} columns.}
+\item{summary}{A data frame with \verb{LV index} and \code{AUC} columns.}
 }
 \value{
 A named numeric vector with counts for thresholds 0.7, 0.8, and 0.9.

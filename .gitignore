@@ -9,7 +9,7 @@ output/
 .RData
 .RDataTmp
 .Rbuildignore
-PLIER2.Rproj
+CLAMP.Rproj
 
 
 # User-specific files
@@ -54,3 +54,5 @@ rsconnect/
 
 #Scratch
 scratch/
+
+.vscode/

@@ -13,5 +13,6 @@ tscale(x)
 A matrix of the same shape, with each row scaled independently.
 }
 \description{
-Standardize each row of a numeric matrix to have mean 0 and standard deviation 1.
+Standardize each row of a numeric matrix to have mean 0 and
+standard deviation 1.
 }

@@ -4,7 +4,7 @@
 \alias{getMaxAUC}
 \title{Get maximum AUC per latent variable}
 \usage{
-getMaxAUC(summary, verbose = F)
+getMaxAUC(summary, verbose = FALSE)
 }
 \arguments{
 \item{summary}{A data frame (e.g., from \code{crossVal()}) .}
@@ -12,7 +12,7 @@ getMaxAUC(summary, verbose = F)
 \item{verbose}{Logical; if \code{TRUE}, prints counts of LVs exceeding AUC thresholds. Default is \code{FALSE}.}
 }
 \value{
-A data frame with columns \code{LV index} and \code{max_AUC}.
+A data frame with columns LV index and max_AUC.
 }
 \description{
 Summarizes a cross-validation results data frame to extract the highest AUC value

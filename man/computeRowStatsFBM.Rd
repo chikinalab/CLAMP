@@ -4,18 +4,18 @@
 \alias{computeRowStatsFBM}
 \title{Compute row-wise sum and sum of squares for a Filebacked Big Matrix}
 \usage{
-computeRowStatsFBM(fbm, chunk_size = 1000)
+computeRowStatsFBM(fbm, ncores = 1)
 }
 \arguments{
 \item{fbm}{A \code{bigstatsr::FBM} object.}
 
-\item{chunk_size}{Number of columns to process at a time. Default is 1000.}
+\item{ncores}{Integer; number of cores to use for parallel operations (default 1).}
 }
 \value{
 A list with two numeric vectors:
 \describe{
-\item{\code{row_sums}}{Sum of each row.}
-\item{\code{row_sums_sq}}{Sum of squares of each row.}
+\item{row_sums}{Sum of each row.}
+\item{row_sums_sq}{Sum of squares of each row.}
 }
 }
 \description{
