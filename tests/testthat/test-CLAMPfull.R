@@ -5,7 +5,7 @@ test_that("CLAMPfull returns list with B, Z, U when doCrossval=FALSE", {
     priorMat <- matrix(1, nrow(mat), 5)
     full <- CLAMPfull(
         Y = mat, priorMat = priorMat, svdres = svdres,
-        plier.base.result = base, k = 5,
+        clamp.base.result = base, k = 5,
         doCrossval = FALSE, trace = FALSE, max.U.updates = 0
     )
     expect_type(full, "list")

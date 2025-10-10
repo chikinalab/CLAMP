@@ -1,4 +1,4 @@
 library(testthat)
-library(PLIER2)
+library(CLAMP)
 
-test_check("PLIER2")
+test_check("CLAMP")
