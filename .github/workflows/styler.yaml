@@ -80,14 +80,16 @@ jobs:
         shell: Rscript {0}
 
       - name: Commit and push changes
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref || github.ref_name }}
         run: |
-          FILES_TO_COMMIT=$(git diff --name-only | egrep -i '\.(r|[qr]md|rmarkdown|rnw|rprofile)$' || true)
+          FILES_TO_COMMIT=$(git diff --name-only | grep -Ei '\.(r|[qr]md|rmarkdown|rnw|rprofile)$' || true)
           if [ -n "$FILES_TO_COMMIT" ]; then
             git config --local user.name "$GITHUB_ACTOR"
             git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-            git add $FILES_TO_COMMIT
+            echo "$FILES_TO_COMMIT" | xargs -r git add
             git commit -m "Style code (GHA)"
-            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+            git push origin HEAD:"$GITHUB_HEAD_REF"
           else
             echo "No changes to commit."
           fi
