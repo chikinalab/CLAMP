@@ -8,7 +8,7 @@
 tscale <- function(x) {
     row_means <- rowMeans(x)
     row_sds <- sqrt(rowMeans((x - row_means)^2))
-    row_sds[row_sds == 0] <- 1  # avoid division by zero
+    row_sds[row_sds == 0] <- 1 # avoid division by zero
     sweep(sweep(x, 1, row_means), 1, row_sds, "/")
 }
 
@@ -167,7 +167,7 @@ max_correspondence_greedy <- function(cor_mat) {
 #' @return A named list where each element is a character vector of gene names for a given gene set.
 #'
 #' @examples
-#' url <- 'https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human'
+#' url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human"
 #' gmt_list <- getGMT(url)
 #' # list available gene sets
 #' names(gmt_list)
@@ -230,12 +230,12 @@ read_gmt <- function(filename) {
 #' @examples
 #' # define a simple nested GMT list
 #' gmt1 <- list(
-#'     PathwayA = c('Gene1', 'Gene2', 'Gene3'),
-#'     PathwayB = c('Gene2', 'Gene4')
+#'     PathwayA = c("Gene1", "Gene2", "Gene3"),
+#'     PathwayB = c("Gene2", "Gene4")
 #' )
 #' gmt2 <- list(
-#'     PathwayC = c('Gene1', 'Gene4'),
-#'     PathwayD = c('Gene3', 'Gene5')
+#'     PathwayC = c("Gene1", "Gene4"),
+#'     PathwayD = c("Gene3", "Gene5")
 #' )
 #' # combine into a nested list
 #' nestedList <- list(gmt1 = gmt1, gmt2 = gmt2)
@@ -266,8 +266,10 @@ gmtListToSparseMat <- function(gmtList) {
 
     # Use sparseMatrix to create the matrix in one go
 
-    pathMat <- sparseMatrix(i = row_indices, j = col_indices, x = values, dims = c(length(allGenes),
-        length(allnames)))
+    pathMat <- sparseMatrix(i = row_indices, j = col_indices, x = values, dims = c(
+        length(allGenes),
+        length(allnames)
+    ))
     rownames(pathMat) <- allGenes
     colnames(pathMat) <- allnames
     pathMat
@@ -356,17 +358,21 @@ cleanFBM <- function(fbm, ncores = 1) {
 #'
 computeRowStatsFBM <- function(fbm, ncores = 1) {
     # Compute row sums in blocks
-    row_sums <- big_apply(fbm, a.FUN = function(X, ind) rowSums(X[, ind]), a.combine = "plus",
-        ncores = ncores)
+    row_sums <- big_apply(fbm,
+        a.FUN = function(X, ind) rowSums(X[, ind]), a.combine = "plus",
+        ncores = ncores
+    )
 
     # Compute row sums of squares in blocks
-    row_sums_sq <- big_apply(fbm, a.FUN = function(X, ind) rowSums(X[, ind]^2), a.combine = "plus",
-        ncores = ncores)
+    row_sums_sq <- big_apply(fbm,
+        a.FUN = function(X, ind) rowSums(X[, ind]^2), a.combine = "plus",
+        ncores = ncores
+    )
 
     n_cols <- ncol(fbm)
     # Final means and variances
-    row_means <- row_sums/n_cols
-    row_variances <- (row_sums_sq/n_cols) - (row_means^2)
+    row_means <- row_sums / n_cols
+    row_variances <- (row_sums_sq / n_cols) - (row_means^2)
 
     list(row_means = row_means, row_variances = row_variances)
 }
@@ -396,7 +402,7 @@ filterFBM <- function(fbm, rowStats, mean_cutoff = NULL, var_cutoff = NULL, back
     row_variances <- rowStats$row_variances
 
     # Determine rows to keep based on cutoffs
-    keep_rows <- rep(TRUE, length(row_means))  # Default: keep all rows
+    keep_rows <- rep(TRUE, length(row_means)) # Default: keep all rows
 
     if (!is.null(mean_cutoff)) {
         keep_rows <- keep_rows & (row_means >= mean_cutoff)
@@ -437,7 +443,7 @@ filterFBM <- function(fbm, rowStats, mean_cutoff = NULL, var_cutoff = NULL, back
 #'         8, 10, 12 # gene2 counts
 #'     ),
 #'     nrow = 2, byrow = TRUE,
-#'     dimnames = list(c('gene1', 'gene2'), paste0('sample', seq_len(3)))
+#'     dimnames = list(c("gene1", "gene2"), paste0("sample", seq_len(3)))
 #' )
 #'
 #' # compute per‐gene mean and variance
@@ -507,15 +513,17 @@ zscoreCLAMP <- function(Y_filtered, rowStats) {
 #'         100, 200, 300 # geneC
 #'     ),
 #'     nrow = 3, byrow = TRUE,
-#'     dimnames = list(c('geneA', 'geneB', 'geneC'), paste0('s', seq_len(3)))
+#'     dimnames = list(c("geneA", "geneB", "geneC"), paste0("s", seq_len(3)))
 #' )
 #' fbm <- FBM(nrow(mat), ncol(mat), init = mat)
 #'
 #' # preprocess without filtering (all genes kept)
 #' res_all <- preprocessCLAMPFBM(fbm)
 #' @export
-preprocessCLAMPFBM <- function(fbm, mean_cutoff = NULL, var_cutoff = NULL, backingfile = NULL,
-    block_size = 1000, ncores = 1) {
+preprocessCLAMPFBM <- function(
+      fbm, mean_cutoff = NULL, var_cutoff = NULL, backingfile = NULL,
+      block_size = 1000, ncores = 1
+) {
     n_r <- nrow(fbm)
     n_c <- ncol(fbm)
 
@@ -555,8 +563,10 @@ preprocessCLAMPFBM <- function(fbm, mean_cutoff = NULL, var_cutoff = NULL, backi
 
     # Filter rows, writing to a new filtered FBM
     filt_bk <- paste0(base_bk, "_filtered")
-    filter_res <- filterFBM(fbm_copy, rowStats = rs_all, mean_cutoff = mean_cutoff,
-        var_cutoff = var_cutoff, backingfile = filt_bk)
+    filter_res <- filterFBM(fbm_copy,
+        rowStats = rs_all, mean_cutoff = mean_cutoff,
+        var_cutoff = var_cutoff, backingfile = filt_bk
+    )
 
     fbm_filtered <- filter_res$fbm_filtered
     kept_rows <- filter_res$kept_rows
@@ -598,20 +608,25 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1
         options(bigstatsr.check.parallel.blas = FALSE)
         old_blas <- getOption("default.nproc.blas")
         options(default.nproc.blas = NULL)
-        on.exit({
-            options(bigstatsr.check.parallel.blas = TRUE)
-            options(default.nproc.blas = old_blas)
-        }, add = TRUE)
+        on.exit(
+            {
+                options(bigstatsr.check.parallel.blas = TRUE)
+                options(default.nproc.blas = old_blas)
+            },
+            add = TRUE
+        )
     }
 
-    bigstatsr::big_apply(fbm_filtered, a.FUN = function(X, ind, means, sds) {
-        block <- X[, ind, drop = FALSE]
-        block <- sweep(block, 1, means, "-")
-        block <- sweep(block, 1, sds, "/")
-        X[, ind] <- block
-        integer(0)
-    }, a.combine = "c", ind = bigstatsr::cols_along(fbm_filtered), block.size = chunk_size,
-        ncores = ncores, means = means, sds = sds)
+    bigstatsr::big_apply(fbm_filtered,
+        a.FUN = function(X, ind, means, sds) {
+            block <- X[, ind, drop = FALSE]
+            block <- sweep(block, 1, means, "-")
+            block <- sweep(block, 1, sds, "/")
+            X[, ind] <- block
+            integer(0)
+        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_filtered), block.size = chunk_size,
+        ncores = ncores, means = means, sds = sds
+    )
 
     invisible(NULL)
 }
@@ -640,7 +655,7 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1
 #'         4, 8, 13
 #'     ),
 #'     nrow = 4, byrow = FALSE,
-#'     dimnames = list(paste0('gene', seq_len(4)), paste0('sample', seq_len(3)))
+#'     dimnames = list(paste0("gene", seq_len(4)), paste0("sample", seq_len(3)))
 #' )
 #'
 #' # keep genes with mean >= 6 and variance >= 2
@@ -703,7 +718,7 @@ cpmCLAMP <- function(counts) {
 #' library(bigstatsr)
 #' mat <- matrix(c(10, 20, 30, 40, 50, 60),
 #'     nrow = 2,
-#'     dimnames = list(c('gene1', 'gene2'), paste0('sample', seq_len(3)))
+#'     dimnames = list(c("gene1", "gene2"), paste0("sample", seq_len(3)))
 #' )
 #' fbm <- FBM(nrow(mat), ncol(mat), init = mat)
 #' cpmCLAMPFBM(fbm, block_size = 1)
@@ -722,27 +737,34 @@ cpmCLAMPFBM <- function(fbm_counts, block_size = 1000, ncores = 1) {
         options(bigstatsr.check.parallel.blas = FALSE)
         old_blas <- getOption("default.nproc.blas")
         options(default.nproc.blas = NULL)
-        on.exit({
-            options(bigstatsr.check.parallel.blas = TRUE)
-            options(default.nproc.blas = old_blas)
-        }, add = TRUE)
+        on.exit(
+            {
+                options(bigstatsr.check.parallel.blas = TRUE)
+                options(default.nproc.blas = old_blas)
+            },
+            add = TRUE
+        )
     }
 
     # Library sizes (sum per column), processed in column chunks
-    lib_sizes <- bigstatsr::big_apply(fbm_counts, a.FUN = function(X, ind) {
-        colSums(X[, ind, drop = FALSE])
-    }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
-        ncores = ncores)
+    lib_sizes <- bigstatsr::big_apply(fbm_counts,
+        a.FUN = function(X, ind) {
+            colSums(X[, ind, drop = FALSE])
+        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
+        ncores = ncores
+    )
     lib_sizes[lib_sizes == 0] <- 1
 
     # Divide each column by its library size and scale to CPM, in-place
-    bigstatsr::big_apply(fbm_counts, a.FUN = function(X, ind, libs) {
-        blk <- X[, ind, drop = FALSE]
-        blk <- sweep(blk, 2, libs[ind], "/") * 1e+06
-        X[, ind] <- blk
-        integer(0)
-    }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
-        ncores = ncores, libs = lib_sizes)
+    bigstatsr::big_apply(fbm_counts,
+        a.FUN = function(X, ind, libs) {
+            blk <- X[, ind, drop = FALSE]
+            blk <- sweep(blk, 2, libs[ind], "/") * 1e+06
+            X[, ind] <- blk
+            integer(0)
+        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
+        ncores = ncores, libs = lib_sizes
+    )
 
     invisible(fbm_counts)
 }

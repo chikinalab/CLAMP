@@ -157,10 +157,9 @@ binarizeTop <- function(Z, top, keepVals = TRUE) {
 #'    Columns are named \code{LV1}, \code{LV2}, ...}
 #' }
 #'
-solveU <- function(
-        Z, Chat = NULL, priorMat, penalty.factor, pathwaySelection = "fast",
-        alpha = 0.9, maxPath = 10, nfolds = 5, useSE = FALSE, top = NULL,
-        binary = FALSE, nlambda = 20, scale = TRUE, refit = TRUE, Uprev = NULL, ...) {
+solveU <- function(Z, Chat = NULL, priorMat, penalty.factor, pathwaySelection = "fast",
+    alpha = 0.9, maxPath = 10, nfolds = 5, useSE = FALSE, top = NULL,
+    binary = FALSE, nlambda = 20, scale = TRUE, refit = TRUE, Uprev = NULL, ...) {
     if (nrow(Z) != nrow(priorMat)) {
         cm <- commonRows(Z, priorMat)
         Z <- Z[cm, ]
@@ -492,13 +491,8 @@ AUC <- function(labels, values) {
         auc <- 0.5
         pval <- NA
     }
-    list(auc = auc, pval = pval, npos=posn, nneg=negn)
+    list(auc = auc, pval = pval, npos = posn, nneg = negn)
 }
-
-
-
-
-
 
 
 #' Cross-validation AUC for CLAMP latent variables and pathways
@@ -518,46 +512,44 @@ AUC <- function(labels, values) {
 #'   \item{\code{summary}}{Data frame with pathway, LV index, AUC, p-value, and FDR}
 #' }
 crossVal <- function(clampRes, priorMat, priorMatcv) {
-  ii <- which(Matrix::colSums(clampRes$U) > 0)
+    ii <- which(Matrix::colSums(clampRes$U) > 0)
 
-  Uauc <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
-  Up   <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
+    Uauc <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
+    Up <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
 
-  results <- list()
+    results <- list()
 
-  for (i in ii) {
-    iipath <- which(clampRes$U[, i] > 0)
+    for (i in ii) {
+        iipath <- which(clampRes$U[, i] > 0)
 
-    for (j in iipath) {
-      iiheldout <- which((rowSums(priorMat[, iipath, drop = FALSE]) == 0) |
-                           (priorMat[, j] > 0 & priorMatcv[, j] == 0))
+        for (j in iipath) {
+            iiheldout <- which((rowSums(priorMat[, iipath, drop = FALSE]) == 0) |
+                (priorMat[, j] > 0 & priorMatcv[, j] == 0))
 
-      aucres <- AUC(priorMat[iiheldout, j], clampRes$Z[iiheldout, i])
+            aucres <- AUC(priorMat[iiheldout, j], clampRes$Z[iiheldout, i])
 
 
-      results[[length(results) + 1]] <- data.frame(
-        pathway  = colnames(priorMat)[j],
-        LV_index = i,
-        AUC      = aucres$auc,
-        p_value  = aucres$pval,
-        FDR      = NA_real_,   # placeholder
-        npos     = aucres$npos,
-        nneg     = aucres$nneg,
-        stringsAsFactors = FALSE
-      )
+            results[[length(results) + 1]] <- data.frame(
+                pathway = colnames(priorMat)[j],
+                LV_index = i,
+                AUC = aucres$auc,
+                p_value = aucres$pval,
+                FDR = NA_real_, # placeholder
+                npos = aucres$npos,
+                nneg = aucres$nneg,
+                stringsAsFactors = FALSE
+            )
 
-      Uauc[j, i] <- aucres$auc
-      Up[j, i]   <- -log10(aucres$pval)
+            Uauc[j, i] <- aucres$auc
+            Up[j, i] <- -log10(aucres$pval)
+        }
     }
-  }
 
-  out <- do.call(rbind, results)
-  out$FDR <- BH(out$p_value)
+    out <- do.call(rbind, results)
+    out$FDR <- BH(out$p_value)
 
-  return(list(Uauc = Uauc, Upval = Up, summary = out))
+    return(list(Uauc = Uauc, Upval = Up, summary = out))
 }
-
-
 
 
 #' CLAMP base matrix factorization
@@ -613,11 +605,10 @@ crossVal <- function(clampRes, priorMat, priorMatcv) {
 #' dim(res$Z)
 #'
 #' @export
-CLAMPbase <- function(
-        Y, k, svdres = NULL, L1 = NULL, L2 = NULL,
-        Zpos = TRUE, max.iter = 200, tol = 5e-4, trace = FALSE,
-        rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20,
-        cutoff = 0, ncores = 1) {
+CLAMPbase <- function(Y, k, svdres = NULL, L1 = NULL, L2 = NULL,
+    Zpos = TRUE, max.iter = 200, tol = 5e-4, trace = FALSE,
+    rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20,
+    cutoff = 0, ncores = 1) {
     if (ncores > 1) {
         # if we are parallelizing, then disable BLAS parallelization
         options(bigstatsr.check.parallel.blas = FALSE)
@@ -842,13 +833,12 @@ CLAMPbase <- function(
 #'     doCrossval = FALSE, trace = FALSE, max.U.updates = 0
 #' )
 #' @export
-CLAMPfull <- function(
-        Y, priorMat, svdres = NULL, clamp.base.result = NULL, k = NULL, L1 = NULL, L2 = NULL, top = NULL,
-        cvn = 5, max.iter = 350, trace = FALSE, Chat = NULL, maxPath = 10, doCrossval = TRUE,
-        penalty.factor = rep(1, ncol(priorMat)), glm_alpha = 0.9,
-        minGenes = 10, tol = 5e-4, seed = 123456, allGenes = FALSE, rseed = NULL,
-        max.U.updates = 5, pathwaySelection = c("fast"), multiplier = 1,
-        adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitAll = FALSE, useSE = FALSE, ncores = 1) {
+CLAMPfull <- function(Y, priorMat, svdres = NULL, clamp.base.result = NULL, k = NULL, L1 = NULL, L2 = NULL, top = NULL,
+    cvn = 5, max.iter = 350, trace = FALSE, Chat = NULL, maxPath = 10, doCrossval = TRUE,
+    penalty.factor = rep(1, ncol(priorMat)), glm_alpha = 0.9,
+    minGenes = 10, tol = 5e-4, seed = 123456, allGenes = FALSE, rseed = NULL,
+    max.U.updates = 5, pathwaySelection = c("fast"), multiplier = 1,
+    adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitAll = FALSE, useSE = FALSE, ncores = 1) {
     if (ncores > 1) {
         # if we are parallelizing, then disable BLAS parallelization
         options(bigstatsr.check.parallel.blas = FALSE)
