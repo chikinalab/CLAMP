@@ -49,6 +49,7 @@ Suggests:
     org.Hs.eg.db,
     rappdirs,
     rmarkdown,
+    styler,
     testthat (>= 3.0.0),
     CLAMPData
 VignetteBuilder: knitr
