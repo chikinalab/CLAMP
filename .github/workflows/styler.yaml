@@ -1,6 +1,8 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# This workflow automatically styles R source files using styler with Bioconductor conventions.
+# It runs on push or pull requests that modify R-related files and commits changes back to the branch.
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-name: style.yaml
+name: Apply Bioconductor Style to R Code
 
 on:
   push:
