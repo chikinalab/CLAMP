@@ -13,5 +13,6 @@ BH(p)
 Adjusted p-values.
 }
 \description{
-Applies the BH (Benjamini-Hochberg) correction for multiple hypothesis testing.
+Applies the BH (Benjamini-Hochberg) correction for
+multiple hypothesis testing.
 }

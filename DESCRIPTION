@@ -1,20 +1,60 @@
-Package: PLIER2
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut","cre"))
-Description: What the package does (one paragraph).
-License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-Depends: R (>= 3.5)
-Imports: bigstatsr, dplyr, glmnet, irlba, Matrix, rlang, rsvd
-Suggests: 
+Package: CLAMP
+Type: Package
+Title: Pathway-Level Information ExtractoR 2 
+Version: 0.99.0
+Authors@R: 
+    c(
+      person("Marc", "Subirana-Granes", role = c("aut","cre"),
+             email = "mb2subi@gmail.com",
+             comment = c(ORCID = "0000-0003-3934-839X")),
+      person("Maria", "Chikina", role = "aut",
+             email = "mchikina@gmail.com")
+    )
+Description: CLAMP performs prior-informed latent variable decomposition of
+    high-dimensional transcriptomic data. It integrates curated gene sets to
+    learn biologically interpretable latent variables, supports file-backed
+    matrices for large datasets, and provides tools for preprocessing,
+    normalization, projection, and evaluation of latent structures. CLAMP is
+    designed to scale to tens of thousands of samples, making it suitable for
+    large public resources such as recount3 and ARCHS4. It enables researchers
+    to uncover biologically meaningful patterns that connect genes, pathways,
+    and complex traits in transcriptomics studies.
+License: GPL-3
+URL: https://mchikina.github.io/CLAMP/, https://github.com/mchikina/CLAMP
+BugReports: https://github.com/mchikina/CLAMP/issues
+Depends:
+    R (>= 4.4.0)
+Imports:
+    bigstatsr,
+    Matrix,
+    rlang,
+    rsvd,
+    irlba,
+    glmnet,
+    stats,
+    dplyr,
+    ggplot2,
+    ggrepel,
+    utils,
+    BiocGenerics
+Suggests:
+    AnnotationDbi,
+    BiocStyle,
+    DT,
+    DiagrammeR,
+    data.table,
+    hdf5r,
+    here,
     knitr,
-    pkgdown,
-    testthat (>= 3.0.0)
+    org.Hs.eg.db,
+    rappdirs,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    CLAMPData
 VignetteBuilder: knitr
-URL: https://mchikina.github.io/PLIER2/, https://github.com/mchikina/PLIER2
-BugReports: https://github.com/mchikina/PLIER2/issues
+Encoding: UTF-8
+LazyData: false
+biocViews: Software, GeneExpression, RNASeq, Transcriptomics, DimensionReduction, Visualization, Normalization, Pathways, Preprocessing, GenePrediction
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3

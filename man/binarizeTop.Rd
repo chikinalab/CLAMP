@@ -4,7 +4,7 @@
 \alias{binarizeTop}
 \title{Binarize matrix by top-k values per column}
 \usage{
-binarizeTop(Z, top, keepVals = T)
+binarizeTop(Z, top, keepVals = TRUE)
 }
 \arguments{
 \item{Z}{A numeric matrix.}

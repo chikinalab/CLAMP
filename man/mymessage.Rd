@@ -9,6 +9,9 @@ mymessage(...)
 \arguments{
 \item{...}{Character strings to concatenate and print.}
 }
+\value{
+Invisibly returns NULL. Called for side effects (messages).
+}
 \description{
 Wrapper around \code{message()} that pastes arguments together into a single string.
 }

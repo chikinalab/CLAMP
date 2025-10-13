@@ -4,16 +4,20 @@
 \alias{mat_mult}
 \title{Matrix multiplication with support for FBM objects}
 \usage{
-mat_mult(mat1, mat2)
+mat_mult(mat1, mat2, ncores = 1)
 }
 \arguments{
 \item{mat1}{A matrix or an object of class \code{FBM}.}
 
 \item{mat2}{A numeric matrix.}
+
+\item{ncores}{Number of cores to use for parallel computation
+(only used if mat1 is an FBM). Default is 1.}
 }
 \value{
 Matrix product of \code{mat1} and \code{mat2}.
 }
 \description{
-Multiplies two matrices, using optimized multiplication if the first is a Filebacked Big Matrix (FBM).
+Multiplies two matrices, using optimized multiplication if the first
+is a Filebacked Big Matrix (FBM).
 }

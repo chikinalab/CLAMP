@@ -1,11 +1,11 @@
-url: https://mchikina.github.io/PLIER2/
+url: https://mchikina.github.io/CLAMP/
 template:
   bootstrap: 5
   params:
     bootswatch: flatly
 
 navbar:
-  title: PLIER2
+  title: CLAMP
   left:
     - text: "Home"
       href: index.html

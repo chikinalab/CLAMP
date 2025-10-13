@@ -6,6 +6,13 @@
 \usage{
 rotateSVD(svdres)
 }
+\arguments{
+\item{svdres}{A list as returned by \code{svd()}, with components \code{u}, \code{d}, and \code{v}.}
+}
+\value{
+A modified \code{svd}‐result list where each column of \code{$u} has been sign‐flipped
+so that its entries sum to a nonnegative value; \code{$v} is flipped correspondingly.
+}
 \description{
 Ensures consistency in SVD output by flipping signs so that each left singular vector
 has a majority of positive entries.

@@ -74,7 +74,7 @@ adaptive sparsity, positive constraints, and regularization.</p>
 
 
 <dl><dt id="arg-y">Y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Input gene expression matrix (genes × samples). Can be dense, sparse (<code>dgCMatrix</code>), or FBM.</p></dd>
+<dd><p>Input gene expression matrix (genes x samples). Can be dense, sparse (<code>dgCMatrix</code>), or FBM.</p></dd>
 
 
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
@@ -140,10 +140,10 @@ adaptive sparsity, positive constraints, and regularization.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list with components:</p><dl><dt><code>B</code></dt>
-<dd><p>Latent variable loadings (LVs × genes)</p></dd>
+<dd><p>Latent variable loadings (LVs x genes)</p></dd>
 
 <dt><code>Z</code></dt>
-<dd><p>Latent variable scores (LVs × samples)</p></dd>
+<dd><p>Latent variable scores (LVs x samples)</p></dd>
 
 <dt><code>Zraw</code></dt>
 <dd><p>Raw Z matrix before thresholding</p></dd>
@@ -163,12 +163,30 @@ given <code>B</code> and solving for <code>B</code> given <code>Z</code>, with o
 constraints on <code>Z</code>. Convergence is assessed via relative change in <code>B</code>.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># small toy dataset: 5 genes x 4 samples</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># run a single iteration for speed</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">PLIERbase</span><span class="op">(</span><span class="va">Y</span>, k <span class="op">=</span> <span class="fl">2</span>, max.iter <span class="op">=</span> <span class="fl">1</span>, trace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ****</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Computing SVD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L1 is set to 0.926903271141505"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L2 is set to 2.78070981342451"</span>
+<span class="r-in"><span><span class="co"># inspect dimensions of B and Z</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">B</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 4</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5 2</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Marc Subirana-Granes, Maria Chikina.</p>
 </div>
 
 <div class="pkgdown-footer-right">

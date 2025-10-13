@@ -74,7 +74,8 @@ guided by prior knowledge and includes optional cross-validation to evaluate pat
 <span>  adaptive.p <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  useNNLS <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  useRaw <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  refitAll <span class="op">=</span> <span class="cn">F</span></span>
+<span>  refitAll <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  useSE <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,11 +84,11 @@ guided by prior knowledge and includes optional cross-validation to evaluate pat
 
 
 <dl><dt id="arg-y">Y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Gene expression matrix (genes × samples). Can be dense, sparse (dgCMatrix), or FBM.</p></dd>
+<dd><p>Gene expression matrix (genes x samples). Can be dense, sparse (dgCMatrix), or FBM.</p></dd>
 
 
 <dt id="arg-priormat">priorMat<a class="anchor" aria-label="anchor" href="#arg-priormat"></a></dt>
-<dd><p>Binary matrix (genes × pathways) representing prior annotations.</p></dd>
+<dd><p>Binary matrix (genes x pathways) representing prior annotations.</p></dd>
 
 
 <dt id="arg-svdres">svdres<a class="anchor" aria-label="anchor" href="#arg-svdres"></a></dt>
@@ -195,17 +196,21 @@ small positive values, assuming they reflect noise. Default is 0.05.</p></dd>
 <dt id="arg-refitall">refitAll<a class="anchor" aria-label="anchor" href="#arg-refitall"></a></dt>
 <dd><p>If <code>TRUE</code>, refits all U columns every update. Default is <code>FALSE</code>.</p></dd>
 
+
+<dt id="arg-usese">useSE<a class="anchor" aria-label="anchor" href="#arg-usese"></a></dt>
+<dd><p>Logical; passed to the internal <code><a href="solveU.html">solveU()</a></code> call. If <code>TRUE</code>, enables standard-error–aware selection when fitting U (pathway coefficients). Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list with the following components:</p><dl><dt><code>B</code></dt>
-<dd><p>Latent variable loadings (LVs × genes)</p></dd>
+<dd><p>Latent variable loadings (LVs x genes)</p></dd>
 
 <dt><code>Z</code></dt>
-<dd><p>Latent variable matrix (LVs × samples)</p></dd>
+<dd><p>Latent variable matrix (LVs x samples)</p></dd>
 
 <dt><code>U</code></dt>
-<dd><p>Pathway loadings matrix (pathways × LVs)</p></dd>
+<dd><p>Pathway loadings matrix (pathways x LVs)</p></dd>
 
 <dt><code>C</code></dt>
 <dd><p>Masked prior matrix used for training</p></dd>
@@ -223,7 +228,7 @@ small positive values, assuming they reflect noise. Default is 0.05.</p></dd>
 <dd><p>-<code>log10(p)</code> values from CV evaluation (if enabled)</p></dd>
 
 <dt><code>summary</code></dt>
-<dd><p>Data frame of AUC, p-values, and FDR per pathway × LV (if enabled)</p></dd>
+<dd><p>Data frame of AUC, p-values, and FDR per pathway x LV (if enabled)</p></dd>
 
 <dt><code>priorMatCV</code></dt>
 <dd><p>Masked prior matrix used during CV</p></dd>
@@ -246,12 +251,32 @@ to <code>Z</code> using a dynamic threshold based on the negative tail of its di
 is used to hold out gene annotations in <code>priorMat</code> and evaluate latent variable specificity.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">svdres</span> <span class="op">&lt;-</span> <span class="fu">rsvd</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rsvd/man/rsvd.html" class="external-link">rsvd</a></span><span class="op">(</span><span class="va">mat</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="PLIERbase.html">PLIERbase</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">mat</span>, k <span class="op">=</span> <span class="fl">5</span>, svdres <span class="op">=</span> <span class="va">svdres</span>, trace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ****</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L1 is set to 0.971985706716372"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "L2 is set to 2.91595712014912"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converged at iteration= 31 | Bdiff=0.000003,  tol=0.000500     </span>
+<span class="r-in"><span><span class="va">priorMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">full</span> <span class="op">&lt;-</span> <span class="fu">PLIERfull</span><span class="op">(</span>Y <span class="op">=</span> <span class="va">mat</span>, priorMat <span class="op">=</span> <span class="va">priorMat</span>, svdres <span class="op">=</span> <span class="va">svdres</span>,</span></span>
+<span class="r-in"><span>                  plier.base.result <span class="op">=</span> <span class="va">base</span>, k <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                  doCrossval <span class="op">=</span> <span class="cn">FALSE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span>, max.U.updates <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> **PLIER v2 **</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> using provided PLIERbase result</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> L1=0.971985706716372; L2=2.91595712014912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Converged at 8 / 350 | Bdiff=0.000000, minCor=1.000000</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Not using cross-validation. No AUCs or p-values</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Marc Subirana-Granes, Maria Chikina.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -13,12 +13,12 @@ solveU(
   alpha = 0.9,
   maxPath = 10,
   nfolds = 5,
-  useSE = F,
+  useSE = FALSE,
   top = NULL,
-  binary = F,
+  binary = FALSE,
   nlambda = 20,
-  scale = T,
-  refit = T,
+  scale = TRUE,
+  refit = TRUE,
   Uprev = NULL,
   ...
 )
@@ -26,9 +26,10 @@ solveU(
 \arguments{
 \item{Z}{A numeric matrix with features (rows) and samples (columns).}
 
-\item{Chat}{(Optional) Precomputed pseudo-inverse of \code{priorMat}; if \code{NULL}, it is calculated using ridge regularization.}
+\item{Chat}{(Optional) Precomputed pseudo-inverse of \code{priorMat}; if \code{NULL},
+it is calculated using ridge regularization.}
 
-\item{priorMat}{A numeric matrix with prior information (features × pathways).}
+\item{priorMat}{A numeric matrix with prior information (features x pathways).}
 
 \item{penalty.factor}{Optional penalty weights for features in \code{priorMat}.}
 
@@ -44,7 +45,8 @@ solveU(
 
 \item{top}{If set, sets to 0 all but the top entries of \code{Z} per column before fitting.}
 
-\item{binary}{If \code{TRUE}, fits a binomial model (e.g., classification) to \code{Z}>0. Can be used incombination with \code{top}. Default is \code{FALSE}.}
+\item{binary}{If \code{TRUE}, fits a binomial model (e.g., classification) to \code{Z}>0.
+Can be used incombination with \code{top}. Default is \code{FALSE}.}
 
 \item{nlambda}{Number of lambda values for glmnet. Default is 20.}
 
@@ -52,18 +54,21 @@ solveU(
 
 \item{refit}{Whether to perform relaxed refitting using selected predictors. Default is \code{TRUE}.}
 
-\item{Uprev}{(Optional) Previous U matrix to reuse. In this mode only the columns of \code{U} that are all zero are estimated. Used internally in \code{PLIER2}.}
+\item{Uprev}{(Optional) Previous U matrix to reuse. In this mode only the columns of \code{U}
+that are all zero are estimated. Used internally in \code{CLAMP}.}
 
 \item{...}{Additional arguments passed to \code{glmnet()} or \code{cv.glmnet()}.}
 }
 \value{
 A list with one element:
 \describe{
-\item{\code{U}}{A matrix of loadings (features × components). Columns are named \code{LV1}, \code{LV2}, ...}
+\item{\code{U}}{A matrix of loadings (features x components).
+Columns are named \code{LV1}, \code{LV2}, ...}
 }
 }
 \description{
 For each column of a target matrix \code{Z} using pathway or prior annotation \code{priorMat}.
 It performs regularization selection using cross-validation and can apply either
-Supports continuous or binary response models. Relaxed refitting is supported for final coefficient estimation.
+Supports continuous or binary response models. Relaxed refitting is supported for final
+coefficient estimation.
 }

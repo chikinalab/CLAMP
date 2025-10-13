@@ -21,13 +21,14 @@ filterFBM(
 
 \item{var_cutoff}{Optional minimum variance threshold; rows with variances below this are removed.}
 
-\item{backingfile}{A character string specifying the filename (without extension) for the new FBM. Default is \code{"filtered_fbm"}.}
+\item{backingfile}{A character string specifying the filename (without extension) for the new FBM.
+Default is \code{filtered_fbm}.}
 }
 \value{
 A list with:
 \describe{
-\item{\code{fbm_filtered}}{A new FBM object containing only filtered rows.}
-\item{\code{kept_rows}}{Indices of rows retained in the filtering step.}
+\item{fbm_filtered}{A new FBM object containing only filtered rows.}
+\item{kept_rows}{Indices of rows retained in the filtering step.}
 }
 }
 \description{

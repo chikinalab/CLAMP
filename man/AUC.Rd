@@ -21,5 +21,5 @@ A list with:
 \description{
 Computes the area under the ROC curve (AUC) by applying a Wilcoxon rank-sum test
 between predicted values for positive and negative labels. This is equivalent to
-computing the Mann–Whitney U statistic.
+computing the Mann-Whitney U statistic.
 }
