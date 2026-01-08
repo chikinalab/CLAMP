@@ -792,6 +792,8 @@ squashZscore <- function(zdata, maxScore = 2) {
 #' @export
 getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
   k <- length(sv)
+  #works best on log scale
+sv=log(sv)
   if(k<20){
 
     stop("Need at least 20 singular values ")
@@ -815,11 +817,13 @@ getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
     if (r2 > best_r2) {
       best_r2 <- r2
       best_drop <- drop
+
     }
   }
 
   if (best_r2 < min_r2){
-    scale=fallback
+    message(paste("Minimum r2 not reached, best_r2 is", best_r2))
+    scale=exp(median(y_pred))
     k=NULL
     return(list(scale=scale))
   }
@@ -829,14 +833,46 @@ getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
   fit <- lm(sv[x] ~ x)
   y_pred <- predict(fit, newdata = data.frame(x = 1:n))
 
-  if (any(y_pred < 0)){
-    scale=fallback
-    k=NULL
-    return(list(scale=scale))
+  if (mean(y_pred < 0)>0.1){
+
+    message("y_pred is <0, consider supplying more SVs")
+    scale=exp(median(y_pred))
+    k=best_drop
+    return(list(scale=scale,k=k))
   }
-  scale=median(y_pred)
+  scale=exp(median(y_pred))
   k=best_drop
   return(list(scale=scale, k=k))
+}
+
+
+#' Scale matrix rows by inverse SVD row residuals
+#'
+#' Computes a low-rank reconstruction from an `rsvd` result, calculates the
+#' per-row root-mean-squared residuals, and rescales each row of the input
+#' matrix by the inverse of its residual. This is equivalent to applying
+#' \eqn{\sqrt{w_i} = 1 / r_i} row-weights for weighted least squares.
+#'
+#' @param X Numeric matrix. Input data matrix.
+#' @param svdres List returned by `rsvd::rsvd()`, containing components
+#'   `u`, `d`, and `v`.
+#'
+#' @return A matrix of the same dimensions as `X` with rowwise scaling applied.
+#'
+#' @examples
+#' # svdres <- rsvd::rsvd(X, k = 5)
+#' # X_scaled <- scale_rows(X, svdres)
+#'
+#' @export
+scale_rows <- function(X, svdres, return.scale=F) {
+  Xhat <- (svdres$u %*% diag(svdres$d)) %*% t(svdres$v)
+  r <- sqrt(rowSums((X - Xhat)^2) / ncol(X))  # RMSE per row
+  if(!return.scale){
+    X * (1 / r)
+  }
+  else{
+    1/r
+  }
 }
 
 

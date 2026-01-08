@@ -26,12 +26,14 @@ compareBs <- function(res1, res2, target, method = "p", xlab = "1", ylab = "2",
                       stat.method = "t", oneToOne = TRUE) {
 
   extract_B <- function(res) {
-    if (is.list(res) & !is.null(res$B)) {
+    if (is.list(res) && !is.null(res$B)) {
+
       return(as.matrix(res$B))
     } else if (inherits(res, "rsvd")) {
 
       return(t(res$v))
     } else {
+
       return(as.matrix(res))
     }
   }
@@ -69,8 +71,8 @@ compareBs <- function(res1, res2, target, method = "p", xlab = "1", ylab = "2",
 
   cor1 <- apply(mat1, 2, max)
   cor2 <- apply(mat2, 2, max)
-  cor1[cor1 < 0.01] <- NA
-  cor2[cor2 < 0.01] <- NA
+  cor1[cor1 < -50] <- NA
+  cor2[cor2 < -50] <- NA
   idx1 <- apply(mat1, 2, which.max)
   idx2 <- apply(mat2, 2, which.max)
   Labels <- colnames(target)
@@ -107,7 +109,7 @@ compareBs <- function(res1, res2, target, method = "p", xlab = "1", ylab = "2",
                       label = paste("p =", signif(pval, 3))) +
     ggplot2::theme_minimal()
 
-  if (is.list(res1) && !is.null(res1$Z)) {
+  if (is.list(res1) && !is.null(res1$Z)&&is.list(res2) && !is.null(res2$Z)) {
     get_top_genes <- function(Z, k) {
       apply(Z, 2, function(col) {
         names(sort(col, decreasing = TRUE))[seq_len(min(k, length(col)))]
@@ -276,3 +278,49 @@ plotTopZ_Complex <- function(plierRes, data, priorMat, top = 10, top.pathway = 5
     ComplexHeatmap::draw(row_annot + ht_z + ht1 + ht2, row_dend_side = "left")
   }
 }
+
+
+
+library(ggplot2)
+library(ggrepel)
+
+library(ggplot2)
+library(ggrepel)
+
+plot_xy<- function(x, y, n_labels = 10, title = NULL, color = NULL) {
+  stopifnot(length(x) == length(y))
+  if (!is.null(color)) stopifnot(length(color) == length(x))
+
+  # default labels = names(x) or fallback to row numbers
+  lbl <- names(x)
+  if (is.null(lbl)) lbl <- seq_along(x)
+
+  # rescale to the same range
+  r  <- range(c(x, y), na.rm = TRUE)
+  xs <- scales::rescale(x, to = r)
+  ys <- scales::rescale(y, to = r)
+
+  df <- data.frame(x = xs, y = ys, label = lbl)
+  if (!is.null(color)) df$color <- color
+
+  # allocate labels: x-high, y-high, |x−y|-high
+  k <- floor(n_labels / 3)
+  idx_x  <- order(df$x, decreasing = TRUE)[1:k]
+  idx_y  <- order(df$y, decreasing = TRUE)[1:k]
+  idx_xy <- order(abs(df$x - df$y), decreasing = TRUE)[1:(n_labels - 2*k)]
+
+  idx <- unique(c(idx_x, idx_y, idx_xy))
+
+  df$lab_show <- NA
+  df$lab_show[idx] <- df$label[idx]
+
+  ggplot(df, aes(x, y)) +
+    geom_point(aes(color = if (!is.null(color)) color else NULL), alpha = 0.6) +
+    geom_abline(slope = 1, intercept = 0, linetype = 2, color = "gray60") +
+    geom_text_repel(aes(label = lab_show), na.rm = TRUE, size = 3) +
+    coord_equal() +
+    labs(title = title, x = "x (scaled)", y = "y (scaled)", color = NULL) +
+    scale_color_viridis_c(option = "A")+
+    theme_bw()
+}
+

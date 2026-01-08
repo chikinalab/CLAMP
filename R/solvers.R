@@ -218,11 +218,13 @@ solveU <- function(
   }
 
   for (i in seq_len(ncol(Z))) {
+    if (var(Z[, i]) < 1e-9 || sum(Z[,i]>0)<20) {
+      # message("skipping")
+      next
+    }
     if (all(U[, i] == 0)) {
-      if (var(Z[, i]) < 1e-9) {
-        # message("skipping")
-        next
-      }
+
+
       if (pathwaySelection == "fast") {
         iip <- which(Ur[, i] <= maxPath)
       }
@@ -618,7 +620,7 @@ PLIERbase <- function(
     Y, k=NULL, svdres = NULL, L1 = NULL, L2 = NULL,
     Zpos = TRUE, max.iter = 200, tol = 5e-4, trace = FALSE,
     rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20,
-    cutoff = 0, ncores = 1) {
+    cutoff = 0, ncores = 1, use.vector=F) {
   if (ncores > 1) {
     # if we are parallelizing, then disable BLAS parallelization
     options(bigstatsr.check.parallel.blas = FALSE)
@@ -669,10 +671,12 @@ PLIERbase <- function(
 
   }
   svdres <- rotateSVD(svdres)
-  if(k>20 | is.null(k)){
+  if( is.null(k)){
+    message("running getScale")
+
     scale.res=getScaleFromSVs(svdres$d, ncol(Y))
 
-    k=min(floor(scale.res$k*1.5), ncol(Y)-5)
+    k=min(floor(scale.res$k), ncol(Y)-5)
 
 
     d=scale.res$scale
@@ -684,20 +688,31 @@ PLIERbase <- function(
   message(paste0("k is set to ", k))
   if (is.null(L1)) {
     # L1 <- svdres$d[k] * scale
-    L1 <- d * scale
+    L1 <- d
     if (!is.null(pos.adj)) {
       L1 <- L1 / pos.adj
     }
   }
   if (is.null(L2)) {
     #   L2 <- svdres$d[k] * scale
-    L2 <- d * scale
+    L2 <- d
   }
-  L2k <- L2 * diag(k)
+  L1 <- L1*scale
+  L2 <- L2*scale
+  print("Scale adjusted")
+
   #    L1=svdres$d[k]/2*scale
   message("L1 is set to ", L1)
   message("L2 is set to ", L2)
 
+  if(use.vector & !is.null(svdres)){
+    message("using vector")
+    L2=svdres$d[1:k]*scale
+    L1=svdres$d[1:k]*scale/pos.adj
+  }
+
+  L2k <- L2 * diag(k)
+  L1k <- L1 * diag(k)
   if (is.null(B)) {
     # initialize B with svd
 
@@ -727,7 +742,7 @@ PLIERbase <- function(
 
   for (i in seq_len(max.iter)) {
     # main loop
-    Zraw <- Z <- mat_mult(Y, t(B), ncores = ncores) %*% solve(tcrossprod(B) + L1 * diag(k))
+    Zraw <- Z <- mat_mult(Y, t(B), ncores = ncores) %*% solve(tcrossprod(B) + L1k)
 
     if (i >= adaptive.iter && adaptive.p > 0) {
       cutoffs <- apply(Zraw, 2, getT)
@@ -1366,6 +1381,21 @@ winsor_topk <- function(M, k) {
   sweep(M, 2L, thr, pmin)
 }
 
+# winsor_topk <- function(M, k) {
+#   if (nrow(M) < 10 * k) return(M)
+#   stopifnot(is.matrix(M), is.numeric(M), k >= 1L, k <= nrow(M))
+#
+#   n <- nrow(M)
+#   thr <- apply(M, 2L, function(x) {
+#     topk <- sort.int(x, partial = n - k + 1L)[(n - k + 1L):n]
+#     tval <- topk[1L]
+#     if (tval == 0) median(topk) else tval
+#   })
+#
+#   sweep(M, 2L, thr, pmin)
+# }
+
+
 #' Cross-product Z^T Y with FBM or dense matrices
 #'
 #' Computes \eqn{Z^T Y}, handling FBM objects from bigstatsr
@@ -1483,7 +1513,7 @@ PLIERfullVP <- function(
     minGenes = 0, tol = 5e-4, seed = 123456, allGenes = FALSE, rseed = NULL,
     max.U.updates = Inf, pathwaySelection = c("fast", "complete"),  multiplier = 5,
     adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitEvery = 3,
-    useSE = FALSE, var.prior = TRUE, Uscale = FALSE, robust.vp = TRUE, use_cpp=F) {
+    useSE = FALSE, var.prior = TRUE, Uscale = FALSE, robust.vp = TRUE, use_cpp=F, penalty.multipler) {
   if (is.infinite(max.U.updates)) max.U.updates <- max.iter
   getT <- function(x) -stats::quantile(x[x < 0], adaptive.p)
   pathwaySelection <- match.arg(pathwaySelection, c("fast", "complete"))
@@ -1605,7 +1635,7 @@ PLIERfullVP <- function(
     k <- ncol(plier.base.result$Z)
   }
 
-  Z <- plier.base.result$Z
+  Zin<-Z <- plier.base.result$Z
   if (is.null(L1)) L1 <- plier.base.result$L1
   if (is.null(L2)) L2 <- plier.base.result$L2
   message(paste0("L1=", L1, "; L2=", L2))
@@ -1744,7 +1774,9 @@ PLIERfullVP <- function(
       Zraw <- Z
       Zraw[Zraw < 0] <- 0
       cutoffs <- apply(Z, 2, getT)
+
       for (j in seq_len(ncol(Z))) Z[Z[, j] < cutoffs[j], j] <- 0
+
     } else {
       Z[Z < 0] <- 0
       Zraw <- Z
@@ -1808,7 +1840,7 @@ PLIERfullVP <- function(
   } else {
     message("Not using cross-validation. No AUCs or p-values")
   }
-
+out$Zin=Zin
   out$call <- match.call()
   out
 }
