@@ -920,4 +920,59 @@ getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
   return(list(scale=scale, k=k))
 }
 
+#' Select default number of components to compute for CLAMP solver SVDs.
+#' Other SVD contexts use their own heuristics
+#'
+#' Returns the default number of components to compute in a truncated SVD
+#' for the given input matrix. Used by the CLAMP solvers when `svd_k` is
+#' not provided explicitly.
+#'
+#' @param Y A matrix-like object (dense matrix, `dgCMatrix`, or `FBM`).
+#' @return An integer: `max(2, min(nrow(Y), ncol(Y)) - 1)`.
+#' @examples
+#' select_svd_k(matrix(0, nrow = 100, ncol = 20))
+#' @export
+select_svd_k <- function(Y) {
+  return(max(2, min(nrow(Y), ncol(Y)) - 1))
+}
+
+#' Compute a truncated SVD for a CLAMP input matrix
+#'
+#' Dispatches to the appropriate SVD backend based on the class of `Y`:
+#' `bigstatsr::big_SVD` for `FBM` objects, `irlba::irlba` for sparse
+#' `dgCMatrix` objects, and `rsvd::rsvd` otherwise. Used by the CLAMP
+#' solvers so that the SVD step is handled in one place.
+#'
+#' @param Y A matrix-like object (dense matrix, `dgCMatrix`, or `FBM`).
+#' @param k Integer number of components to compute. If `NULL` (the
+#'   default), `select_svd_k(Y)` is used.
+#' @return A list with `d`, `u`, `v` components (structure depends on the
+#'   backend but these three fields are always present).
+#' @examples
+#' set.seed(1)
+#' Y <- matrix(rnorm(100), nrow = 20, ncol = 5)
+#' res <- compute_svd(Y, k = 3)
+#' length(res$d)
+#' @export
+compute_svd <- function(Y, k = NULL) {
+  # May not be needed but sanity check
+  if (is.null(k)) k <- select_svd_k(Y)
+
+  if (inherits(Y, "FBM")) {
+    if (requireNamespace("bigstatsr", quietly = TRUE)) {
+      return(bigstatsr::big_SVD(X = Y, k = k))
+    } else {
+      return(rsvd::rsvd(Y, k = k))
+    }
+  } else if (inherits(Y, "dgCMatrix")) {
+    if (requireNamespace("irlba", quietly = TRUE)) {
+      return(irlba::irlba(Y, nv = k))
+    } else {
+      return(rsvd::rsvd(Y, k = k))
+    }
+  } else {
+    return(rsvd::rsvd(Y, k = k))
+  }
+}
+
 

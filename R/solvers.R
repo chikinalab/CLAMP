@@ -667,34 +667,12 @@ CLAMPbase <- function(
   message("****")
 
   if (is.null(svd_k)) {
-    n_genes   <- nrow(Y)
-    n_samples <- ncol(Y)
-    svd_k <- max(2, min(n_genes, n_samples) - 1)
+    svd_k <- select_svd_k(Y)
   }
   
   if (is.null(svdres) && is.null(B)) {
     message("Computing SVD")
-    if (is_fbm) {
-      # For FBM, we need special handling for SVD
-      if (requireNamespace("bigstatsr", quietly = TRUE)) {
-        # Use big_SVD from bigstatsr if available
-        svdres <- bigstatsr::big_SVD(X = Y, k = svd_k)
-      } else {
-        # Fallback: convert to regular matrix for SVD
-        # This might be memory-intensive for large matrices
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else if (is_sparse) {
-      # For sparse matrices, use irlba or other sparse SVD methods
-      if (requireNamespace("irlba", quietly = TRUE)) {
-        svdres <- irlba::irlba(Y, nv = svd_k)
-      } else {
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else {
-      # Regular matrix
-      svdres <- rsvd(Y, k = svd_k)
-    }
+    svdres <- compute_svd(Y, k = svd_k)
   }
 
   svdres <- rotateSVD(svdres)
@@ -981,34 +959,12 @@ CLAMPfullnVP <- function(
   }
 
   if (is.null(svd_k) && is.null(clamp.base.result)) {
-    n_genes   <- nrow(Y)
-    n_samples <- ncol(Y)
-    svd_k <- max(2, min(n_genes, n_samples) - 1)
+    svd_k <- select_svd_k(Y)
   }
 
- if (is.null(svdres) && is.null(clamp.base.result)) {
+  if (is.null(svdres) && is.null(clamp.base.result)) {
     message("Computing SVD")
-    if (is_fbm) {
-      # For FBM, we need special handling for SVD
-      if (requireNamespace("bigstatsr", quietly = TRUE)) {
-        # Use big_SVD from bigstatsr if available
-        svdres <- bigstatsr::big_SVD(X = Y, k = svd_k)
-      } else {
-        # Fallback: convert to regular matrix for SVD
-        # This might be memory-intensive for large matrices
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else if (is_sparse) {
-      # For sparse matrices, use irlba or other sparse SVD methods
-      if (requireNamespace("irlba", quietly = TRUE)) {
-        svdres <- irlba::irlba(Y, nv = svd_k)
-      } else {
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else {
-      # Regular matrix
-      svdres <- rsvd(Y, k = svd_k)
-    }
+    svdres <- compute_svd(Y, k = svd_k)
   }
 
   if (is.null(svdres) && is.null(clamp.base.result)) {
@@ -1690,34 +1646,12 @@ CLAMPfull <- function(
   }
 
   if (is.null(svd_k) && is.null(clamp.base.result)) {
-    n_genes   <- nrow(Y)
-    n_samples <- ncol(Y)
-    svd_k <- max(2, min(n_genes, n_samples) - 1)
+    svd_k <- select_svd_k(Y)
   }
 
- if (is.null(svdres) && is.null(clamp.base.result)) {
+  if (is.null(svdres) && is.null(clamp.base.result)) {
     message("Computing SVD")
-    if (is_fbm) {
-      # For FBM, we need special handling for SVD
-      if (requireNamespace("bigstatsr", quietly = TRUE)) {
-        # Use big_SVD from bigstatsr if available
-        svdres <- bigstatsr::big_SVD(X = Y, k = svd_k)
-      } else {
-        # Fallback: convert to regular matrix for SVD
-        # This might be memory-intensive for large matrices
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else if (is_sparse) {
-      # For sparse matrices, use irlba or other sparse SVD methods
-      if (requireNamespace("irlba", quietly = TRUE)) {
-        svdres <- irlba::irlba(Y, nv = svd_k)
-      } else {
-        svdres <- rsvd(Y, k = svd_k)
-      }
-    } else {
-      # Regular matrix
-      svdres <- rsvd(Y, k = svd_k)
-    }
+    svdres <- compute_svd(Y, k = svd_k)
   }
 
   if (is.null(svdres) && is.null(clamp.base.result)) {
