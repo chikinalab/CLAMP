@@ -23,7 +23,7 @@ License: GPL-3
 URL: https://mchikina.github.io/CLAMP/, https://github.com/mchikina/CLAMP
 BugReports: https://github.com/mchikina/CLAMP/issues
 Depends:
-    R (>= 4.6.0),
+    R (>= 4.4.0),
 Imports:
     bigstatsr,
     circlize,

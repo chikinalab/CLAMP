@@ -678,9 +678,9 @@ CLAMPbase <- function(
   svdres <- rotateSVD(svdres)
 
   if(is.null(clamp_k)){
-    scale.res <- getScaleFromSVs(svdres$d, ncol(Y))
-    clamp_k <- min(floor(scale.res$k*1.5), svd_k)
-    d <- scale.res$scale
+    auto <- select_clamp_k(svdres, n_samples = ncol(Y), svd_k = svd_k)
+    clamp_k <- auto$clamp_k
+    d <- auto$scale
   } else {
     d <- svdres$d[clamp_k]
   }
@@ -972,9 +972,9 @@ CLAMPfullnVP <- function(
   }
   
   if(is.null(clamp.base.result)){
-    scale.res <- getScaleFromSVs(svdres$d, ncol(Y))
-    clamp_k <- min(floor(scale.res$k*1.5), svd_k)
-    d <- scale.res$scale
+    auto <- select_clamp_k(svdres, n_samples = ncol(Y), svd_k = svd_k)
+    clamp_k <- auto$clamp_k
+    d <- auto$scale
   } else {
     d <- svdres$d[clamp_k]
   }
@@ -1659,9 +1659,9 @@ CLAMPfull <- function(
   }
   
   if(is.null(clamp.base.result)){
-    scale.res <- getScaleFromSVs(svdres$d, ncol(Y))
-    clamp_k <- min(floor(scale.res$k*1.5), svd_k)
-    d <- scale.res$scale
+    auto <- select_clamp_k(svdres, n_samples = ncol(Y), svd_k = svd_k)
+    clamp_k <- auto$clamp_k
+    d <- auto$scale
   } else {
     d <- svdres$d[clamp_k]
   }

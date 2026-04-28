@@ -4,7 +4,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - r-base=4.4.*
+  - r-base=4.6.* #Must eventuallly be 4.6.0 due to CLAMPData requring 4.6.0, when it comes out 4-24-26
   - hdf5
   - r-hdf5r
   - bioconductor-rhdf5

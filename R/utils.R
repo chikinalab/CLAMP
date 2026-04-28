@@ -975,4 +975,63 @@ compute_svd <- function(Y, k = NULL) {
   }
 }
 
+#' Select default number of CLAMP latent variables from an SVD
+#'
+#' Chooses the default `clamp_k` used by the CLAMP solvers when the user
+#' does not provide one, and returns the scale used for downstream L1/L2
+#' regularization. Multiple methods are available via `method`:
+#'
+#' \describe{
+#'   \item{`"elbow"` (default)}{Elbow heuristic on the singular-value spectrum
+#'     via `num.pc(svdres, method = "elbow")`. `scale = svdres$d[clamp_k]`.}
+#'   \item{`"permutation"`}{Permutation test via `num.pc(data, method =
+#'     "permutation", B = B)`. Requires the raw row-normalized `data` matrix.
+#'     `scale = svdres$d[clamp_k]`.}
+#'   \item{`"gavish_donoho"`}{Not yet implemented; reserved for the
+#'     Gavish-Donoho optimal singular-value threshold.}
+#'   \item{`"legacy"`}{Previous behavior: `getScaleFromSVs()` linear-tail fit,
+#'     `clamp_k <- min(floor(k * 1.5), svd_k)`, scale from the fit.}
+#' }
+#'
+#' @param svdres An SVD result with a `d` component (output of `compute_svd`).
+#' @param n_samples Integer number of samples in the original matrix
+#'   (i.e. `ncol(Y)`). Used by `"legacy"`.
+#' @param svd_k Integer upper bound on `clamp_k` (number of components
+#'   actually computed in the SVD).
+#' @param method One of `"elbow"`, `"permutation"`, `"gavish_donoho"`,
+#'   `"legacy"`. Defaults to `"elbow"`.
+#' @param data Raw (row-normalized) data matrix. Required for `"permutation"`.
+#' @param B Number of permutations for `"permutation"`.
+#' @return A list with:
+#'   \describe{
+#'     \item{`clamp_k`}{Selected number of latent variables.}
+#'     \item{`scale`}{Scale value used downstream for default L1 / L2
+#'       regularization.}
+#'   }
+#' @export
+select_clamp_k <- function(svdres, n_samples, svd_k,
+                           method = c("elbow", "permutation",
+                                      "gavish_donoho", "legacy"),
+                           data = NULL, B = 20) {
+  method <- match.arg(method)
 
+  if (method == "legacy") {
+    scale.res <- getScaleFromSVs(svdres$d, n_samples)
+    clamp_k <- min(floor(scale.res$k * 1.5), svd_k)
+    return(list(clamp_k = clamp_k, scale = scale.res$scale))
+  }
+
+  if (method == "elbow") {
+    clamp_k <- num.pc(list(d = svdres$d), method = "elbow")
+  } else if (method == "permutation") {
+    if (is.null(data)) {
+      stop("`data` (raw row-normalized matrix) is required for method = 'permutation'.")
+    }
+    clamp_k <- num.pc(data, method = "permutation", B = B)
+  } else if (method == "gavish_donoho") {
+    stop("method = 'gavish_donoho' is not yet implemented.")
+  }
+
+  clamp_k <- min(clamp_k, svd_k)
+  list(clamp_k = clamp_k, scale = svdres$d[clamp_k])
+}
