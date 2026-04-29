@@ -22,7 +22,8 @@ CLAMPbase(
   adaptive.p = 0.05,
   adaptive.iter = 20,
   cutoff = 0,
-  ncores = 1
+  ncores = 1,
+  clamp_k_method = "elbow"
 )
 }
 \arguments{
@@ -68,6 +69,10 @@ Smaller values lead to more sparsity. Default is 0.05.}
 is not used. Default is 0.}
 
 \item{ncores}{Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.}
+
+\item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
+One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
+\code{"scaleSVs"}. Passed to \code{\link[=select_clamp_k]{select_clamp_k()}}.}
 }
 \value{
 A list with components:

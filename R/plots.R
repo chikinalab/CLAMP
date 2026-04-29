@@ -330,6 +330,7 @@ plotTopZ_Complex <- function(clampRes, data, priorMat, top = 10, top.pathway = 5
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient theme_minimal
 #'   theme element_text element_blank labs unit
 #' @importFrom rlang .data
+#' @importFrom stats hclust dist
 #' @export
 #' @examples
 #' set.seed(42)

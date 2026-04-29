@@ -35,7 +35,8 @@ CLAMPfullnVP(
   useRaw = TRUE,
   refitAll = FALSE,
   useSE = FALSE,
-  ncores = 1
+  ncores = 1,
+  clamp_k_method = "elbow"
 )
 }
 \arguments{
@@ -105,6 +106,10 @@ small positive values, assuming they reflect noise. Default is 0.05.}
 enables standard-error–aware selection when fitting U (pathway coefficients). Default is \code{FALSE}.}
 
 \item{ncores}{Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.}
+
+\item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
+One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
+\code{"scaleSVs"}. Passed to \code{\link[=select_clamp_k]{select_clamp_k()}}.}
 }
 \value{
 A list with the following components:

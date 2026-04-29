@@ -37,7 +37,8 @@ CLAMPfull(
   var.prior = TRUE,
   Uscale = FALSE,
   robust.vp = TRUE,
-  use_cpp = FALSE
+  use_cpp = FALSE,
+  clamp_k_method = "elbow"
 )
 }
 \arguments{
@@ -108,6 +109,10 @@ Default: \code{TRUE}.}
 \item{robust.vp}{Logical; winsorize prior-predicted Z2 values to reduce outlier effects. Default: \code{TRUE}.}
 
 \item{use_cpp}{Logical; if TRUE, use C++ implementation for Z updates. Default is FALSE.}
+
+\item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
+One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
+\code{"scaleSVs"}. Passed to \code{\link[=select_clamp_k]{select_clamp_k()}}.}
 }
 \value{
 A list with elements:
