@@ -920,6 +920,37 @@ getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
   return(list(scale=scale, k=k))
 }
 
+#' One-to-one masking of maximum associations
+#'
+#' Selects the highest-scoring one-to-one pairs between rows and columns
+#' of a matrix, similar to a greedy bipartite matching. All other entries
+#' are set to a sentinel value (default \code{-100}).
+#'
+#' @param cc A numeric matrix of association scores.
+#'
+#' @return A numeric matrix of the same dimensions as \code{cc},
+#'   where only the selected one-to-one maxima are retained
+#'   and all other entries are set to \code{-100}.
+#'
+#' @examples
+#' set.seed(1)
+#' m <- matrix(runif(16), 4, 4)
+#' oneToOneMask(m)
+#'
+#' @export
+oneToOneMask <- function(cc) {
+  cc <- as.matrix(cc)
+  cc_out <- matrix(-100, nrow(cc), ncol(cc))
+  tmp <- cc
+  for (i in seq_len(ncol(cc))) {
+    imax <- which(tmp == max(tmp, na.rm = TRUE), arr.ind = TRUE)[1, ]
+    cc_out[imax[1], imax[2]] <- cc[imax[1], imax[2]]
+    tmp[imax[1], ] <- -100
+    tmp[, imax[2]] <- -100
+  }
+  return(cc_out)
+}
+
 #' Select default number of components to compute for CLAMP solver SVDs.
 #' Other SVD contexts use their own heuristics
 #'

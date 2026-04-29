@@ -1,6 +1,6 @@
 ---
 title: "Analyzing human RNA-Seq data with CLAMP"
-author: "Marc Subirana-Granés and Maria Chikina"
+author: "Marc Subirana-Granés"
 package: CLAMP
 output: 
   BiocStyle::html_document:
@@ -20,7 +20,8 @@ knitr::opts_chunk$set(
     warning = FALSE,
     message = FALSE,
     fig.align = "center",
-    out.width = "80%"
+    out.width = "80%",
+    dev = "png"
 )
 
 library(dplyr)
@@ -39,6 +40,8 @@ library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(DT)
 library(DiagrammeR)
+
+options(bitmapType = "cairo")
 
 set.seed(1)
 ```
@@ -69,10 +72,15 @@ latent variables that capture both known and emergent biological processes acros
 
 ## Workflow overview
 
-```{r CLAMP-workflow, include=FALSE, warning=FALSE, out.width='90%'}
+```{r CLAMP-workflow, echo=FALSE, warning=FALSE, message=FALSE, fig.width=12, fig.height=9, out.width='100%'}
 grViz('
  digraph CLAMP_pipeline {
-   graph [layout=dot, rankdir=TB, splines=ortho]
+   graph [
+     layout=dot, rankdir=TB, splines=ortho,
+     ranksep=0.6, nodesep=0.45, margin=0.03
+   ]
+   node [fontname=Helvetica, fontsize=16, margin="0.10,0.05", penwidth=1.2]
+   edge [arrowsize=0.7, penwidth=1.1]
 
    // ---- Inputs & Priors (gray) ----
    DF     [shape=folder,   style=filled, fillcolor=Gray90, label="data.frame"]
@@ -143,7 +151,9 @@ grViz('
    full -> Bmat
    full -> summaryTbl
    full -> Umat
- }')
+ }',
+ width = "100%",
+ height = "900px")
 ```
 
 # Quick Start
@@ -178,11 +188,12 @@ The choice of SVD function depends on dataset size:
 
 - **Large datasets (file-backed):** Use `bigstatsr::big_randomSVD()` for file-backed matrices (FBM). This function computes the SVD without loading the entire matrix into memory, enabling analysis of datasets too large for RAM.
 
-After computing the SVD, infer the optimal number of latent variables (`clamp_k`) using `num.pc()`:
+After computing the SVD, infer the optimal number of latent variables
+(`clamp_k`) using `num.pc()`:
 
 # Example 1: In-memory data.frame (Whole Blood)
 
-## 1. Load example data
+## Load example data
 
 In this chunk, we load the whole-blood expression matrix.
 
@@ -192,7 +203,7 @@ dim(dataWholeBlood) # genes x samples
 head(dataWholeBlood) # genes x samples
 ```
 
-## 2. Preprocess and z-score
+## Preprocess and z-score
 
 We first CPM-normalize the data (when needed), filter for genes with mean expression ≥ 0.5 
 and variance ≥ 0.1, and then apply z-score normalization.
@@ -220,7 +231,7 @@ wb_Y_z <- zscoreCLAMP(
 )
 ```
 
-## 3. Compute SVD and infer k
+## Compute SVD and infer k
 
 We compute the SVD using `rsvd::rsvd()` and infer the optimal number of latent variables using `num.pc()`.
 
@@ -234,7 +245,7 @@ wb_clamp_k <- num.pc(list(d = wb_svd$d)) * 2
 wb_clamp_k
 ```
 
-## 4. CLAMPbase initialization
+## CLAMPbase initialization
 
 We initialize latent variables using `CLAMPbase`, providing the pre-computed SVD and inferred `k`.
 
@@ -253,7 +264,7 @@ wb_baseRes <- CLAMPbase(
 )
 ```
 
-## 5. Prepare pathway priors
+## Prepare pathway priors
 
 Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
 
@@ -284,10 +295,10 @@ matchedPathsWB <- getMatchedPathwayMatList(
 )
 ```
 
-**Note**: GMT files can also be loaded from local storage using read_gmt().
+**Note**: GMT files can also be loaded from local storage using `read_gmt()`.
 This allows you to integrate custom or curated gene set libraries, such as *MSigDB* canonical pathways, directly into your analysis pipeline alongside remote resources.
 
-## 6. CLAMPfull
+## CLAMPfull
 
 Finally, we refine the base model by integrating pathway priors using `CLAMPfull`,
 which applies cross-validation to optimize latent variable regularization.
@@ -306,7 +317,7 @@ wb_fullRes <- CLAMPfull(
   )
 ```
 
-## 7. Display significant latent variables
+## Display significant latent variables
 
 ```{r summary-table}
 # Display significant latent variables
@@ -334,7 +345,7 @@ datatable(
 
 This example uses data from Alzheimer’s brain samples from a *Neurobiology of Disease* study (Barbash et al., 2017; DOI: https://doi.org/10.1016/j.nbd.2017.06.008). It demonstrates the on‑disk workflow with a file‑backed FBM to handle large‑scale transcriptomic datasets.
 
-## 1. Cleanup old FBM files
+## Cleanup old FBM files
 
 ```{r fbm-cleanup, message=FALSE}
 output_dir <- here("output", "alzFBM")
@@ -348,7 +359,7 @@ file.remove(bk_paths[file.exists(bk_paths)])
 For file-backed matrices (FBMs), you can compute counts-per-million (CPM) in-place—without loading the entire dataset into
 RAM—using the `cpmCLAMPFBM()` function from **CLAMP**:
 
-## 2. Load HDF5 expression
+## Load HDF5 expression
 
 ```{r hdf5-load, message=FALSE}
 alz_path <- human_gene_v2_5_alz_h5()
@@ -361,7 +372,7 @@ colnames(expr_mat) <- samples
 rownames(expr_mat) <- genes
 ```
 
-## 3. Construct file‑backed FBM
+## Construct file‑backed FBM
 
 ```{r fbm-construct, message=FALSE}
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
@@ -374,7 +385,7 @@ for (i in seq_len(ceiling(nrow(expr_mat) / blk))) {
 }
 ```
 
-## 4. CPM, preprocess and z‑score FBM
+## CPM, preprocess and z‑score FBM
 
 ```{r fbm-preprocess, message=FALSE}
 prep_alz <- preprocessCLAMPFBM(
@@ -389,12 +400,12 @@ zscoreCLAMPFBM(alz_fbm_filt, alz_rowStats)
 alz_genes <- genes[prep_alz$kept_rows]
 ```
 
-## 5. Compute SVD and infer k
+## Compute SVD and infer k
 
 For file-backed matrices, we use `bigstatsr::big_randomSVD()` to compute the SVD without loading the entire matrix into RAM.
 
 ```{r fbm-svd, message=FALSE}
-# Compute SVD using big_randomSVD (k = n_samples - 1)
+# Compute SVD (k = n_samples - 1)
 alz_svd_k <- ncol(alz_fbm_filt) - 1
 alz_svd <- big_randomSVD(alz_fbm_filt, k = alz_svd_k)
 
@@ -403,7 +414,7 @@ alz_clamp_k <- num.pc(list(d = alz_svd$d)) * 2
 alz_clamp_k
 ```
 
-## 6. CLAMPbase
+## CLAMPbase
 
 ```{r fbm-CLAMPbase, message=FALSE}
 alz_baseRes <- CLAMPbase(
@@ -413,7 +424,7 @@ alz_baseRes <- CLAMPbase(
 )
 ```
 
-## 7. Prepare pathway priors
+## Prepare pathway priors
 
 ```{r fbm-priors, message=FALSE}
 alz_gmtList <- list(
@@ -426,7 +437,7 @@ alz_pathMat <- gmtListToSparseMat(alz_gmtList)
 alz_matched <- getMatchedPathwayMat(alz_pathMat, alz_genes)
 ```
 
-## 8. CLAMPfull
+## CLAMPfull
 
 ```{r fbm-CLAMPfull, message=FALSE}
 alz_fullRes <- CLAMPfull(
@@ -439,7 +450,7 @@ alz_fullRes <- CLAMPfull(
   )
 ```
 
-## 9. Display significant latent variables
+## Display significant latent variables
 
 ```{r fbm-summary}
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
@@ -470,7 +481,7 @@ trajectories towards type 2 diabetes”, DOI: 10.1038/s42255-021-00420-9). After
 the CLAMP model, we perform a differential analysis of latent‑variable activities to compare non‑diabetic (ND) and type 2
 diabetic (T2D) samples.
 
-## 1. Load count data and map gene symbols
+## Load count data and map gene symbols
 
 ```{r islet-load, message=FALSE}
 islet_file <- GSE164416_DP_htseq_counts_txt_gz()
@@ -485,7 +496,7 @@ islet_df$symbol <- mapIds( org.Hs.eg.db,
 islet_df <- islet_df[!is.na(islet_df$symbol), ]
 ```
 
-## 2. Aggregate counts by gene symbol
+## Aggregate counts by gene symbol
 
 ```{r islet-aggregate, message=FALSE}
 # Sum counts per symbol
@@ -498,7 +509,7 @@ expr$symbol <- NULL
 expr <- as.matrix(expr)
 ```
 
-## 3. CPM, preprocess and z-score
+## CPM, preprocess and z-score
 
 ```{r islet-preprocess, message=FALSE}
 prep_is <- preprocessCLAMP(
@@ -515,7 +526,7 @@ iso_Yz <- zscoreCLAMP(Y_filtered = iso_Yf,
 
 ```
 
-## 4. Compute SVD and infer k
+## Compute SVD and infer k
 
 ```{r islet-svd, message=FALSE}
 # Compute SVD (k = n_samples - 1)
@@ -527,7 +538,7 @@ islet_clamp_k <- num.pc(list(d = islet_svd$d)) * 2
 islet_clamp_k
 ```
 
-## 5. CLAMPbase
+## CLAMPbase
 
 ```{r islet-CLAMPbase, message=FALSE}
 islet_baseRes <- CLAMPbase(
@@ -537,7 +548,7 @@ islet_baseRes <- CLAMPbase(
 )
 ```
 
-## 6. Prepare pathway priors
+## Prepare pathway priors
 
 ```{r islet-priors, message=FALSE}
 islet_gmtList <- list(
@@ -551,7 +562,7 @@ islet_matched <- getMatchedPathwayMat(islet_pathMat, rownames(iso_Yz))
 islet_chatObj <- getChat(islet_matched)
 ```
 
-## 7. CLAMPfull
+## CLAMPfull
 
 ```{r islet-CLAMPfull, message=FALSE}
 islet_fullRes <- CLAMPfull(
@@ -564,7 +575,7 @@ islet_fullRes <- CLAMPfull(
   )
 ```
 
-## 8. Display significant latent variables
+## Display significant latent variables
 
 ```{r islet-summary}
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
@@ -587,7 +598,7 @@ datatable(
     formatSignif(c("AUC", "FDR"), 3)
 ```
 
-## 9. Differential latent-variable expression between conditions
+## Differential latent-variable expression between conditions
 
 Rows of the B matrix correspond to LVs and columns to samples. By grouping samples by condition (ND vs T2D),
 we compute average LV expression per group to identify LVs that differ between healthy and diabetic islets
@@ -649,6 +660,173 @@ datatable(
     class = "stripe hover compact"
 ) %>%
     formatSignif(c("AUC", "FDR"), 3)
+```
+
+# Projection: Applying one CLAMP model to another dataset
+
+`projectCLAMP()` reuses the gene loadings (**Z**) from a fitted CLAMP model
+and estimates latent-variable activities (**B**) for a new expression matrix.
+Projection uses the same genes in the same order; when both matrices have row
+names, `projectCLAMP()` aligns the common genes automatically before solving
+for **B**.
+
+Here we project the whole-blood expression matrix from Example 1 into the
+full latent-variable space learned from the pancreatic islet model in Example 3.
+
+```{r project-islet-model-to-whole-blood, message=TRUE}
+islet_model_genes <- rownames(islet_fullRes$Z)
+wb_project_genes <- rownames(wb_Y_z)
+
+common_genes <- intersect(islet_model_genes, wb_project_genes)
+cat(
+    "Overlapping genes:", length(common_genes), "/", length(islet_model_genes),
+    "islet model genes",
+    sprintf("(%.1f%%)\n", 100 * length(common_genes) / length(islet_model_genes))
+)
+
+# projectCLAMP aligns common row names in the model's gene order
+wb_projected_B <- projectCLAMP(islet_fullRes, wb_Y_z)
+
+dim(wb_projected_B)
+wb_projected_B[
+    seq_len(min(5, nrow(wb_projected_B))),
+    seq_len(min(5, ncol(wb_projected_B))),
+    drop = FALSE
+]
+```
+
+# Choosing the Number of Latent Variables (CLAMP_K)
+
+CLAMP_K controls how many latent variables the model learns.  Too few and
+biologically distinct signals merge; too many and noise is absorbed into
+spurious components.  CLAMP provides two built-in strategies via `num.pc()`
+and supports the information-theoretic Gavish–Donoho threshold via
+**PCAtools**.
+
+## Elbow method (default)
+
+`num.pc()` fits a smoothing spline to the singular-value scree plot and
+returns the index at which curvature is maximised — the "elbow".  This is the
+fastest option and works well when the signal-to-noise boundary is clear.
+
+## Permutation method
+
+The permutation approach shuffles each row of the input matrix independently
+`B` times and recomputes the SVD to build a null distribution of singular
+values.  The number of components whose observed singular value exceeds the
+95th percentile of the null is returned.  This is more conservative and
+slower, but robust to smooth scree plots.
+
+## Gavish–Donoho optimal hard threshold (PCAtools)
+
+The Gavish–Donoho threshold (Gavish & Donoho, 2014) identifies the
+singular-value cutoff below which components are statistically
+indistinguishable from noise, given matrix dimensions and an estimate of the
+noise level. **PCAtools** implements this via `chooseGavishDonoho()`.
+
+In practice, doubling the chosen `k` (as done throughout the examples with
+`num.pc(...) * 2`) inflates the initial search space so that `CLAMPfull`'s
+cross-validation can discard components that lack pathway support.
+
+# Visualization
+
+CLAMP provides dedicated plotting functions built on **ggplot2**, prefixed
+`CLAMPplot` or `CLAMPdotplot`.  The examples below use the whole-blood result
+`wb_fullRes` computed in Example 1.
+
+## Pathway–LV association heatmap (`CLAMPplotU`)
+
+`CLAMPplotU` displays the pathway loading matrix **U** after filtering by AUC
+and FDR.  Only the top-`top` pathways per LV are shown, making it easy to
+scan which pathways drive each latent variable.
+
+```{r plot-U, message=FALSE, fig.width=14, fig.height=10}
+CLAMPplotU(
+  wb_fullRes,
+  auc.cutoff = 0.6,
+  fdr.cutoff = 0.05,
+  top        = 3
+)
+```
+
+## Top-gene loading plot (`CLAMPplotTopZ`)
+
+`CLAMPplotTopZ` ranks genes by their Z loading for each selected LV and plots
+the top genes as loading-versus-rank scatter plots.  The highest-loading genes
+are labelled directly.
+
+```{r plot-topZ, message=FALSE, fig.width=9, fig.height=7}
+# Use the first few LVs that have pathway support
+lv_with_paths <- wb_fullRes$withPrior[seq_len(min(4, length(wb_fullRes$withPrior)))]
+
+CLAMPplotTopZ(
+  wb_fullRes,
+  top       = 50,
+  label.top = 10,
+  index     = lv_with_paths
+)
+```
+
+Only one LV:
+```{r plot-topZ1, message=FALSE, fig.width=5, fig.height=3}
+# Use the first few LVs that have pathway support
+lv_with_paths <- wb_fullRes$withPrior[1]
+
+CLAMPplotTopZ(
+  wb_fullRes,
+  top       = 50,
+  label.top = 10,
+  index     = lv_with_paths
+)
+```
+## Single-LV pathway dot plot (`CLAMPdotplot`)
+
+`CLAMPdotplot` shows the top pathways for one selected LV as a lollipop chart.
+Dot size encodes AUC; dot colour encodes `-log10(FDR)`.  Use `x.axis` and
+`order.by` to choose whether the x-axis and pathway ranking use AUC or
+`-log10(FDR)`.
+
+Plot order by AUC:
+
+```{r plot-dot, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
+CLAMPdotplot(
+  wb_fullRes,
+  lv         = 'LV2',
+  top        = 15,
+  auc.cutoff = 0.6,
+  fdr.cutoff = 0.1,
+  x.axis     = "AUC",
+  order.by   = "AUC"
+)
+```
+
+Plot order by FDR:
+
+```{r plot-dot-fdr, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
+CLAMPdotplot(
+  wb_fullRes,
+  lv         = 'LV2',
+  top        = 15,
+  auc.cutoff = 0.6,
+  fdr.cutoff = 0.1,
+  x.axis     = "-log10(FDR)",
+  order.by   = "-log10(FDR)"
+)
+```
+
+## All-LV pathway dot plot (`CLAMPdotplotAll`)
+
+`CLAMPdotplotAll` gives a compact overview of all significant pathway–LV
+associations across every latent variable. Dot size encodes AUC and dot colour
+encodes `-log10(FDR)`.
+
+```{r plot-dotAll, message=FALSE, fig.width=10, fig.height=7.5, out.width='100%'}
+CLAMPdotplotAll(
+  wb_fullRes,
+  auc.cutoff = 0.65,
+  fdr.cutoff = 0.05,
+  top.per.lv = 5
+)
 ```
 
 # Parallelization in CLAMP
