@@ -951,20 +951,22 @@ oneToOneMask <- function(cc) {
   return(cc_out)
 }
 
-#' Select default number of components to compute for CLAMP solver SVDs.
-#' Other SVD contexts use their own heuristics
+#' Select default number of components for a CLAMP solver SVD
 #'
 #' Returns the default number of components to compute in a truncated SVD
 #' for the given input matrix. Used by the CLAMP solvers when `svd_k` is
-#' not provided explicitly.
+#' not provided explicitly. Other SVD contexts use their own heuristics.
 #'
 #' @param Y A matrix-like object (dense matrix, `dgCMatrix`, or `FBM`).
-#' @return An integer: `max(2, min(nrow(Y), ncol(Y)) - 1)`.
+#' 
+#' @return An integer: `max(2, floor((min(nrow(Y), ncol(Y)) - 1) / 4))`.
+#' 
 #' @examples
 #' select_svd_k(matrix(0, nrow = 100, ncol = 20))
+#' 
 #' @export
 select_svd_k <- function(Y) {
-  return(max(2, min(nrow(Y), ncol(Y)) - 1))
+  return(max(2, floor((min(nrow(Y), ncol(Y)) - 1) / 4)))
 }
 
 #' Compute a truncated SVD for a CLAMP input matrix
@@ -977,33 +979,22 @@ select_svd_k <- function(Y) {
 #' @param Y A matrix-like object (dense matrix, `dgCMatrix`, or `FBM`).
 #' @param k Integer number of components to compute. If `NULL` (the
 #'   default), `select_svd_k(Y)` is used.
+#' 
 #' @return A list with `d`, `u`, `v` components (structure depends on the
 #'   backend but these three fields are always present).
+#' 
 #' @examples
 #' set.seed(1)
 #' Y <- matrix(rnorm(100), nrow = 20, ncol = 5)
 #' res <- compute_svd(Y, k = 3)
 #' length(res$d)
+#' 
 #' @export
 compute_svd <- function(Y, k = NULL) {
-  # May not be needed but sanity check
   if (is.null(k)) k <- select_svd_k(Y)
-
-  if (inherits(Y, "FBM")) {
-    if (requireNamespace("bigstatsr", quietly = TRUE)) {
-      return(bigstatsr::big_SVD(X = Y, k = k))
-    } else {
-      return(rsvd::rsvd(Y, k = k))
-    }
-  } else if (inherits(Y, "dgCMatrix")) {
-    if (requireNamespace("irlba", quietly = TRUE)) {
-      return(irlba::irlba(Y, nv = k))
-    } else {
-      return(rsvd::rsvd(Y, k = k))
-    }
-  } else {
-    return(rsvd::rsvd(Y, k = k))
-  }
+  if (inherits(Y, "FBM")) return(bigstatsr::big_SVD(X = Y, k = k))
+  if (inherits(Y, "dgCMatrix")) return(irlba::irlba(Y, nv = k))
+  rsvd::rsvd(Y, k = k)
 }
 
 #' Select default number of CLAMP latent variables from an SVD
@@ -1018,35 +1009,39 @@ compute_svd <- function(Y, k = NULL) {
 #'   \item{`"permutation"`}{Permutation test via `num.pc(data, method =
 #'     "permutation", B = B)`. Requires the raw row-normalized `data` matrix.
 #'     `scale = svdres$d[clamp_k]`.}
-#'   \item{`"gavish_donoho"`}{Not yet implemented; reserved for the
-#'     Gavish-Donoho optimal singular-value threshold.}
-#'   \item{`"legacy"`}{Previous behavior: `getScaleFromSVs()` linear-tail fit,
+#'   \item{`"gavish_donoho"`}{Gavish-Donoho optimal singular-value threshold
+#'     via `PCAtools::chooseGavishDonoho()`. Requires the raw `data` matrix
+#'     (used for `n_genes`). `scale = svdres$d[clamp_k]`.}
+#'   \item{`"scaleSVs"`}{Previous behavior: `getScaleFromSVs()` linear-tail fit,
 #'     `clamp_k <- min(floor(k * 1.5), svd_k)`, scale from the fit.}
 #' }
 #'
 #' @param svdres An SVD result with a `d` component (output of `compute_svd`).
 #' @param n_samples Integer number of samples in the original matrix
-#'   (i.e. `ncol(Y)`). Used by `"legacy"`.
+#'   (i.e. `ncol(Y)`). Used by `"scaleSVs"` and `"gavish_donoho"`.
 #' @param svd_k Integer upper bound on `clamp_k` (number of components
 #'   actually computed in the SVD).
 #' @param method One of `"elbow"`, `"permutation"`, `"gavish_donoho"`,
-#'   `"legacy"`. Defaults to `"elbow"`.
-#' @param data Raw (row-normalized) data matrix. Required for `"permutation"`.
+#'   `"scaleSVs"`. Defaults to `"elbow"`.
+#' @param data Raw data matrix. Required for `"permutation"` (row-normalized
+#'   internally) and `"gavish_donoho"` (used for `n_genes`).
 #' @param B Number of permutations for `"permutation"`.
+#' 
 #' @return A list with:
 #'   \describe{
 #'     \item{`clamp_k`}{Selected number of latent variables.}
 #'     \item{`scale`}{Scale value used downstream for default L1 / L2
 #'       regularization.}
 #'   }
+#' 
 #' @export
 select_clamp_k <- function(svdres, n_samples, svd_k,
                            method = c("elbow", "permutation",
-                                      "gavish_donoho", "legacy"),
+                                      "gavish_donoho", "scaleSVs"),
                            data = NULL, B = 20) {
   method <- match.arg(method)
 
-  if (method == "legacy") {
+  if (method == "scaleSVs") {
     scale.res <- getScaleFromSVs(svdres$d, n_samples)
     clamp_k <- min(floor(scale.res$k * 1.5), svd_k)
     return(list(clamp_k = clamp_k, scale = scale.res$scale))
@@ -1060,9 +1055,17 @@ select_clamp_k <- function(svdres, n_samples, svd_k,
     }
     clamp_k <- num.pc(data, method = "permutation", B = B)
   } else if (method == "gavish_donoho") {
-    stop("method = 'gavish_donoho' is not yet implemented.")
+    if (is.null(data)) {
+      stop("`data` is required for method = 'gavish_donoho'.")
+    }
+    eigenvalues <- sort(svdres$d^2 / (n_samples - 1), decreasing = TRUE)
+    clamp_k <- PCAtools::chooseGavishDonoho(
+      .dim          = c(nrow(data), n_samples),
+      var.explained = eigenvalues,
+      noise         = median(eigenvalues)
+    )
   }
 
-  clamp_k <- min(clamp_k, svd_k)
+  clamp_k <- min(clamp_k * 2, svd_k)
   list(clamp_k = clamp_k, scale = svdres$d[clamp_k])
 }
