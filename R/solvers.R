@@ -671,6 +671,7 @@ CLAMPbase <- function(
 
   if (is.null(svd_k)) {
     svd_k <- select_svd_k(Y)
+    if (!is.null(clamp_k)) svd_k <- max(svd_k, clamp_k)
   }
   
   if (is.null(svdres) && is.null(B)) {
@@ -968,6 +969,7 @@ CLAMPfullnVP <- function(
 
   if (is.null(svd_k) && is.null(clamp.base.result)) {
     svd_k <- select_svd_k(Y)
+    if (!is.null(clamp_k)) svd_k <- max(svd_k, clamp_k)
   }
 
   if (is.null(svdres) && is.null(clamp.base.result)) {
@@ -1713,6 +1715,7 @@ CLAMPfull <- function(
 
   if (is.null(svd_k) && is.null(clamp.base.result)) {
     svd_k <- select_svd_k(Y)
+    if (!is.null(clamp_k)) svd_k <- max(svd_k, clamp_k)
   }
 
   if (is.null(svdres) && is.null(clamp.base.result)) {

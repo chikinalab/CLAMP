@@ -229,8 +229,9 @@ read_gmt <- function(filename) {
     }
 
     gmt <- list()
-    lines <- readLines(filename)
-    
+    lines <- readLines(filename, encoding = "UTF-8")
+    lines <- iconv(lines, from = "UTF-8", to = "UTF-8", sub = "")
+  
     for (line in lines) {
         # Bioc style: avoid complex nested regex if possible for clarity
         sp <- unlist(strsplit(trimws(line), "\t"))
