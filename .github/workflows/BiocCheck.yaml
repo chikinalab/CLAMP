@@ -32,7 +32,15 @@ jobs:
           cache: always
           # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
           # it will then be picked up automatically from DESCRIPTION.
-          extra-packages: pivlab/CLAMPData
+          extra-packages: |
+            bioc::BiocCheck
+            pivlab/CLAMPData
+
+      - name: Build tarball
+        run: R CMD build --no-manual .
 
       - name: Run BiocCheck
-        uses: insightsengineering/bioc-check-action@v1
+        run: |
+          tarball <- list.files(pattern = "^CLAMP_.*\\.tar\\.gz$")[1]
+          BiocCheck::BiocCheck(tarball, `quit-with-status` = TRUE)
+        shell: Rscript {0}
