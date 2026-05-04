@@ -20,10 +20,10 @@ Description: CLAMP performs prior-informed latent variable decomposition of
     to uncover biologically meaningful patterns that connect genes, pathways,
     and complex traits in transcriptomics studies.
 License: GPL-3
-URL: https://mchikina.github.io/CLAMP/, https://github.com/mchikina/CLAMP
-BugReports: https://github.com/mchikina/CLAMP/issues
+URL: https://chikinalab.github.io/CLAMP/, https://github.com/chikinalab/CLAMP
+BugReports: https://github.com/chikinalab/CLAMP/issues/
 Depends:
-    R (>= 4.4.0),
+    R (>= 4.6.0),
 Imports:
     bigstatsr,
     circlize,

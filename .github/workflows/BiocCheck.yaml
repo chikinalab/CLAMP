@@ -1,0 +1,38 @@
+on:
+  push:
+    branches: [main, devel]
+  pull_request:
+
+name: BiocCheck.yaml
+
+permissions: read-all
+
+jobs:
+  BiocCheck:
+    runs-on: ubuntu-latest
+    name: BiocCheck
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          http-user-agent: release
+          use-public-rspm: true
+
+      - name: Install Deps
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache: true
+          # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
+          # it will then be picked up automatically from DESCRIPTION.
+          extra-packages: pivlab/CLAMPData
+
+      - name: Run BiocCheck
+        uses: insightsengineering/bioc-check-action@v1
