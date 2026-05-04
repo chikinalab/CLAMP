@@ -324,8 +324,6 @@ wb_fullRes <- CLAMPfull(
 wb_summary_df <- as.data.frame(wb_fullRes$summary) %>%
     dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -456,8 +454,6 @@ alz_fullRes <- CLAMPfull(
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
     filter(FDR < 0.05 & AUC > 0.7) %>%
   dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -581,8 +577,6 @@ islet_fullRes <- CLAMPfull(
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
     filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
