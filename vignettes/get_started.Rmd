@@ -268,8 +268,10 @@ wb_baseRes <- CLAMPbase(
 
 Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
 
-```{r priors, message=FALSE}
-# Download pathway and cell marker libraries from Enrichr
+```{r priors-download, eval=FALSE}
+# How to download pathway and cell marker libraries from Enrichr.
+# Not run during vignette build to avoid network calls; pre-fetched
+# .rds files are loaded in the next chunk instead.
 gmtList <- list(
   CellMarkers = getGMT(
     "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
@@ -279,6 +281,14 @@ gmtList <- list(
     "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
     "KEGG_2021_Human"
   )
+)
+```
+
+```{r priors, message=FALSE}
+# Load pre-fetched gene set libraries bundled with the package
+gmtList <- list(
+  CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
+  KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
 )
 
 # Combine into a single sparse matrix
@@ -424,11 +434,20 @@ alz_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r fbm-priors, message=FALSE}
+```{r fbm-priors-download, eval=FALSE}
+# How to fetch the libraries; not run during vignette build.
 alz_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
     MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+)
+```
+
+```{r fbm-priors, message=FALSE}
+alz_gmtList <- list(
+    GTEx_Tissues = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
+    BP           = readRDS(system.file("extdata", "GO_Biological_Process_2025.rds", package = "CLAMP")),
+    MSigDB       = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 alz_pathMat <- gmtListToSparseMat(alz_gmtList)
@@ -546,11 +565,20 @@ islet_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r islet-priors, message=FALSE}
+```{r islet-priors-download, eval=FALSE}
+# How to fetch the libraries; not run during vignette build.
 islet_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     Diabetes_Perturbations = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"),
     MSigDB_Hallmark = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+)
+```
+
+```{r islet-priors, message=FALSE}
+islet_gmtList <- list(
+    GTEx_Tissues           = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
+    Diabetes_Perturbations = readRDS(system.file("extdata", "Diabetes_Perturbations_GEO_2022.rds", package = "CLAMP")),
+    MSigDB_Hallmark        = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 islet_pathMat <- gmtListToSparseMat(islet_gmtList)

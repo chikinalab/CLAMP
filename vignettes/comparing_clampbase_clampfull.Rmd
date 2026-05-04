@@ -54,8 +54,10 @@ dataWholeBlood <- tscale(dataWholeBlood)
 
 ## 2. Load Prior Knowledge Matrices
 
-```{r load-priors}
-# Download pathway and cell marker libraries from Enrichr
+```{r load-priors-download, eval=FALSE}
+# How to download pathway and cell marker libraries from Enrichr.
+# Not run during vignette build to avoid network calls; pre-fetched
+# .rds files are loaded in the next chunk instead.
 gmtList <- list(
   CellMarkers = getGMT(
     "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
@@ -65,6 +67,14 @@ gmtList <- list(
     "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
     "KEGG_2021_Human"
   )
+)
+```
+
+```{r load-priors}
+# Load pre-fetched gene set libraries bundled with the package
+gmtList <- list(
+  CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
+  KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
 )
 
 # Combine into a single sparse matrix

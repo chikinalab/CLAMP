@@ -29,7 +29,7 @@ jobs:
       - name: Install Deps
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          cache: true
+          cache: always
           # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
           # it will then be picked up automatically from DESCRIPTION.
           extra-packages: pivlab/CLAMPData

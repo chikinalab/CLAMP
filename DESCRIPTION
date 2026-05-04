@@ -46,7 +46,6 @@ Imports:
 Suggests:
     AnnotationDbi,
     BiocStyle,
-    Cairo,
     CLAMPData,
     data.table,
     DiagrammeR,
