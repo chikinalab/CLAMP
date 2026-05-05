@@ -45,7 +45,7 @@
 #'     method = "p", xlab = "SVD1", ylab = "SVD2"
 #' )
 compareBs <- function(res1, res2, target, method = "p", xlab = "1", ylab = "2",
-                      stat.method = "t", oneToOne = TRUE) {
+                        stat.method = "t", oneToOne = TRUE) {
     extract_B <- function(res) {
         if (is.list(res) & !is.null(res$B)) {
             return(as.matrix(res$B))

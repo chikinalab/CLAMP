@@ -76,7 +76,8 @@ tscale <- function(x) {
 
 #' Print a concatenated message
 #'
-#' Wrapper around `message()` that pastes arguments together into a single string.
+#' Wrapper around `message()` that pastes arguments together into a single
+#' string.
 #' @param ... Character strings to concatenate and print.
 #' @return Invisibly returns NULL. Called for side effects (messages).
 mymessage <- function(...) {
@@ -85,11 +86,12 @@ mymessage <- function(...) {
 
 #' Get maximum AUC per latent variable
 #'
-#' Summarizes a cross-validation results data frame to extract the highest AUC value
-#' associated with each latent variable (LV).
+#' Summarizes a cross-validation results data frame to extract the highest
+#' AUC value associated with each latent variable (LV).
 #'
 #' @param summary A data frame (e.g., from `crossVal()`) .
-#' @param verbose Logical; if `TRUE`, prints counts of LVs exceeding AUC thresholds. Default is `FALSE`.
+#' @param verbose Logical; if `TRUE`, prints counts of LVs exceeding AUC
+#'   thresholds. Default is `FALSE`.
 #'
 #' @return A data frame with columns LV index and max_AUC.
 getMaxAUC <- function(summary, verbose = FALSE) {
@@ -99,16 +101,22 @@ getMaxAUC <- function(summary, verbose = FALSE) {
         ungroup()
 
     if (verbose) {
-        message("There are ", sum(max_auc_per_lv$max_AUC > 0.7), " LVs with AUC>0.70")
-        message("There are ", sum(max_auc_per_lv$max_AUC > 0.9), " LVs with AUC>0.90")
+        message(
+            "There are ", sum(max_auc_per_lv$max_AUC > 0.7),
+            " LVs with AUC>0.70"
+        )
+        message(
+            "There are ", sum(max_auc_per_lv$max_AUC > 0.9),
+            " LVs with AUC>0.90"
+        )
     }
     max_auc_per_lv
 }
 
 #' Count number of latent variables exceeding AUC thresholds
 #'
-#' Given a summary data frame from cross-validation, reports the number of latent variables
-#' with maximum AUC exceeding 0.7, 0.8, and 0.9.
+#' Given a summary data frame from cross-validation, reports the number of
+#' latent variables with maximum AUC exceeding 0.7, 0.8, and 0.9.
 #'
 #' @param summary A data frame with `LV index` and `AUC` columns.
 #'
@@ -122,10 +130,12 @@ getAUCstats <- function(summary) {
 
 #' Greedy maximum correspondence from correlation matrix
 #'
-#' Finds a one-to-one assignment (permutation) between rows and columns of a square correlation matrix
-#' that maximizes the total correlation score, using a greedy algorithm.
+#' Finds a one-to-one assignment (permutation) between rows and columns of a
+#' square correlation matrix that maximizes the total correlation score,
+#' using a greedy algorithm.
 #'
-#' @param cor_mat A square numeric matrix of pairwise correlations (rows = items, cols = items).
+#' @param cor_mat A square numeric matrix of pairwise correlations
+#'   (rows = items, cols = items).
 #' @return A vector of assignments (integer indices).
 max_correspondence_greedy <- function(cor_mat) {
     n <- nrow(cor_mat)
@@ -147,23 +157,31 @@ max_correspondence_greedy <- function(cor_mat) {
         }
     }
 
-    list(permutation = assignment, sum = sum(cor_mat[cbind(seq_len(n), assignment)]))
+    list(
+        permutation = assignment,
+        sum = sum(cor_mat[cbind(seq_len(n), assignment)])
+    )
 }
 
 #' Download and read a GMT file from a URL
 #'
-#' Downloads a Gene Matrix Transposed (GMT) file from a specified URL, reads it into R as a list,
-#' and removes the temporary file afterward.
+#' Downloads a Gene Matrix Transposed (GMT) file from a specified URL, reads
+#' it into R as a list, and removes the temporary file afterward.
 #'
 #' @param url A character string specifying the URL to a GMT file.
-#' @param name Optional name for the GMT file (defaults to the portion after the last '=' in the URL).
+#' @param name Optional name for the GMT file (defaults to the portion after
+#'   the last '=' in the URL).
 #' @param cache_dir Optional directory in which to cache/download the GMT file.
 #' @param redownload Logical; if `TRUE`, forces re-download even if cached.
 #'
-#' @return A named list where each element is a character vector of gene names for a given gene set.
+#' @return A named list where each element is a character vector of gene
+#'   names for a given gene set.
 #'
 #' @examples
-#' url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human"
+#' url <- paste0(
+#'     "https://maayanlab.cloud/Enrichr/geneSetLibrary",
+#'     "?mode=text&libraryName=KEGG_2019_Human"
+#' )
 #' gmt_list <- getGMT(url)
 #' # list available gene sets
 #' names(gmt_list)
@@ -250,11 +268,12 @@ read_gmt <- function(filename) {
 
 #' Convert a list of GMT gene sets to a sparse matrix
 #'
-#' Converts a list of named gene sets (e.g., from `getGMT()`) into a sparse binary matrix
-#' where rows are genes, columns are gene sets, and entries are 1 if the gene is in the set.
+#' Converts a list of named gene sets (e.g., from `getGMT()`) into a sparse
+#' binary matrix where rows are genes, columns are gene sets, and entries
+#' are 1 if the gene is in the set.
 #'
-#' @param gmtList A nested list of gene sets. Outer names are gene set names; each entry is a character
-#' vector of gene names.
+#' @param gmtList A nested list of gene sets. Outer names are gene set names;
+#'   each entry is a character vector of gene names.
 #'
 #' @return A sparse binary matrix with genes as rows and gene sets as columns.
 #' @examples
@@ -296,10 +315,10 @@ gmtListToSparseMat <- function(gmtList) {
 
     # Use sparseMatrix to create the matrix in one go
 
-    pathMat <- Matrix::sparseMatrix(i = row_indices, j = col_indices, x = values, dims = c(
-        length(allGenes),
-        length(allnames)
-    ))
+    pathMat <- Matrix::sparseMatrix(
+        i = row_indices, j = col_indices, x = values,
+        dims = c(length(allGenes), length(allnames))
+    )
     rownames(pathMat) <- allGenes
     colnames(pathMat) <- allnames
     pathMat
@@ -319,25 +338,33 @@ commonRows <- function(data1, data2) {
 
 #' Clean a Filebacked Big Matrix (FBM) by log-transforming and handling NAs
 #'
-#' This function inspects an FBM to determine if log-transformation is needed (based on value range)
-#' and whether NA values are present. If the maximum value is >= 100, it applies a log2(x + 1)
-#' transformation in-place. If any NA values are detected, they are replaced with 0.
+#' This function inspects an FBM to determine if log-transformation is needed
+#' (based on value range) and whether NA values are present. If the maximum
+#' value is >= 100, it applies a log2(x + 1) transformation in-place. If any
+#' NA values are detected, they are replaced with 0.
 #'
 #' @param fbm A `bigmemory::FBM` or `bigstatsr::FBM` object.
-#' @param ncores Integer; number of cores to use for parallel operations (default 1).
+#' @param ncores Integer; number of cores to use for parallel operations
+#'   (default 1).
 #' @return A list with:
 #'   \describe{
-#'     \item{max_value}{The maximum value encountered in the FBM (after log transformation if applied).}
-#'     \item{had_na}{Logical indicating whether any NA values were found and filled.}
+#'     \item{max_value}{The maximum value encountered in the FBM (after log
+#'       transformation if applied).}
+#'     \item{had_na}{Logical indicating whether any NA values were found
+#'       and filled.}
 #'   }
 #'
 #' @details
-#' Modifies the FBM in place. Uses `bigstatsr::big_apply()` to process in parallel-safe chunks.
+#' Modifies the FBM in place. Uses `bigstatsr::big_apply()` to process in
+#' parallel-safe chunks.
 #' @importFrom bigstatsr big_apply rows_along FBM
 #' @examples
 #' \donttest{
 #' library(bigstatsr)
-#' fbm <- FBM(3, 4, init = matrix(c(0, 1, 2, NA, 100, 200, 300, 400, 5, 6, 7, 8), nrow = 3))
+#' fbm <- FBM(3, 4, init = matrix(
+#'     c(0, 1, 2, NA, 100, 200, 300, 400, 5, 6, 7, 8),
+#'     nrow = 3
+#' ))
 #' cleanFBM(fbm, ncores = 1)
 #' }
 #'
@@ -346,7 +373,10 @@ cleanFBM <- function(fbm, ncores = 1) {
     # Block‐wise scan for max and NA
     stats <- big_apply(fbm, a.FUN = function(X, ind) {
         vals <- X[, ind, drop = FALSE]
-        list(max = if (all(is.na(vals))) NA_real_ else max(vals, na.rm = TRUE), na = anyNA(vals))
+        list(
+            max = if (all(is.na(vals))) NA_real_ else max(vals, na.rm = TRUE),
+            na = anyNA(vals)
+        )
     }, a.combine = function(...) {
         Reduce(function(a, b) {
             list(max = max(a$max, b$max, na.rm = TRUE), na = a$na || b$na)
@@ -383,11 +413,13 @@ cleanFBM <- function(fbm, ncores = 1) {
 
 #' Compute row-wise sum and sum of squares for a Filebacked Big Matrix
 #'
-#' Efficiently computes row sums and row sum-of-squares for a `bigstatsr::FBM` using
-#' column-wise chunking, suitable for large datasets that cannot be loaded fully into memory.
+#' Efficiently computes row sums and row sum-of-squares for a
+#' `bigstatsr::FBM` using column-wise chunking, suitable for large datasets
+#' that cannot be loaded fully into memory.
 #'
 #' @param fbm A `bigstatsr::FBM` object.
-#' @param ncores Integer; number of cores to use for parallel operations (default 1).
+#' @param ncores Integer; number of cores to use for parallel operations
+#'   (default 1).
 #' @return A list with two numeric vectors:
 #' \describe{
 #'   \item{row_sums}{Sum of each row.}
@@ -417,14 +449,18 @@ computeRowStatsFBM <- function(fbm, ncores = 1) {
 
 #' Filter rows of a Filebacked Big Matrix based on mean and variance
 #'
-#' Filters an FBM based on row-level mean and variance thresholds, returning a new FBM
+#' Filters an FBM based on row-level mean and variance thresholds, returning
+#' a new FBM
 #' with only the selected rows.
 #'
 #' @param fbm A `bigstatsr::FBM` object.
 #' @param rowStats A list with numeric vectors `row_means` and `row_variances`.
-#' @param mean_cutoff Optional minimum mean threshold; rows with means below this are removed.
-#' @param var_cutoff Optional minimum variance threshold; rows with variances below this are removed.
-#' @param backingfile A character string specifying the filename (without extension) for the new FBM.
+#' @param mean_cutoff Optional minimum mean threshold; rows with means below
+#'   this are removed.
+#' @param var_cutoff Optional minimum variance threshold; rows with variances
+#'   below this are removed.
+#' @param backingfile A character string specifying the filename (without
+#'   extension) for the new FBM.
 #' @param keep_samples_idx Optional integer vector of column indices to retain.
 #' Default is `filtered_fbm`.
 #'
@@ -434,18 +470,24 @@ computeRowStatsFBM <- function(fbm, ncores = 1) {
 #'   \item{kept_rows}{Indices of rows retained in the filtering step.}
 #' }
 #' @details
-#' This function creates a new FBM and copies over only the rows that pass the filtering criteria.
+#' This function creates a new FBM and copies over only the rows that pass
+#' the filtering criteria.
 #' The original FBM is unchanged.
 #' @examples
 #' \donttest{
 #' library(bigstatsr)
 #' fbm <- FBM(5, 3, init = matrix(rnorm(15), nrow = 5))
 #' rs <- list(row_means = rowMeans(fbm[]), row_variances = apply(fbm[], 1, var))
-#' out <- filterFBM(fbm, rs, mean_cutoff = -0.2, var_cutoff = 0.5, backingfile = tempfile())
+#' out <- filterFBM(fbm, rs,
+#'     mean_cutoff = -0.2, var_cutoff = 0.5,
+#'     backingfile = tempfile()
+#' )
 #' }
 #' @importFrom bigstatsr cols_along big_copy
 #' @export
-filterFBM <- function(fbm, rowStats, keep_samples_idx = NULL, mean_cutoff = NULL, var_cutoff = NULL, backingfile = "filtered_fbm") {
+filterFBM <- function(fbm, rowStats, keep_samples_idx = NULL,
+                      mean_cutoff = NULL, var_cutoff = NULL,
+                      backingfile = "filtered_fbm") {
     row_means <- rowStats$row_means
     row_variances <- rowStats$row_variances
 
@@ -486,11 +528,13 @@ filterFBM <- function(fbm, rowStats, keep_samples_idx = NULL, mean_cutoff = NULL
 #'
 #' Centers each gene to mean 0 and scales to unit variance.
 #'
-#' @param Y_filtered Numeric matrix (genes x samples) returned by preprocessCLAMP
+#' @param Y_filtered Numeric matrix (genes x samples) returned by
+#'   preprocessCLAMP
 #' @param rowStats   Data frame with numeric columns `mean` and `variance`,
 #'                   row-named to match `rownames(Y_filtered)`
 #'
-#' @return Numeric matrix of the same dimensions as Y_filtered, with each row centered and scaled.
+#' @return Numeric matrix of the same dimensions as Y_filtered, with each
+#'   row centered and scaled.
 #' @examples
 #' # simple 2 genes x 3 samples matrix
 #' Y <- matrix(
@@ -517,8 +561,12 @@ zscoreCLAMP <- function(Y_filtered, rowStats) {
     if (!is.matrix(Y_filtered) || !is.numeric(Y_filtered)) {
         stop("`Y_filtered` must be a numeric matrix (genes x samples).")
     }
-    if (!is.data.frame(rowStats) || !all(c("mean", "variance") %in% colnames(rowStats))) {
-        stop("`rowStats` must be a data.frame with columns 'mean' and 'variance'.")
+    if (!is.data.frame(rowStats) ||
+        !all(c("mean", "variance") %in% colnames(rowStats))) {
+        stop(
+            "`rowStats` must be a data.frame with columns 'mean' ",
+            "and 'variance'."
+        )
     }
     # Align rowStats to Y_filtered
     if (!all(rownames(Y_filtered) %in% rownames(rowStats))) {
@@ -545,20 +593,27 @@ zscoreCLAMP <- function(Y_filtered, rowStats) {
 
 #' Preprocess a bigstatsr FBM for CLAMP
 #'
-#' Makes a writable copy of the input FBM, cleans it (log2 transform if needed, fill NAs),
-#' filters rows by mean/variance, and returns the filtered FBM plus stats and indices.
+#' Makes a writable copy of the input FBM, cleans it (log2 transform if
+#' needed, fill NAs), filters rows by mean/variance, and returns the filtered
+#' FBM plus stats and indices.
 #'
 #' @param fbm A bigstatsr::FBM (genes x samples), possibly read-only.
-#' @param mean_cutoff Numeric or NULL. Minimum row mean to keep (NULL = no mean filter).
-#' @param var_cutoff  Numeric or NULL. Minimum row variance to keep (NULL = no var filter).
-#' @param backingfile Character or NULL. Base name for the *copy* FBM and filtered FBM on disk.
-#'                    If NULL, defaults to paste0(fbm$backingfile, '_preproc') and '_filtered'.
-#' @param ncores Integer; number of cores to use for parallel operations (default 1).
-#' @param block_size Number of rows to process at a time when copying data. Default is 1000.
+#' @param mean_cutoff Numeric or NULL. Minimum row mean to keep
+#'   (NULL = no mean filter).
+#' @param var_cutoff  Numeric or NULL. Minimum row variance to keep
+#'   (NULL = no var filter).
+#' @param backingfile Character or NULL. Base name for the *copy* FBM and
+#'   filtered FBM on disk. If NULL, defaults to
+#'   paste0(fbm$backingfile, '_preproc') and '_filtered'.
+#' @param ncores Integer; number of cores to use for parallel operations
+#'   (default 1).
+#' @param block_size Number of rows to process at a time when copying data.
+#'   Default is 1000.
 #' @return A list with:
 #'   \item{fbm_filtered}{The filtered FBM (writable).}
 #'   \item{rowStats}{List with row_means & row_variances for fbm_filtered.}
-#'   \item{kept_rows}{Integer vector of original row indices that were retained.}
+#'   \item{kept_rows}{Integer vector of original row indices that were
+#'     retained.}
 #' @examples
 #' library(bigstatsr)
 #' # create a toy matrix and back it with an FBM
@@ -593,7 +648,10 @@ preprocessCLAMPFBM <- function(
     }
 
     # Make a writable copy
-    fbm_copy <- FBM(nrow = n_r, ncol = n_c, backingfile = base_bk, create_bk = TRUE)
+    fbm_copy <- FBM(
+        nrow = n_r, ncol = n_c,
+        backingfile = base_bk, create_bk = TRUE
+    )
 
     # copy all data
     for (rs in seq(1, n_r, by = block_size)) {
@@ -630,9 +688,16 @@ preprocessCLAMPFBM <- function(
     kept_rows <- filter_res$kept_rows
 
     # Subset stats to kept rows
-    stats_filt <- list(row_means = rs_all$row_means[kept_rows], row_variances = rs_all$row_variances[kept_rows])
+    stats_filt <- list(
+        row_means = rs_all$row_means[kept_rows],
+        row_variances = rs_all$row_variances[kept_rows]
+    )
 
-    list(fbm_filtered = fbm_filtered, rowStats = stats_filt, kept_rows = kept_rows)
+    list(
+        fbm_filtered = fbm_filtered,
+        rowStats = stats_filt,
+        kept_rows = kept_rows
+    )
 }
 
 #' Z-score a filtered FBM in-place
@@ -642,7 +707,8 @@ preprocessCLAMPFBM <- function(
 #' @param fbm_filtered A bigstatsr::FBM produced by preprocessCLAMPFBM().
 #' @param rowStats A list with row_means and row_variances from that FBM.
 #' @param chunk_size Columns per block (default 1000).
-#' @param ncores Integer; number of cores to use for parallel operations (default 1).
+#' @param ncores Integer; number of cores to use for parallel operations
+#'   (default 1).
 #' @examples
 #' library(bigstatsr)
 #' fbm <- FBM(
@@ -656,7 +722,8 @@ preprocessCLAMPFBM <- function(
 #' zscoreCLAMPFBM(fbm, stats, chunk_size = 2)
 #' @return A normalized FBM with z-scored rows.
 #' @export
-zscoreCLAMPFBM <- function(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1) {
+zscoreCLAMPFBM <- function(fbm_filtered, rowStats,
+                           chunk_size = 1000, ncores = 1) {
     message("Applying Z-score transformation")
     means <- rowStats$row_means
     sds <- sqrt(rowStats$row_variances)
@@ -682,7 +749,10 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1
             block <- sweep(block, 1, sds, "/")
             X[, ind] <- block
             integer(0)
-        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_filtered), block.size = chunk_size,
+        },
+        a.combine = "c",
+        ind = bigstatsr::cols_along(fbm_filtered),
+        block.size = chunk_size,
         ncores = ncores, means = means, sds = sds
     )
 
@@ -695,8 +765,10 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1
 #' and per-gene statistics.
 #'
 #' @param Y Numeric matrix of gene expression (rows = genes, cols = samples)
-#' @param mean_cutoff Numeric. Minimum row-mean required to keep a gene (default 0).
-#' @param var_cutoff  Numeric. Minimum row-variance required to keep a gene (default 0).
+#' @param mean_cutoff Numeric. Minimum row-mean required to keep a gene
+#'   (default 0).
+#' @param var_cutoff  Numeric. Minimum row-variance required to keep a gene
+#'   (default 0).
 #'
 #' @return A list with components:
 #'   - Y_filtered: filtered matrix (genes x samples)
@@ -727,11 +799,16 @@ preprocessCLAMP <- function(Y, mean_cutoff = 0, var_cutoff = 0) {
     row_mean <- rowMeans(Y, na.rm = TRUE)
     row_var <- apply(Y, 1, stats::var, na.rm = TRUE)
 
-    rowStats <- data.frame(mean = row_mean, variance = row_var, stringsAsFactors = FALSE)
+    rowStats <- data.frame(
+        mean = row_mean, variance = row_var,
+        stringsAsFactors = FALSE
+    )
     rownames(rowStats) <- rownames(Y)
 
     # Identify genes passing both thresholds
-    keep <- which(rowStats$mean >= mean_cutoff & rowStats$variance >= var_cutoff)
+    keep <- which(
+        rowStats$mean >= mean_cutoff & rowStats$variance >= var_cutoff
+    )
     if (length(keep) == 0) {
         stop("No genes passed the mean/variance filters.")
     }
@@ -740,13 +817,18 @@ preprocessCLAMP <- function(Y, mean_cutoff = 0, var_cutoff = 0) {
     Y_filtered <- Y[keep, , drop = FALSE]
     rowStats_filtered <- rowStats[keep, , drop = FALSE]
 
-    return(list(Y_filtered = Y_filtered, rowStats = rowStats_filtered, kept_rows = keep))
+    return(list(
+        Y_filtered = Y_filtered,
+        rowStats = rowStats_filtered,
+        kept_rows = keep
+    ))
 }
 
 #' Compute counts-per-million (CPM) for CLAMP pipelines
 #'
 #' @param counts A numeric matrix or data.frame of raw counts (genes x samples).
-#' @return A numeric matrix of CPM values (same dimensions), ready for CLAMP input.
+#' @return A numeric matrix of CPM values (same dimensions), ready for CLAMP
+#'   input.
 #' @examples
 #' mat <- matrix(seq_len(12), nrow = 3)
 #' cpmCLAMP(mat)
@@ -770,7 +852,8 @@ cpmCLAMP <- function(counts) {
 #'
 #' @param fbm_counts A bigstatsr::FBM of raw counts (genes x samples).
 #' @param block_size Integer; columns per block (default 1000).
-#' @param ncores Integer; number of cores to use for parallel operations (default 1).
+#' @param ncores Integer; number of cores to use for parallel operations
+#'   (default 1).
 #' @return Invisibly returns the modified FBM (now holding CPM values).
 #' @examples
 #' library(bigstatsr)
@@ -808,7 +891,10 @@ cpmCLAMPFBM <- function(fbm_counts, block_size = 1000, ncores = 1) {
     lib_sizes <- bigstatsr::big_apply(fbm_counts,
         a.FUN = function(X, ind) {
             colSums(X[, ind, drop = FALSE])
-        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
+        },
+        a.combine = "c",
+        ind = bigstatsr::cols_along(fbm_counts),
+        block.size = block_size,
         ncores = ncores
     )
     lib_sizes[lib_sizes == 0] <- 1
@@ -820,7 +906,10 @@ cpmCLAMPFBM <- function(fbm_counts, block_size = 1000, ncores = 1) {
             blk <- sweep(blk, 2, libs[ind], "/") * 1e+06
             X[, ind] <- blk
             integer(0)
-        }, a.combine = "c", ind = bigstatsr::cols_along(fbm_counts), block.size = block_size,
+        },
+        a.combine = "c",
+        ind = bigstatsr::cols_along(fbm_counts),
+        block.size = block_size,
         ncores = ncores, libs = lib_sizes
     )
 
@@ -875,7 +964,8 @@ squashZscore <- function(zdata, maxScore = 2) {
 
 #' Estimate noise scale from singular values with linear tail extrapolation
 #'
-#' This function estimates a characteristic scale from a vector of singular values
+#' This function estimates a characteristic scale from a vector of singular
+#' values
 #' by fitting a linear model to the tail and extrapolating to length \code{n}.
 #' The median of the extrapolated values is returned as the estimate.
 #' If no sufficiently linear tail is detected (based on \code{min_r2}) or
@@ -1080,7 +1170,10 @@ select_clamp_k <- function(svdres, n_samples, svd_k,
         clamp_k <- num.pc(list(d = svdres$d), method = "elbow")
     } else if (method == "permutation") {
         if (is.null(data)) {
-            stop("`data` (raw row-normalized matrix) is required for method = 'permutation'.")
+            stop(
+                "`data` (raw row-normalized matrix) is required for ",
+                "method = 'permutation'."
+            )
         }
         clamp_k <- num.pc(data, method = "permutation", B = B)
     } else if (method == "gavish_donoho") {

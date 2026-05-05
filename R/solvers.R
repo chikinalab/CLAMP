@@ -69,7 +69,8 @@ mat_mult <- function(mat1, mat2, ncores = 1) {
 #'
 #' @param m A symmetric numeric matrix (e.g., from \code{crossprod()}).
 #' @param alpha Non-negative scalar specifying the ridge penalty.
-#' A small positive value stabilizes the inversion by shrinking large singular values.
+#' A small positive value stabilizes the inversion by shrinking large
+#' singular values.
 #'
 #' @return A numeric matrix representing the ridge-regularized
 #' pseudoinverse of \code{m}.
@@ -88,12 +89,14 @@ pinv.ridge <- function(m, alpha = 0) {
 
 #' Rotate SVD components to make dominant directions positive
 #'
-#' Ensures consistency in SVD output by flipping signs so that each left singular vector
-#' has a majority of positive entries.
+#' Ensures consistency in SVD output by flipping signs so that each left
+#' singular vector has a majority of positive entries.
 #'
-#' @param svdres A list as returned by \code{svd()}, with components \code{u}, \code{d}, and \code{v}.
-#' @return A modified \code{svd}‐result list where each column of \code{$u} has been sign‐flipped
-#'   so that its entries sum to a nonnegative value; \code{$v} is flipped correspondingly.
+#' @param svdres A list as returned by \code{svd()}, with components
+#'   \code{u}, \code{d}, and \code{v}.
+#' @return A modified \code{svd}-result list where each column of \code{$u}
+#'   has been sign-flipped so that its entries sum to a nonnegative value;
+#'   \code{$v} is flipped correspondingly.
 rotateSVD <- function(svdres) {
     upos <- svdres$u
     uneg <- svdres$u
@@ -115,11 +118,13 @@ rotateSVD <- function(svdres) {
 
 #' Binarize matrix by top-k values per column
 #'
-#' Keeps only the top \code{top} values in each column of a matrix, setting others to 0.
+#' Keeps only the top \code{top} values in each column of a matrix, setting
+#' others to 0.
 #'
 #' @param Z A numeric matrix.
 #' @param top Number of top entries to keep in each column.
-#' @param keepVals If \code{TRUE}, retains original values above the cutoff; otherwise, sets them to 1.
+#' @param keepVals If \code{TRUE}, retains original values above the cutoff;
+#'   otherwise, sets them to 1.
 #' @return A modified matrix with only top entries retained per column.
 binarizeTop <- function(Z, top, keepVals = TRUE) {
     for (i in seq_len(ncol(Z))) {
@@ -135,32 +140,47 @@ binarizeTop <- function(Z, top, keepVals = TRUE) {
 
 #' Fit the loading matrix Z using sparse regression of prior information U
 #'
-#' For each column of a target matrix \code{Z} using pathway or prior annotation \code{priorMat}.
-#' It performs regularization selection using cross-validation and can apply either
-#' Supports continuous or binary response models. Relaxed refitting is supported for final
-#' coefficient estimation.
+#' For each column of a target matrix \code{Z} using pathway or prior
+#' annotation \code{priorMat}. It performs regularization selection using
+#' cross-validation and can apply either Supports continuous or binary
+#' response models. Relaxed refitting is supported for final coefficient
+#' estimation.
 #'
 #' @param Z A numeric matrix with features (rows) and samples (columns).
-#' @param Chat (Optional) Precomputed pseudo-inverse of \code{priorMat}; if \code{NULL},
-#' it is calculated using ridge regularization.
-#' @param priorMat A numeric matrix with prior information (features x pathways).
-#' @param penalty.factor Optional penalty weights for features in \code{priorMat}.
-#' @param pathwaySelection Method to select candidate pathways: \code{"fast"} (default) or \code{"complete"}.
-#' @param alpha Elastic net mixing parameter (0 = ridge, 1 = lasso). Default is 0.9.
-#' @param maxPath Maximum number of pathways/features selected per column. Default is 10.
+#' @param Chat (Optional) Precomputed pseudo-inverse of \code{priorMat};
+#'   if \code{NULL}, it is calculated using ridge regularization.
+#' @param priorMat A numeric matrix with prior information
+#'   (features x pathways).
+#' @param penalty.factor Optional penalty weights for features in
+#'   \code{priorMat}.
+#' @param pathwaySelection Method to select candidate pathways: \code{"fast"}
+#'   (default) or \code{"complete"}.
+#' @param alpha Elastic net mixing parameter (0 = ridge, 1 = lasso).
+#'   Default is 0.9.
+#' @param maxPath Maximum number of pathways/features selected per column.
+#'   Default is 10.
 #' @param nfolds Number of cross-validation folds. Default is 5.
-#' @param useSE Whether to use the 1-standard-error rule for lambda selection. Default is \code{FALSE}.
-#' @param top If set, sets to 0 all but the top entries of \code{Z} per column before fitting.
-#' @param binary If \code{TRUE}, fits a binomial model (e.g., classification) to \code{Z}>0.
-#' Can be used incombination with \code{top}. Default is \code{FALSE}.
+#' @param useSE Whether to use the 1-standard-error rule for lambda selection.
+#'   Default is \code{FALSE}.
+#' @param top If set, sets to 0 all but the top entries of \code{Z} per
+#'   column before fitting.
+#' @param binary If \code{TRUE}, fits a binomial model (e.g., classification)
+#'   to \code{Z}>0. Can be used in combination with \code{top}.
+#'   Default is \code{FALSE}.
 #' @param nlambda Number of lambda values for glmnet. Default is 20.
-#' @param scale Whether to standardize predictors in glmnet. Default is \code{TRUE}.
-#' @param refit Whether to perform relaxed refitting using selected predictors. Default is \code{TRUE}.
-#' @param Uprev (Optional) Previous U matrix to reuse. In this mode only the columns of \code{U}
-#' that are all zero are estimated. Used internally in \code{CLAMP}.
-#' @param ... Additional arguments passed to \code{glmnet()} or \code{cv.glmnet()}.
-#' @param useAUC Logical; whether to compute pathway–LV associations using AUC (default TRUE) instead of OLS.
-#' @param intercept Logical; whether to include an intercept term in glmnet models. Default is TRUE.
+#' @param scale Whether to standardize predictors in glmnet.
+#'   Default is \code{TRUE}.
+#' @param refit Whether to perform relaxed refitting using selected
+#'   predictors. Default is \code{TRUE}.
+#' @param Uprev (Optional) Previous U matrix to reuse. In this mode only
+#'   the columns of \code{U} that are all zero are estimated. Used
+#'   internally in \code{CLAMP}.
+#' @param ... Additional arguments passed to \code{glmnet()} or
+#'   \code{cv.glmnet()}.
+#' @param useAUC Logical; whether to compute pathway-LV associations using
+#'   AUC (default TRUE) instead of OLS.
+#' @param intercept Logical; whether to include an intercept term in glmnet
+#'   models. Default is TRUE.
 #' @return A list with one element:
 #' \describe{
 #'   \item{\code{U}}{A matrix of loadings (features x components).
@@ -192,8 +212,8 @@ binarizeTop <- function(Z, top, keepVals = TRUE) {
 solveU <- function(
   Z, Chat = NULL, priorMat, penalty.factor, pathwaySelection = "fast",
   alpha = 0.9, maxPath = 10, nfolds = 5, useSE = FALSE, top = NULL,
-  binary = FALSE, nlambda = 20, scale = TRUE, refit = TRUE, Uprev = NULL, useAUC = TRUE, intercept = TRUE, ...
-) {
+    binary = FALSE, nlambda = 20, scale = TRUE, refit = TRUE,
+    Uprev = NULL, useAUC = TRUE, intercept = TRUE, ...) {
     if (nrow(Z) != nrow(priorMat)) {
         cm <- commonRows(Z, priorMat)
         Z <- Z[cm, ]
@@ -222,7 +242,10 @@ solveU <- function(
 
     # Zhat <- matrix(0, nrow = nrow(Z), ncol = ncol(Z))
     if (is.null(Uprev)) {
-        U <- Matrix::Matrix(0, nrow = ncol(priorMat), ncol = ncol(Z), sparse = TRUE)
+        U <- Matrix::Matrix(
+            0,
+            nrow = ncol(priorMat), ncol = ncol(Z), sparse = TRUE
+        )
         #  U=matrix(0,nrow=ncol(priorMat), ncol=ncol(Z))
     } else {
         U <- Uprev
@@ -251,9 +274,12 @@ solveU <- function(
 
             if (!binary) { # not doing a binary prediction
                 gres <- cv.glmnet(
-                    y = Z[, i], x = priorMat[, iip], alpha = alpha, lower.limits = 0,
-                    foldid = ((seq_len(nrow(Z))) %% nfolds) + 1, keep = TRUE, nfolds = nfolds,
-                    standardize = scale, dfmax = maxPath, nlambda = nlambda, intercept = intercept, ...
+                    y = Z[, i], x = priorMat[, iip],
+                    alpha = alpha, lower.limits = 0,
+                    foldid = ((seq_len(nrow(Z))) %% nfolds) + 1,
+                    keep = TRUE, nfolds = nfolds,
+                    standardize = scale, dfmax = maxPath,
+                    nlambda = nlambda, intercept = intercept, ...
                 )
 
                 # plot(gres)
@@ -261,9 +287,11 @@ solveU <- function(
                 gres <- cv.glmnet(
                     y = (Z[, i] > 0) + 1 - 1, x = priorMat[, iip],
                     family = "binomial", alpha = alpha, lower.limits = 0,
-                    foldid = ((seq_len(nrow(Z))) %% nfolds) + 1, keep = FALSE,
-                    nfolds = nfolds, type.measure = "auc", dfmax = maxPath, nlambda = nlambda,
-                    standardize = scale, nlambda = nlambda, intercept = intercept, ...
+                    foldid = ((seq_len(nrow(Z))) %% nfolds) + 1,
+                    keep = FALSE,
+                    nfolds = nfolds, type.measure = "auc",
+                    dfmax = maxPath, nlambda = nlambda,
+                    standardize = scale, intercept = intercept, ...
                 )
             }
         } # end if all U[,i]==0
@@ -306,7 +334,8 @@ solveU <- function(
                 coefs <- as.vector(coef(fit_relaxed))[-1]
                 if (add_dummy) coefs <- coefs[-length(coefs)]
                 U[selected_features, i] <- coefs
-                # Zhat[, i] <- predict(fit_relaxed, newx = X_sel, s = 0, type = "response")[,1]
+                # Zhat[, i] <- predict(fit_relaxed, newx = X_sel,
+                #                      s = 0, type = "response")[,1]
             }
         } else {
             s_best <- if (useSE) gres$lambda.1se else gres$lambda.min
@@ -316,7 +345,8 @@ solveU <- function(
         }
         # end for i in Z
     }
-    # message(sprintf(", Number of annotated columns is %d", sum(Matrix::colSums(U) > 0)))
+    # message(sprintf(", Number of annotated columns is %d",
+    #                 sum(Matrix::colSums(U) > 0)))
     # rownames(U)=substr(colnames(priorMat),1,30)
     rownames(U) <- colnames(priorMat)
     colnames(U) <- colnames(Z)
@@ -334,12 +364,15 @@ solveU <- function(
 
 #' Compute Chat matrix from prior annotation
 #'
-#' Computes the transformation matrix \code{Chat} used to map from observed data to latent space,
-#' based on a pseudo-inverse of the prior annotation matrix. Optionally standardizes the columns
+#' Computes the transformation matrix \code{Chat} used to map from observed
+#' data to latent space, based on a pseudo-inverse of the prior annotation
+#' matrix. Optionally standardizes the columns
 #' of \code{priorMat} before computing.
 #'
-#' @param priorMat A numeric or sparse matrix (features x pathways) containing prior annotations.
-#' @param scale Logical; if \code{TRUE} (default), standardizes the columns of \code{priorMat}
+#' @param priorMat A numeric or sparse matrix (features x pathways)
+#'   containing prior annotations.
+#' @param scale Logical; if \code{TRUE} (default), standardizes the columns
+#'   of \code{priorMat}
 #' before computing \code{Chat}.
 #'
 #' @return A numeric matrix \code{Chat} of dimensions (pathways x features).
@@ -382,9 +415,11 @@ getChat <- function(priorMat, scale = TRUE) {
 #'
 #' @param pathMat A sparse binary matrix of genes (rows) x pathways (columns).
 #' @param new.genes Character vector of gene names to match.
-#' @param min.genes Minimum number of overlapping genes required to keep a pathway.
+#' @param min.genes Minimum number of overlapping genes required to keep
+#'   a pathway.
 #'
-#' @return A sparse matrix of dimensions \code{length(new.genes)} x filtered pathways.
+#' @return A sparse matrix of dimensions \code{length(new.genes)} x
+#'   filtered pathways.
 #' @examples
 #' library(Matrix)
 #' # create a toy gene-by-pathway sparse matrix
@@ -402,7 +437,10 @@ getChat <- function(priorMat, scale = TRUE) {
 #' @export
 getMatchedPathwayMat <- function(pathMat, new.genes, min.genes = 10) {
     cm <- intersect(rownames(pathMat), new.genes)
-    mymessage("There are ", length(cm), " genes in the intersection between data and prior")
+    mymessage(
+        "There are ", length(cm),
+        " genes in the intersection between data and prior"
+    )
 
     matchPathMat <- Matrix::sparseMatrix(
         i = match(cm, new.genes),
@@ -428,15 +466,20 @@ getMatchedPathwayMat <- function(pathMat, new.genes, min.genes = 10) {
 #'
 #' @param ... One or more sparse binary matrices (genes x pathways).
 #' @param new.genes Character vector of gene names to match.
-#' @param min.genes Minimum number of overlapping genes required to keep a pathway.
+#' @param min.genes Minimum number of overlapping genes required to keep
+#'   a pathway.
 #'
-#' @return A sparse matrix with rows = \code{new.genes} and columns = filtered pathways from all inputs.
+#' @return A sparse matrix with rows = \code{new.genes} and columns =
+#'   filtered pathways from all inputs.
 getMatchedPathwayMat2 <- function(..., new.genes, min.genes = 10) {
     pathMats <- list(...)
 
     filtered <- lapply(pathMats, function(pathMat) {
         cm <- intersect(rownames(pathMat), new.genes)
-        message("There are ", length(cm), " genes in the intersection between data and prior")
+        message(
+            "There are ", length(cm),
+            " genes in the intersection between data and prior"
+        )
 
         matchPathMat <- Matrix::sparseMatrix(
             i = match(cm, new.genes),
@@ -451,7 +494,9 @@ getMatchedPathwayMat2 <- function(..., new.genes, min.genes = 10) {
 
         ii <- which(genesInPath >= min.genes)
 
-        message(sprintf("Removing %d pathways", ncol(matchPathMat) - length(ii)))
+        message(sprintf(
+            "Removing %d pathways", ncol(matchPathMat) - length(ii)
+        ))
 
         matchPathMat[, ii, drop = FALSE]
     })
@@ -471,12 +516,17 @@ getMatchedPathwayMat2 <- function(..., new.genes, min.genes = 10) {
 #'
 #' @param pathMat A sparse binary matrix of genes (rows) x pathways (columns).
 #' @param new.genes Character vector of gene names to match.
-#' @param min.genes Minimum number of overlapping genes required to keep a pathway.
+#' @param min.genes Minimum number of overlapping genes required to keep
+#'   a pathway.
 #'
-#' @return A sparse matrix of dimensions \code{length(new.genes)} x filtered pathways.
+#' @return A sparse matrix of dimensions \code{length(new.genes)} x
+#'   filtered pathways.
 getMatchedPathwayMatOld <- function(pathMat, new.genes, min.genes = 10) {
     cm <- intersect(rownames(pathMat), new.genes)
-    mymessage("There are ", length(cm), " genes in the intersection between data and prior")
+    mymessage(
+        "There are ", length(cm),
+        " genes in the intersection between data and prior"
+    )
 
     matchPathMat <- Matrix::sparseMatrix(
         i = match(cm, new.genes),
@@ -496,17 +546,21 @@ getMatchedPathwayMatOld <- function(pathMat, new.genes, min.genes = 10) {
 
 #' Compute AUC using Wilcoxon rank-sum test
 #'
-#' Computes the area under the ROC curve (AUC) by applying a Wilcoxon rank-sum test
-#' between predicted values for positive and negative labels. This is equivalent to
+#' Computes the area under the ROC curve (AUC) by applying a Wilcoxon
+#' rank-sum test between predicted values for positive and negative labels.
+#' This is equivalent to
 #' computing the Mann-Whitney U statistic.
 #'
-#' @param labels A numeric or logical vector indicating class labels. Values > 0 are treated as positive.
-#' @param values A numeric vector of prediction scores corresponding to \code{labels}.
+#' @param labels A numeric or logical vector indicating class labels.
+#'   Values > 0 are treated as positive.
+#' @param values A numeric vector of prediction scores corresponding to
+#'   \code{labels}.
 #'
 #' @return A list with:
 #' \describe{
 #'   \item{\code{auc}}{Estimated AUC, or 0.5 if one class is missing}
-#'   \item{\code{pval}}{Wilcoxon test p-value, or \code{NA} if one class is missing}
+#'   \item{\code{pval}}{Wilcoxon test p-value, or \code{NA} if one class
+#'     is missing}
 #' }
 AUC <- function(labels, values) {
     pos <- labels > 0
@@ -529,25 +583,37 @@ AUC <- function(labels, values) {
 
 #' Cross-validation AUC for CLAMP latent variables and pathways
 #'
-#' Evaluates how well each latent variable in a CLAMP model captures held-out pathway annotations,
-#' using cross-validation over the prior matrix. For each latent variable and associated pathway,
-#' held-out genes are selected and the AUC is computed using their scores in \code{clampRes$Z}.
+#' Evaluates how well each latent variable in a CLAMP model captures
+#' held-out pathway annotations, using cross-validation over the prior
+#' matrix. For each latent variable and associated pathway, held-out genes
+#' are selected and the AUC is computed using their scores in
+#' \code{clampRes$Z}.
 #'
-#' @param clampRes A list containing \code{U} (loadings) and \code{Z} (scores) from a CLAMP model.
-#' @param priorMat A binary matrix (genes x pathways) indicating original pathway annotations.
-#' @param priorMatcv A version of \code{priorMat} used to mask held-out annotations for cross-validation.
+#' @param clampRes A list containing \code{U} (loadings) and \code{Z}
+#'   (scores) from a CLAMP model.
+#' @param priorMat A binary matrix (genes x pathways) indicating original
+#'   pathway annotations.
+#' @param priorMatcv A version of \code{priorMat} used to mask held-out
+#'   annotations for cross-validation.
 #'
 #' @return A list with:
 #' \describe{
 #'   \item{\code{Uauc}}{Matrix of AUC values (pathways x LVs)}
 #'   \item{\code{Upval}}{Matrix of \code{-log10(p)} values (pathways x LVs)}
-#'   \item{\code{summary}}{Data frame with pathway, LV index, AUC, p-value, and FDR}
+#'   \item{\code{summary}}{Data frame with pathway, LV index, AUC, p-value,
+#'     and FDR}
 #' }
 crossVal <- function(clampRes, priorMat, priorMatcv) {
     ii <- which(Matrix::colSums(clampRes$U) > 0)
 
-    Uauc <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
-    Up <- Matrix::Matrix(0, nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE)
+    Uauc <- Matrix::Matrix(
+        0,
+        nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE
+    )
+    Up <- Matrix::Matrix(
+        0,
+        nrow = nrow(clampRes$U), ncol = ncol(clampRes$U), sparse = TRUE
+    )
 
     results <- list()
 
@@ -555,8 +621,10 @@ crossVal <- function(clampRes, priorMat, priorMatcv) {
         iipath <- which(clampRes$U[, i] > 0)
 
         for (j in iipath) {
-            iiheldout <- which((rowSums(priorMat[, iipath, drop = FALSE]) == 0) |
-                (priorMat[, j] > 0 & priorMatcv[, j] == 0))
+            iiheldout <- which(
+                (rowSums(priorMat[, iipath, drop = FALSE]) == 0) |
+                    (priorMat[, j] > 0 & priorMatcv[, j] == 0)
+            )
 
             aucres <- AUC(priorMat[iiheldout, j], clampRes$Z[iiheldout, i])
 
@@ -587,35 +655,48 @@ crossVal <- function(clampRes, priorMat, priorMatcv) {
 #' CLAMP base matrix factorization
 #'
 #' Runs the core matrix factorization procedure of CLAMP,
-#' decomposing the gene expression matrix \code{Y} into latent variables \code{Z} and loadings \code{B}.
-#' It supports sparse, dense, and Filebacked Big Matrices (FBM) as input and includes options for
+#' decomposing the gene expression matrix \code{Y} into latent variables
+#' \code{Z} and loadings \code{B}. It supports sparse, dense, and Filebacked
+#' Big Matrices (FBM) as input and includes options for
 #' adaptive sparsity, positive constraints, and regularization.
 #'
-#' @param Y Input gene expression matrix (genes x samples). Can be dense, sparse (\code{dgCMatrix}), or FBM.
+#' @param Y Input gene expression matrix (genes x samples). Can be dense,
+#'   sparse (\code{dgCMatrix}), or FBM.
 #' @param clamp_k Number of latent variables for CLAMP (final model rank).
 #'   If \code{NULL}, it is chosen from the SVD via \code{getScaleFromSVs}.
 #' @param svd_k Number of singular values/components to compute in the SVD.
 #'   If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.
-#' @param svdres Optional precomputed SVD result. If not supplied, it is computed internally.
-#' @param L1 L1 regularization strength for Z. Defaults to scaled singular value.
-#' @param L2 L2 regularization strength for B. Defaults to scaled singular value.
-#' @param Zpos Logical; if \code{TRUE}, negative entries in Z are zeroed. Default is \code{TRUE}.
+#' @param svdres Optional precomputed SVD result. If not supplied, it is
+#'   computed internally.
+#' @param L1 L1 regularization strength for Z. Defaults to scaled singular
+#'   value.
+#' @param L2 L2 regularization strength for B. Defaults to scaled singular
+#'   value.
+#' @param Zpos Logical; if \code{TRUE}, negative entries in Z are zeroed.
+#'   Default is \code{TRUE}.
 #' @param max.iter Maximum number of optimization iterations. Default is 200.
 #' @param tol Convergence tolerance for B update. Default is 5e-4.
-#' @param trace Logical; if \code{TRUE}, prints progress. Default is \code{FALSE}.
+#' @param trace Logical; if \code{TRUE}, prints progress. Default is
+#'   \code{FALSE}.
 #' @param rseed Optional integer for reproducible random initialization of B.
-#' @param B Optional initial matrix for B. If not provided, initialized from SVD.
+#' @param B Optional initial matrix for B. If not provided, initialized
+#'   from SVD.
 #' @param scale Scaling factor for L1 and L2 when not provided. Default is 1.
 #' @param pos.adj Positive constraint adjustment divisor for L1. Default is 3.
-#' @param adaptive.p Controls adaptive sparsity in \code{Z}. After each ALS update,
+#' @param adaptive.p Controls adaptive sparsity in \code{Z}. After each ALS
+#'   update,
 #' negative entries in \code{Z} are assumed to reflect noise.
-#' The cutoff for thresholding is set according to the probability of positive values under
-#' a reflected negative distribution—effectively zeroing out small positive entries likely to be noise.
+#' The cutoff for thresholding is set according to the probability of
+#' positive values under a reflected negative distribution-effectively
+#' zeroing out small positive entries likely to be noise.
 #' Smaller values lead to more sparsity. Default is 0.05.
-#' @param adaptive.iter Number of iterations before adaptive sparsity is applied. Default is 20.
-#' @param cutoff Scalar threshold to zero Z values when \code{Zpos = TRUE} and adaptive thresholding
+#' @param adaptive.iter Number of iterations before adaptive sparsity is
+#'   applied. Default is 20.
+#' @param cutoff Scalar threshold to zero Z values when \code{Zpos = TRUE}
+#'   and adaptive thresholding
 #' is not used. Default is 0.
-#' @param ncores Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.
+#' @param ncores Number of cores to use for parallel computation (only used
+#'   if Y is an FBM). Default is 1.
 #' @param clamp_k_method Method for selecting `clamp_k` when not provided.
 #'   One of `"elbow"` (default), `"permutation"`, `"gavish_donoho"`, or
 #'   `"scaleSVs"`. Passed to [select_clamp_k()].
@@ -629,9 +710,10 @@ crossVal <- function(clampRes, priorMat, priorMatcv) {
 #' }
 #'
 #' @details
-#' This function is the low-level implementation of CLAMP. It alternates between solving for \code{Z}
-#' given \code{B} and solving for \code{B} given \code{Z}, with optional sparsity and non-negativity
-#' constraints on \code{Z}. Convergence is assessed via relative change in \code{B}.
+#' This function is the low-level implementation of CLAMP. It alternates
+#' between solving for \code{Z} given \code{B} and solving for \code{B}
+#' given \code{Z}, with optional sparsity and non-negativity constraints on
+#' \code{Z}. Convergence is assessed via relative change in \code{B}.
 #'
 #' @examples
 #' # small toy dataset: 5 genes x 4 samples
@@ -646,7 +728,8 @@ crossVal <- function(clampRes, priorMat, priorMatcv) {
 CLAMPbase <- function(
   Y, clamp_k = NULL, svd_k = NULL, svdres = NULL, L1 = NULL, L2 = NULL,
   Zpos = TRUE, max.iter = 200, tol = 5e-4, trace = FALSE,
-  rseed = NULL, B = NULL, scale = 1, pos.adj = 3, adaptive.p = 0.05, adaptive.iter = 20,
+  rseed = NULL, B = NULL, scale = 1, pos.adj = 3,
+  adaptive.p = 0.05, adaptive.iter = 20,
   cutoff = 0, ncores = 1, clamp_k_method = "elbow"
 ) {
     if (ncores > 1) {
@@ -715,11 +798,15 @@ CLAMPbase <- function(
     if (is.null(B)) {
         # initialize B with svd
 
-        B <- t(svdres$v[, seq_len(clamp_k)] %*% diag(sqrt(svdres$d[seq_len(clamp_k)])))
+        B <- t(
+            svdres$v[, seq_len(clamp_k)] %*%
+                diag(sqrt(svdres$d[seq_len(clamp_k)]))
+        )
 
         # alternative initializations
         # seem to be not as good
-        #   B <- t(svdres$v[seq_len(ncol(Y)), seq_len(k)] %*% diag(svdres$d[seq_len(k)]))
+        #   B <- t(svdres$v[seq_len(ncol(Y)), seq_len(k)] %*%
+        #          diag(svdres$d[seq_len(k)]))
         #   B <- t(svdres$v[seq_len(ncol(Y)), seq_len(k)])
     } else {
         message("B given")
@@ -740,7 +827,8 @@ CLAMPbase <- function(
 
     for (i in seq_len(max.iter)) {
         # main loop
-        Zraw <- Z <- mat_mult(Y, t(B), ncores = ncores) %*% solve(tcrossprod(B) + L1 * diag(clamp_k))
+        Zraw <- Z <- mat_mult(Y, t(B), ncores = ncores) %*%
+            solve(tcrossprod(B) + L1 * diag(clamp_k))
 
         if (i >= adaptive.iter && adaptive.p > 0) {
             cutoffs <- apply(Zraw, 2, getT)
@@ -759,7 +847,8 @@ CLAMPbase <- function(
             ZY <- Matrix::t(ZYt)
             B <- solve(Matrix::t(Z) %*% Z + L2k) %*% ZY
         } else {
-            B <- solve(Matrix::t(Z) %*% Z + L2k) %*% mat_mult(Matrix::t(Z), Y, ncores = ncores)
+            B <- solve(Matrix::t(Z) %*% Z + L2k) %*%
+                mat_mult(Matrix::t(Z), Y, ncores = ncores)
         }
 
         # update error
@@ -771,7 +860,10 @@ CLAMPbase <- function(
         BdiffTrace <- c(BdiffTrace, Bdiff)
 
         if (trace) {
-            message(sprintf("\rProgress %d / %d | Bdiff=%.6f, minCor=%.6f", i, max.iter, Bdiff, minCor))
+            message(sprintf(
+                "\rProgress %d / %d | Bdiff=%.6f, minCor=%.6f",
+                i, max.iter, Bdiff, minCor
+            ))
             flush.console()
         }
 
@@ -783,7 +875,10 @@ CLAMPbase <- function(
         }
 
         if (Bdiff < tol && i > adaptive.iter + 10) {
-            message(sprintf("Converged at iteration= %d | Bdiff=%.6f,  tol=%.6f     ", i, Bdiff, tol))
+            message(sprintf(
+                "Converged at iteration= %d | Bdiff=%.6f,  tol=%.6f     ",
+                i, Bdiff, tol
+            ))
             break
         }
         if (BdiffCount > 5 && i > adaptive.iter + 10) {
@@ -802,51 +897,72 @@ CLAMPbase <- function(
         options(default.nproc.blas = blas_nproc)
     }
 
-    return(list(B = as.matrix(B), Z = as.matrix(Z), Zraw = Zraw, L1 = L1, L2 = L2))
+    return(list(
+        B = as.matrix(B), Z = as.matrix(Z),
+        Zraw = Zraw, L1 = L1, L2 = L2
+    ))
 }
 
 #' Full CLAMP model with prior information and cross-validation
 #'
 #' Runs the full CLAMP model using a gene expression matrix
-#' and prior pathway annotation matrix. This function performs latent variable decomposition
-#' guided by prior knowledge and includes optional cross-validation to evaluate pathway associations.
+#' and prior pathway annotation matrix. This function performs latent
+#' variable decomposition guided by prior knowledge and includes optional
+#' cross-validation to evaluate pathway associations.
 #'
-#' @param Y Gene expression matrix (genes x samples). Can be dense, sparse (dgCMatrix), or FBM.
-#' @param priorMat Binary matrix (genes x pathways) representing prior annotations.
+#' @param Y Gene expression matrix (genes x samples). Can be dense, sparse
+#'   (dgCMatrix), or FBM.
+#' @param priorMat Binary matrix (genes x pathways) representing prior
+#'   annotations.
 #' @param svdres Optional SVD result used for initialization.
-#' @param clamp.base.result Optional result from \code{CLAMPbase()} to initialize B.
+#' @param clamp.base.result Optional result from \code{CLAMPbase()} to
+#'   initialize B.
 #' @param clamp_k Number of latent variables for CLAMP (final model rank).
 #'   If \code{NULL}, it is chosen from the SVD via \code{getScaleFromSVs}.
 #' @param svd_k Number of singular values/components to compute in the SVD.
 #'   If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.
-#' @param L1 Regularization strength for Z. If \code{NULL}, initialized from SVD or \code{clamp.base.result}.
-#' @param L2 Regularization strength for B. If \code{NULL}, initialized from SVD or \code{clamp.base.result}.
+#' @param L1 Regularization strength for Z. If \code{NULL}, initialized from
+#'   SVD or \code{clamp.base.result}.
+#' @param L2 Regularization strength for B. If \code{NULL}, initialized from
+#'   SVD or \code{clamp.base.result}.
 #' @param top If set, keeps only top-n values per column in Z during U updates.
 #' @param cvn Number of folds for cross-validation in U updates. Default is 5.
 #' @param max.iter Maximum number of iterations. Default is 350.
 #' @param trace Logical; if \code{TRUE}, prints iteration progress.
 #' @param Chat Optional precomputed matrix for solving U.
-#' @param maxPath Maximum number of pathways/features selected per LV. Default is 10.
-#' @param doCrossval Whether to perform pathway-level cross-validation. Default is \code{TRUE}.
-#' @param penalty.factor Vector of feature-specific penalties for glmnet. Default: all ones.
+#' @param maxPath Maximum number of pathways/features selected per LV.
+#'   Default is 10.
+#' @param doCrossval Whether to perform pathway-level cross-validation.
+#'   Default is \code{TRUE}.
+#' @param penalty.factor Vector of feature-specific penalties for glmnet.
+#'   Default: all ones.
 #' @param glm_alpha Elastic net mixing parameter for glmnet. Default is 0.9.
 #' @param minGenes Minimum number of genes per pathway to retain. Default is 10.
 #' @param tol Convergence tolerance on relative change in B. Default is 5e-4.
-#' @param seed Seed for reproducibility of cross-validation masking. Default is 123456.
-#' @param allGenes If \code{TRUE}, zero-fills \code{priorMat} for genes not present. Default is \code{FALSE}.
+#' @param seed Seed for reproducibility of cross-validation masking.
+#'   Default is 123456.
+#' @param allGenes If \code{TRUE}, zero-fills \code{priorMat} for genes not
+#'   present. Default is \code{FALSE}.
 #' @param rseed Optional seed for randomly reinitializing B and Z.
 #' @param max.U.updates Maximum number of U updates. Default is 5.
-#' @param pathwaySelection Pathway selection mode: \code{"fast"} or \code{"complete"}.
+#' @param pathwaySelection Pathway selection mode: \code{"fast"} or
+#'   \code{"complete"}.
 #' @param multiplier Scaling factor for adjusting L1 and L2.
-#' @param adaptive.p Quantile threshold for adaptively zeroing small Z values. After each update,
-#'   the \code{adaptive.p}-quantile of negative entries in Z is used (flipped positive) to threshold
+#' @param adaptive.p Quantile threshold for adaptively zeroing small Z
+#'   values. After each update, the \code{adaptive.p}-quantile of negative
+#'   entries in Z is used (flipped positive) to threshold
 #'   small positive values, assuming they reflect noise. Default is 0.05.
-#' @param useNNLS If \code{TRUE}, uses non-negative least squares in U estimation. Default is \code{TRUE}.
-#' @param useRaw If \code{TRUE}, uses unthresholded Z for solving U. Default is \code{TRUE}.
-#' @param refitAll If \code{TRUE}, refits all U columns every update. Default is \code{FALSE}.
-#' @param useSE Logical; passed to the internal \code{solveU()} call. If \code{TRUE},
-#'  enables standard-error–aware selection when fitting U (pathway coefficients). Default is \code{FALSE}.
-#' @param ncores Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.
+#' @param useNNLS If \code{TRUE}, uses non-negative least squares in U
+#'   estimation. Default is \code{TRUE}.
+#' @param useRaw If \code{TRUE}, uses unthresholded Z for solving U.
+#'   Default is \code{TRUE}.
+#' @param refitAll If \code{TRUE}, refits all U columns every update.
+#'   Default is \code{FALSE}.
+#' @param useSE Logical; passed to the internal \code{solveU()} call. If
+#'   \code{TRUE}, enables standard-error-aware selection when fitting U
+#'   (pathway coefficients). Default is \code{FALSE}.
+#' @param ncores Number of cores to use for parallel computation (only used
+#'   if Y is an FBM). Default is 1.
 #' @param clamp_k_method Method for selecting `clamp_k` when not provided.
 #'   One of `"elbow"` (default), `"permutation"`, `"gavish_donoho"`, or
 #'   `"scaleSVs"`. Passed to [select_clamp_k()].
@@ -857,10 +973,12 @@ CLAMPbase <- function(
 #'   \item{\code{U}}{Pathway loadings matrix (pathways x LVs)}
 #'   \item{\code{C}}{Masked prior matrix used for training}
 #'   \item{\code{L1}, \code{L2}}{Regularization parameters}
-#'   \item{\code{heldOutGenes}}{List of held-out genes per pathway (if CV is enabled)}
+#'   \item{\code{heldOutGenes}}{List of held-out genes per pathway (if CV
+#'     is enabled)}
 #'   \item{\code{Uauc}}{AUC matrix from CV evaluation (if enabled)}
 #'   \item{\code{Up}}{-\code{log10(p)} values from CV evaluation (if enabled)}
-#'   \item{\code{summary}}{Data frame of AUC, p-values, and FDR per pathway x LV (if enabled)}
+#'   \item{\code{summary}}{Data frame of AUC, p-values, and FDR per pathway
+#'     x LV (if enabled)}
 #'   \item{\code{priorMatCV}}{Masked prior matrix used during CV}
 #'   \item{\code{priorMat}}{Final filtered prior matrix}
 #'   \item{\code{withPrior}}{Indices of LVs with non-zero pathway loadings}
@@ -868,9 +986,11 @@ CLAMPbase <- function(
 #' }
 #'
 #' @details
-#' The model alternates between solving \code{Z}, \code{B}, and \code{U}. Adaptive sparsity is applied
-#' to \code{Z} using a dynamic threshold based on the negative tail of its distribution. Cross-validation
-#' is used to hold out gene annotations in \code{priorMat} and evaluate latent variable specificity.
+#' The model alternates between solving \code{Z}, \code{B}, and \code{U}.
+#' Adaptive sparsity is applied to \code{Z} using a dynamic threshold based
+#' on the negative tail of its distribution. Cross-validation is used to
+#' hold out gene annotations in \code{priorMat} and evaluate latent variable
+#' specificity.
 #'
 #' @examples
 #' mat <- matrix(rnorm(100), 10, 10)
@@ -885,13 +1005,16 @@ CLAMPbase <- function(
 #' @export
 CLAMPfullnVP <- function(
   Y, priorMat, svdres = NULL, clamp.base.result = NULL, clamp_k = NULL,
-  svd_k = NULL, L1 = NULL, L2 = NULL, top = NULL, cvn = 5, max.iter = 350, trace = FALSE, Chat = NULL, maxPath = 10, doCrossval = TRUE,
+  svd_k = NULL, L1 = NULL, L2 = NULL, top = NULL,
+  cvn = 5, max.iter = 350, trace = FALSE, Chat = NULL,
+  maxPath = 10, doCrossval = TRUE,
   penalty.factor = rep(1, ncol(priorMat)), glm_alpha = 0.9,
-  minGenes = 10, tol = 5e-4, seed = 123456, allGenes = FALSE, rseed = NULL,
+  minGenes = 10, tol = 5e-4, seed = 123456,
+  allGenes = FALSE, rseed = NULL,
   max.U.updates = 5, pathwaySelection = c("fast"), multiplier = 1,
-  adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitAll = FALSE, useSE = FALSE, ncores = 1,
-  clamp_k_method = "elbow"
-) {
+  adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE,
+  refitAll = FALSE, useSE = FALSE, ncores = 1,
+  clamp_k_method = "elbow") {
     if (ncores > 1) {
         # if we are parallelizing, then disable BLAS parallelization
         options(bigstatsr.check.parallel.blas = FALSE)
@@ -939,7 +1062,9 @@ CLAMPfullnVP <- function(
     if (doCrossval) {
         priorMatCV <- as.matrix(priorMat)
         if (!is.null(seed)) {
-            warning("`seed` is deprecated and ignored. Use set.seed(seed) before calling this function.",
+            warning(
+                "`seed` is deprecated and ignored. Use set.seed(seed) ",
+                "before calling this function.",
                 call. = FALSE
             )
         }
@@ -1002,7 +1127,10 @@ CLAMPfullnVP <- function(
         message("using provided CLAMPbase result")
         if (nrow(Y) != nrow(clamp.base.result$Z)) {
             if (is.null(rownames(Y)) | is.null(rownames(clamp.base.result$Z))) {
-                stop("Y and clamp.base.result$Z must have equal row numbers or row names")
+                stop(
+                    "Y and clamp.base.result$Z must have equal row ",
+                    "numbers or row names"
+                )
             }
             clamp.base.result$Z <- clamp.base.result$Z[rownames(Y), ]
         }
@@ -1031,7 +1159,8 @@ CLAMPfullnVP <- function(
 
     if (!is.null(rseed)) {
         message("Using random start")
-        # reproducibility is controlled by user calling set.seed before this function
+        # reproducibility is controlled by user calling set.seed before
+        # this function
         B <- t(apply(B, 1, sample))
         Z <- apply(Z, 2, sample)
     }
@@ -1055,7 +1184,8 @@ CLAMPfullnVP <- function(
         ZY <- Matrix::t(ZYt)
         B <- solve(Matrix::t(Z) %*% Z + L2k) %*% ZY
     } else {
-        B <- solve(Matrix::t(Z) %*% Z + L2k) %*% mat_mult(Matrix::t(Z), Y, ncores = ncores)
+        B <- solve(Matrix::t(Z) %*% Z + L2k) %*%
+            mat_mult(Matrix::t(Z), Y, ncores = ncores)
     }
 
     Zraw <- Z
@@ -1078,7 +1208,9 @@ CLAMPfullnVP <- function(
                 }
 
                 if (useRaw) {
-                    res <- solveU(Zraw, Chat, C, penalty.factor, pathwaySelection,
+                    res <- solveU(
+                        Zraw, Chat, C,
+                        penalty.factor, pathwaySelection,
                         glm_alpha, maxPath,
                         binary = FALSE, nfolds = cvn, top = top,
                         useNNLS = useNNLS, Uprev = Uprev, useSE = useSE
@@ -1109,7 +1241,8 @@ CLAMPfullnVP <- function(
 
             Z <- (Z1 + Z2) %*% solve(tcrossprod(B) + L1k)
         } else {
-            Z <- mat_mult(Y, t(B), ncores = ncores) %*% solve(tcrossprod(B) + L1k)
+            Z <- mat_mult(Y, t(B), ncores = ncores) %*%
+                solve(tcrossprod(B) + L1k)
         }
 
         if (adaptive.p > 0) {
@@ -1133,7 +1266,8 @@ CLAMPfullnVP <- function(
             B <- solve(Matrix::t(Z) %*% Z + L2k) %*% ZY
         } else {
             Z_mat <- if (inherits(Z, "matrix")) Z else as.matrix(Z)
-            B <- solve(Matrix::t(Z_mat) %*% Z + L2k) %*% mat_mult(Matrix::t(Z), Y, ncores = ncores)
+            B <- solve(Matrix::t(Z_mat) %*% Z + L2k) %*%
+                mat_mult(Matrix::t(Z), Y, ncores = ncores)
         }
 
         Bdiff <- sum((B - oldB)^2) / sum(B^2)
@@ -1142,7 +1276,10 @@ CLAMPfullnVP <- function(
         BdiffTrace <- c(BdiffTrace, Bdiff)
 
         if (trace) {
-            message(sprintf("\rProgress %d / %d | Bdiff=%.6f", iter, max.iter, Bdiff))
+            message(sprintf(
+                "\rProgress %d / %d | Bdiff=%.6f",
+                iter, max.iter, Bdiff
+            ))
             flush.console()
         }
 
@@ -1155,8 +1292,8 @@ CLAMPfullnVP <- function(
 
         if (Bdiff < tol & iter > u.iter + num.U.updates * 2 + 5) {
             message(sprintf(
-                "\rConverged at %d / %d | Bdiff=%.6f, minCor=%.6f\n", iter, max.iter,
-                Bdiff, minCor
+                "\rConverged at %d / %d | Bdiff=%.6f, minCor=%.6f\n",
+                iter, max.iter, Bdiff, minCor
             ))
             break
         }
@@ -1171,7 +1308,10 @@ CLAMPfullnVP <- function(
     if (!is.null(rownames(Y))) rownames(Z) <- rownames(Y)
     if (!is.null(colnames(Y))) colnames(B) <- colnames(Y)
 
-    out <- list(B = B, Z = Z, U = U, C = C, L1 = L1, L2 = L2, heldOutGenes = heldOutGenes)
+    out <- list(
+        B = B, Z = Z, U = U, C = C,
+        L1 = L1, L2 = L2, heldOutGenes = heldOutGenes
+    )
 
     if (doCrossval) {
         if (adaptive.p != 0) {
@@ -1221,8 +1361,10 @@ CLAMPfullnVP <- function(
 #'   \code{CLAMPbase()}, containing at least \code{Z} and \code{L2}.
 #' @param newdata A gene expression matrix (genes x samples) to be projected.
 #'   Can be a standard matrix, sparse matrix, or FBM/big.matrix.
-#' @param scale Optional numeric multiplier for the L2 regularization terms. Default is 1.
-#' @param ncores Number of cores to use for parallel computation (only used if newdata is an FBM).
+#' @param scale Optional numeric multiplier for the L2 regularization terms.
+#'   Default is 1.
+#' @param ncores Number of cores to use for parallel computation (only used
+#'   if newdata is an FBM).
 #'  Default is 1.
 #' @param align Logical; if \code{TRUE} (default), row names shared by
 #'   \code{CLAMPres$Z} and \code{newdata} are used to align both matrices to
@@ -1230,7 +1372,8 @@ CLAMPfullnVP <- function(
 #'   available, dimensions must already match.
 #' @param verbose Logical; if \code{TRUE} (default), report how many common
 #'   rows are used for projection.
-#' @return A matrix \code{B} of projected latent loadings (LVs x samples) for the new dataset.
+#' @return A matrix \code{B} of projected latent loadings (LVs x samples)
+#'   for the new dataset.
 #'
 #' @details
 #' This function uses ridge-regularized least squares to compute
@@ -1287,12 +1430,13 @@ projectCLAMP <- function(CLAMPres, newdata, scale = 1, ncores = 1,
     } else {
         if (nrow(Z_matrix) != nrow(newdata)) {
             stop(
-                "CLAMPres$Z and newdata have different numbers of rows and cannot ",
-                "be aligned because row names are missing."
+                "CLAMPres$Z and newdata have different numbers of rows ",
+                "and cannot be aligned because row names are missing."
             )
         }
 
-        if (!is.null(z_genes) && !is.null(new_genes) && !identical(z_genes, new_genes)) {
+        if (!is.null(z_genes) && !is.null(new_genes) &&
+            !identical(z_genes, new_genes)) {
             stop(
                 "CLAMPres$Z and newdata row names are not in the same order. ",
                 "Use align = TRUE to align common genes automatically."
@@ -1300,7 +1444,10 @@ projectCLAMP <- function(CLAMPres, newdata, scale = 1, ncores = 1,
         }
 
         if (verbose && (is.null(z_genes) || is.null(new_genes))) {
-            message("Row names unavailable; assuming CLAMPres$Z and newdata are already aligned.")
+            message(
+                "Row names unavailable; assuming CLAMPres$Z and newdata ",
+                "are already aligned."
+            )
         }
     }
 
@@ -1389,7 +1536,8 @@ run_permutation <- function(data, d, B = 20) {
 
 #' Estimate number of principal components via elbow or permutation method
 #'
-#' @param data    Either a matrix (e.g. z-scored data) or an SVD result (list with $d).
+#' @param data    Either a matrix (e.g. z-scored data) or an SVD result
+#'   (list with $d).
 #' @param method  One of "elbow" (fast) or "permutation" (slower).
 #' @param B       Number of permutations (for method = "permutation").
 #' @param seed    Seed for reproducibility.
@@ -1402,7 +1550,8 @@ run_permutation <- function(data, d, B = 20) {
 #' # slower permutation estimate (use fewer perms for example speed)
 #' num.pc(mat, method = "permutation", B = 5)
 #' @export
-num.pc <- function(data, method = c("elbow", "permutation"), B = 20, seed = NULL) {
+num.pc <- function(data, method = c("elbow", "permutation"),
+                   B = 20, seed = NULL) {
     method <- match.arg(method)
     if (!is.null(seed)) {
         warning(
@@ -1449,7 +1598,8 @@ num.pc <- function(data, method = c("elbow", "permutation"), B = 20, seed = NULL
 #'
 #' @param M A numeric matrix.
 #' @param k Integer; number of top elements to cap. Must be >= 1 and <= nrow(M).
-#' @return A numeric matrix of the same dimensions as \code{M}, winsorized per column.
+#' @return A numeric matrix of the same dimensions as \code{M}, winsorized
+#'   per column.
 #' @export
 #' @examples
 #' set.seed(123)
@@ -1524,7 +1674,10 @@ cross_ZY <- function(Y, Z) {
 #' k <- 5
 #'
 #' Y <- matrix(rnorm(50 * 20), nrow = 50, dimnames = list(genes, samples))
-#' Z <- matrix(rnorm(50 * k), nrow = 50, dimnames = list(genes, paste0("LV", 1:k)))
+#' Z <- matrix(rnorm(50 * k),
+#'     nrow = 50,
+#'     dimnames = list(genes, paste0("LV", 1:k))
+#' )
 #'
 #' lambda <- 0.1
 #' L2k <- diag(lambda, k)
@@ -1542,53 +1695,73 @@ ridge_B <- function(Y, Z, L2k) {
 
 #' Runs the streamlined full CLAMP model.
 #'
-#' This version performs latent-variable decomposition of a gene expression matrix \code{Y}
-#' guided by prior pathway annotations \code{priorMat}, with simplified and lighter regularization
-#' compared to the original extended CLAMP variant. The algorithm alternates updates of \code{Z},
-#' \code{B}, and \code{U}, where \code{U} captures pathway–latent variable associations inferred
-#' directly from the data without ridge-regularized projections (\code{Chat} is not used).
+#' This version performs latent-variable decomposition of a gene expression
+#' matrix \code{Y} guided by prior pathway annotations \code{priorMat}, with
+#' simplified and lighter regularization compared to the original extended
+#' CLAMP variant. The algorithm alternates updates of \code{Z}, \code{B},
+#' and \code{U}, where \code{U} captures pathway-latent variable
+#' associations inferred directly from the data without ridge-regularized
+#' projections (\code{Chat} is not used).
 #'
-#' Cross-validation can be used to evaluate pathway–LV specificity, and a variance-based prior
-#' (\code{var.prior = TRUE}) introduces adaptive shrinkage of \code{Z} based on how strongly
-#' each latent component aligns with prior pathways. The scaling factor \code{multiplier} (default 5)
+#' Cross-validation can be used to evaluate pathway-LV specificity, and a
+#' variance-based prior (\code{var.prior = TRUE}) introduces adaptive
+#' shrinkage of \code{Z} based on how strongly each latent component aligns
+#' with prior pathways. The scaling factor \code{multiplier} (default 5)
 #' controls the strength of this adaptive shrinkage.
 #'
-#' @param Y Gene expression matrix (genes × samples). Can be dense, sparse (dgCMatrix), or FBM.
-#' @param priorMat Binary or weighted prior matrix (genes × pathways) linking genes to pathways.
+#' @param Y Gene expression matrix (genes x samples). Can be dense, sparse
+#'   (dgCMatrix), or FBM.
+#' @param priorMat Binary or weighted prior matrix (genes x pathways)
+#'   linking genes to pathways.
 #' @param Chat Ignored in this version (kept for interface compatibility).
 #' @param svdres Optional precomputed SVD result for initialization.
-#' @param clamp.base.result Optional result from \code{CLAMPbase()} providing initial values.
+#' @param clamp.base.result Optional result from \code{CLAMPbase()}
+#'   providing initial values.
 #' @param clamp_k Number of latent variables for CLAMP (final model rank).
 #'   If \code{NULL}, it is chosen from the SVD via \code{getScaleFromSVs}.
 #' @param svd_k Number of singular values/components to compute in the SVD.
 #'   If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.
-#' @param L1,L2 Regularization parameters for \code{Z} and \code{B}. Defaults use values from
+#' @param L1,L2 Regularization parameters for \code{Z} and \code{B}.
+#'   Defaults use values from
 #'   \code{clamp.base.result}.
 #' @param cvn Number of folds for pathway-level cross-validation. Default: 5.
 #' @param max.iter Maximum number of outer iterations. Default: 30.
 #' @param trace Logical; print iteration progress. Default: \code{TRUE}.
-#' @param maxPath Maximum number of pathways per LV during U-fitting. Default: 10.
-#' @param doCrossval Whether to mask prior entries for CV evaluation. Default: \code{TRUE}.
-#' @param penalty.factor Optional vector of per-pathway penalties for glmnet. Default: 1.
+#' @param maxPath Maximum number of pathways per LV during U-fitting.
+#'   Default: 10.
+#' @param doCrossval Whether to mask prior entries for CV evaluation.
+#'   Default: \code{TRUE}.
+#' @param penalty.factor Optional vector of per-pathway penalties for glmnet.
+#'   Default: 1.
 #' @param glm_alpha Elastic net mixing parameter for U estimation. Default: 0.9.
 #' @param minGenes Minimum number of genes per pathway. Default: 0.
 #' @param tol Convergence tolerance for B updates. Default: 5e-4.
 #' @param seed Random seed for CV masking. Default: 123456.
-#' @param allGenes If \code{TRUE}, adds zero-filled rows for missing genes. Default: \code{FALSE}.
-#' @param rseed Reproducibility, coordinate descent updates are done in random order.
+#' @param allGenes If \code{TRUE}, adds zero-filled rows for missing genes.
+#'   Default: \code{FALSE}.
+#' @param rseed Reproducibility, coordinate descent updates are done in
+#'   random order.
 #' @param max.U.updates Maximum number of U updates (capped by max.iter).
-#' @param pathwaySelection Pathway selection mode for U fitting (\code{"fast"} or \code{"complete"}).
+#' @param pathwaySelection Pathway selection mode for U fitting
+#'   (\code{"fast"} or \code{"complete"}).
 #' @param multiplier Variance-prior scaling factor. Default: 5.
-#' @param adaptive.p Quantile of negative Z values used to define adaptive thresholding. Default: 0.05.
-#' @param useNNLS Whether to use non-negative least squares for U estimation. Default: \code{TRUE}.
-#' @param useRaw If \code{TRUE}, uses unthresholded Z in U updates. Default: \code{TRUE}.
+#' @param adaptive.p Quantile of negative Z values used to define adaptive
+#'   thresholding. Default: 0.05.
+#' @param useNNLS Whether to use non-negative least squares for U estimation.
+#'   Default: \code{TRUE}.
+#' @param useRaw If \code{TRUE}, uses unthresholded Z in U updates.
+#'   Default: \code{TRUE}.
 #' @param refitEvery Frequency (in U updates) of full refits. Default: 3.
-#' @param var.prior Logical; if \code{TRUE}, enables adaptive variance prior updates for Z.
+#' @param var.prior Logical; if \code{TRUE}, enables adaptive variance prior
+#'   updates for Z.
 #'   Default: \code{TRUE}.
 #' @param Uscale Logical; whether to scale U columns. Default: \code{FALSE}.
-#' @param robust.vp Logical; winsorize prior-predicted Z2 values to reduce outlier effects. Default: \code{TRUE}.
-#' @param useSE Logical; whether to use the 1-standard-error rule for internal glmnet fitting. Default is FALSE.
-#' @param use_cpp Logical; if TRUE, use C++ implementation for Z updates. Default is FALSE.
+#' @param robust.vp Logical; winsorize prior-predicted Z2 values to reduce
+#'   outlier effects. Default: \code{TRUE}.
+#' @param useSE Logical; whether to use the 1-standard-error rule for
+#'   internal glmnet fitting. Default is FALSE.
+#' @param use_cpp Logical; if TRUE, use C++ implementation for Z updates.
+#'   Default is FALSE.
 #' @param clamp_k_method Method for selecting `clamp_k` when not provided.
 #'   One of `"elbow"` (default), `"permutation"`, `"gavish_donoho"`, or
 #'   `"scaleSVs"`. Passed to [select_clamp_k()].
@@ -1606,10 +1779,13 @@ ridge_B <- function(Y, Z, L2k) {
 #' }
 #'
 #' @details
-#' This implementation omits ridge-projected priors (\code{Chat}) and uses a lighter variance prior
-#' with a lower default \code{multiplier = 5}, allowing more flexible latent representations.
-#' Setting \code{var.prior = FALSE} reproduces standard CLAMP-like updates. Cross-validation, if
-#' enabled, masks 20% of gene–pathway associations per column to estimate pathway–LV specificity
+#' This implementation omits ridge-projected priors (\code{Chat}) and uses
+#' a lighter variance prior with a lower default \code{multiplier = 5},
+#' allowing more flexible latent representations. Setting
+#' \code{var.prior = FALSE} reproduces standard CLAMP-like updates.
+#' Cross-validation, if
+#' enabled, masks 20% of gene-pathway associations per column to estimate
+#' pathway-LV specificity
 #' (reported via AUC and p-values).
 #'
 #' @examples
@@ -1631,15 +1807,19 @@ ridge_B <- function(Y, Z, L2k) {
 #' )
 #' @export
 CLAMPfull <- function(
-  Y, priorMat, Chat = NULL, svdres = NULL, clamp.base.result = NULL, clamp_k = NULL,
-  svd_k = NULL, L1 = NULL, L2 = NULL, cvn = 5, max.iter = 30, trace = TRUE, maxPath = 10, doCrossval = TRUE,
+  Y, priorMat, Chat = NULL, svdres = NULL,
+  clamp.base.result = NULL, clamp_k = NULL,
+  svd_k = NULL, L1 = NULL, L2 = NULL, cvn = 5,
+  max.iter = 30, trace = TRUE, maxPath = 10, doCrossval = TRUE,
   penalty.factor = rep(1, ncol(priorMat)), glm_alpha = 0.9,
-  minGenes = 0, tol = 5e-4, seed = 123456, allGenes = FALSE, rseed = NULL,
-  max.U.updates = Inf, pathwaySelection = c("fast", "complete"), multiplier = 5,
+  minGenes = 0, tol = 5e-4, seed = 123456,
+  allGenes = FALSE, rseed = NULL,
+  max.U.updates = Inf,
+  pathwaySelection = c("fast", "complete"), multiplier = 5,
   adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitEvery = 3,
-  useSE = FALSE, var.prior = TRUE, Uscale = FALSE, robust.vp = TRUE, use_cpp = FALSE,
-  clamp_k_method = "elbow"
-) {
+  useSE = FALSE, var.prior = TRUE, Uscale = FALSE,
+  robust.vp = TRUE, use_cpp = FALSE,
+  clamp_k_method = "elbow") {
     if (is.infinite(max.U.updates)) max.U.updates <- max.iter
 
     getT <- function(x) -stats::quantile(x[x < 0], adaptive.p)
@@ -1667,13 +1847,15 @@ CLAMPfull <- function(
             mvarForward <- mean(Zinput[iiiforward, zi]^2)
             # foreground predicted in Z2
             mvarPredicted <- mean(Z2[iiiforward, zi]^2)
-            # this offset will use the implied foreground variance scale from actual Z
+            # this offset will use the implied foreground variance scale
+            # from actual Z
             # as opposed to the predcicted on in Z2
             offset <- mvarForward / mvarPredicted
             # compute the predicted variance
             Z2var <- Z2[, zi]^2 * offset
             # compute a fold change - 1 and clip at 0
-            # 1 will be added later ensuring that the background variance scale is always L1
+            # 1 will be added later ensuring that the background variance
+            # scale is always L1
             Zmultiplier[, zi] <- pmax((Z2var / mvarBack) - 1, 0)
         }
         Zmultiplier
@@ -1763,7 +1945,10 @@ CLAMPfull <- function(
         message("using provided CLAMPbase result")
         if (nrow(Y) != nrow(clamp.base.result$Z)) {
             if (is.null(rownames(Y)) | is.null(rownames(clamp.base.result$Z))) {
-                stop("Y and clamp.base.result$Z must have equal row numbers or row names")
+                stop(
+                    "Y and clamp.base.result$Z must have equal row ",
+                    "numbers or row names"
+                )
             }
             clamp.base.result$Z <- clamp.base.result$Z[rownames(Y), ]
         }
@@ -1823,14 +2008,26 @@ CLAMPfull <- function(
     start_time <- Sys.time()
     for (iter in seq_len(max.iter)) {
         if (iter == 4) {
-            iter_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+            iter_time <- as.numeric(
+                difftime(Sys.time(), start_time, units = "secs")
+            )
             est_total <- iter_time * max.iter / 4
-            message(sprintf("Estimated total runtime: ~%.1f min", est_total / 60))
+            message(sprintf(
+                "Estimated total runtime: ~%.1f min", est_total / 60
+            ))
         }
         if (iter >= u.iter) { # do U
             if (num.U.updates < max.U.updates) { # actually update U
-                if (any(Zraw < 0)) stop("Zraw has negative entries before U update")
-                Uprev <- if (num.U.updates %% refitEvery == 0 || iter == u.iter) NULL else U
+                if (any(Zraw < 0)) {
+                    stop("Zraw has negative entries before U update")
+                }
+                Uprev <- if (
+                    num.U.updates %% refitEvery == 0 || iter == u.iter
+                ) {
+                    NULL
+                } else {
+                    U
+                }
                 if (!is.null(Uprev)) {
                     #  print("Reusing previous")
                 } else {
@@ -1841,7 +2038,8 @@ CLAMPfull <- function(
                 res <- solveU(Zinput, NULL, C, penalty.factor, pathwaySelection,
                     glm_alpha, maxPath,
                     binary = FALSE, nfolds = cvn,
-                    useNNLS = useNNLS, Uprev = Uprev, useSE = useSE, scale = Uscale, useAUC = TRUE
+                    useNNLS = useNNLS, Uprev = Uprev, useSE = useSE,
+                    scale = Uscale, useAUC = TRUE
                 )
 
                 U <- res$U
@@ -1865,27 +2063,34 @@ CLAMPfull <- function(
 
                 if (use_cpp) {
                     if (!is_fbm) {
-                        updateZcpp(Z, Y, B, B2, bk2_all, YBt, Q, Zmultiplier, L1, multiplier, 3, iter)
+                        updateZcpp(
+                            Z, Y, B, B2, bk2_all, YBt, Q,
+                            Zmultiplier, L1, multiplier, 3, iter
+                        )
                     } else {
-                        updateZcpp(Z, Y$address, B, B2, bk2_all, YBt, Q, Zmultiplier,
-                            L1, multiplier, 3, iter,
+                        updateZcpp(
+                            Z, Y$address, B, B2, bk2_all, YBt, Q,
+                            Zmultiplier, L1, multiplier, 3, iter,
                             Y_is_fbm = TRUE, n = nrow(Y), p = ncol(Y)
                         )
                     }
                 } else {
                     for (inner.iter in seq_len(3)) {
                         for (k_index in sample.int(clamp_k)) {
-                            gene_var <- L1 * (1 / (multiplier * Zmultiplier[, k_index] + 1))
+                            gene_var <- L1 *
+                                (1 / (multiplier * Zmultiplier[, k_index] + 1))
 
                             bk2 <- bk2_all[k_index]
                             denom <- bk2 + gene_var
-                            num <- YBt[, k_index] - Q[, k_index] + Z[, k_index] * bk2
+                            num <- YBt[, k_index] - Q[, k_index] +
+                                Z[, k_index] * bk2
 
                             newZk <- num / denom
                             delta <- newZk - Z[, k_index]
                             Z[, k_index] <- newZk
 
-                            Q <- Q + tcrossprod(delta, B2[k_index, ]) # rank-1 n×1 * 1×k
+                            # rank-1 n*1 * 1*k
+                            Q <- Q + tcrossprod(delta, B2[k_index, ])
 
                             # if (anyNA(Z)) stop()
                         } # end for k
@@ -1918,7 +2123,10 @@ CLAMPfull <- function(
         Bdiff <- sum((B - oldB)^2) / sum(B^2)
         BdiffTrace <- c(BdiffTrace, Bdiff)
         if (trace) {
-            message(sprintf("\rProgress %d / %d | Bdiff=%.6f", iter, max.iter, Bdiff))
+            message(sprintf(
+                "\rProgress %d / %d | Bdiff=%.6f",
+                iter, max.iter, Bdiff
+            ))
             utils::flush.console()
         }
         if (iter > 52 && Bdiff > BdiffTrace[iter - 50]) {
@@ -1928,7 +2136,10 @@ CLAMPfull <- function(
             BdiffCount <- BdiffCount - 1
         }
         if (Bdiff < tol && iter > u.iter + num.U.updates * 2 + 5) {
-            message(sprintf("\rConverged at %d / %d | Bdiff=%.6f", iter, max.iter, Bdiff))
+            message(sprintf(
+                "\rConverged at %d / %d | Bdiff=%.6f",
+                iter, max.iter, Bdiff
+            ))
             break
         }
         if (BdiffCount > 5) {
@@ -1942,7 +2153,11 @@ CLAMPfull <- function(
     rownames(Z) <- rownames(Y)
     if (!is.null(colnames(Y))) colnames(B) <- colnames(Y)
 
-    out <- list(B = B, Z = Z, U = U, C = C, L1 = L1, L2 = L2, Z2 = Z2, heldOutGenes = heldOutGenes)
+    out <- list(
+        B = B, Z = Z, U = U, C = C,
+        L1 = L1, L2 = L2, Z2 = Z2,
+        heldOutGenes = heldOutGenes
+    )
 
     if (doCrossval) {
         if (adaptive.p != 0) {
@@ -1952,8 +2167,15 @@ CLAMPfull <- function(
         }
         message("crossValidation")
         priorMat_m <- as.matrix(priorMat)
-        priorMatCV_m <- if (exists("priorMatCV")) as.matrix(priorMatCV) else as.matrix(priorMat)
-        outAUC <- crossVal(out, priorMat, if (exists("priorMatCV")) priorMatCV else priorMat)
+        priorMatCV_m <- if (exists("priorMatCV")) {
+            as.matrix(priorMatCV)
+        } else {
+            as.matrix(priorMat)
+        }
+        outAUC <- crossVal(
+            out, priorMat,
+            if (exists("priorMatCV")) priorMatCV else priorMat
+        )
         out$Z <- Z
         out$Uauc <- outAUC$Uauc
         out$Up <- outAUC$Upval
@@ -1976,19 +2198,24 @@ CLAMPfull <- function(
 
 #' Subset and filter multiple pathway matrices to match target genes
 #'
-#' Filters one or more gene-by-pathway annotation matrices to retain only pathways
+#' Filters one or more gene-by-pathway annotation matrices to retain only
+#' pathways
 #' with sufficient overlap with a given target gene set. Each input matrix is
 #' restricted to \code{new.genes}, and pathways with fewer than \code{min.genes}
 #' overlapping genes are removed. The resulting matrices are column-bound into a
 #' single sparse matrix aligned to \code{new.genes}.
 #'
-#' @param ... One or more binary matrices (genes × pathways), either base \code{matrix}
+#' @param ... One or more binary matrices (genes x pathways), either base
+#'   \code{matrix}
 #'   or sparse \code{Matrix} objects. Row names must be gene identifiers.
-#' @param new.genes Character vector of gene names to align all pathway matrices to.
-#' @param min.genes Integer; minimum number of overlapping genes required for a pathway
+#' @param new.genes Character vector of gene names to align all pathway
+#'   matrices to.
+#' @param min.genes Integer; minimum number of overlapping genes required
+#'   for a pathway
 #'   to be retained. Default is 10.
 #'
-#' @return A sparse binary matrix with rows equal to \code{new.genes} and columns equal to
+#' @return A sparse binary matrix with rows equal to \code{new.genes} and
+#'   columns equal to
 #'   the union of filtered pathways from all input matrices.
 #' @export
 #' @examples
@@ -2013,7 +2240,9 @@ CLAMPfull <- function(
 #' new.genes <- sample(genes, 50)
 #'
 #' # Match and filter pathways with at least 5 genes
-#' matched <- getMatchedPathwayMatList(mat1, mat2, new.genes = new.genes, min.genes = 5)
+#' matched <- getMatchedPathwayMatList(mat1, mat2,
+#'     new.genes = new.genes, min.genes = 5
+#' )
 getMatchedPathwayMatList <- function(..., new.genes, min.genes = 10) {
     pathMats <- list(...)
 
