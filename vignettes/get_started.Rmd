@@ -152,8 +152,9 @@ grViz('
    full -> summaryTbl
    full -> Umat
  }',
- width = "100%",
- height = "900px")
+    width = "100%",
+    height = "900px"
+)
 ```
 
 # Quick Start
@@ -268,17 +269,27 @@ wb_baseRes <- CLAMPbase(
 
 Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
 
-```{r priors, message=FALSE}
-# Download pathway and cell marker libraries from Enrichr
+```{r priors-download, eval=FALSE}
+# How to download pathway and cell marker libraries from Enrichr.
+# Not run during vignette build to avoid network calls; pre-fetched
+# .rds files are loaded in the next chunk instead.
 gmtList <- list(
-  CellMarkers = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
-    "CellMarker_2024"
-  ),
-  KEGG = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
-    "KEGG_2021_Human"
-  )
+    CellMarkers = getGMT(
+        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
+        "CellMarker_2024"
+    ),
+    KEGG = getGMT(
+        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
+        "KEGG_2021_Human"
+    )
+)
+```
+
+```{r priors, message=FALSE}
+# Load pre-fetched gene set libraries bundled with the package
+gmtList <- list(
+    CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
+    KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
 )
 
 # Combine into a single sparse matrix
@@ -289,9 +300,9 @@ data("xCell")
 
 # Match pathways to the gene space of whole blood
 matchedPathsWB <- getMatchedPathwayMatList(
-  pathMatCell, xCell,
-  new.genes = rownames(dataWholeBlood),
-  min.genes = 2
+    pathMatCell, xCell,
+    new.genes = rownames(dataWholeBlood),
+    min.genes = 2
 )
 ```
 
@@ -314,7 +325,7 @@ wb_fullRes <- CLAMPfull(
     svdres = wb_svd,
     clamp_k = wb_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
@@ -324,8 +335,6 @@ wb_fullRes <- CLAMPfull(
 wb_summary_df <- as.data.frame(wb_fullRes$summary) %>%
     dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -426,11 +435,20 @@ alz_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r fbm-priors, message=FALSE}
+```{r fbm-priors-download, eval=FALSE}
+# How to fetch the libraries; not run during vignette build.
 alz_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
     MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+)
+```
+
+```{r fbm-priors, message=FALSE}
+alz_gmtList <- list(
+    GTEx_Tissues = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
+    BP           = readRDS(system.file("extdata", "GO_Biological_Process_2025.rds", package = "CLAMP")),
+    MSigDB       = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 alz_pathMat <- gmtListToSparseMat(alz_gmtList)
@@ -447,7 +465,7 @@ alz_fullRes <- CLAMPfull(
     svdres = alz_svd,
     clamp_k = alz_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
@@ -455,9 +473,7 @@ alz_fullRes <- CLAMPfull(
 ```{r fbm-summary}
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
     filter(FDR < 0.05 & AUC > 0.7) %>%
-  dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
+    dplyr::arrange(FDR) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -485,13 +501,14 @@ diabetic (T2D) samples.
 
 ```{r islet-load, message=FALSE}
 islet_file <- GSE164416_DP_htseq_counts_txt_gz()
-islet_df <- read.table(gzfile(islet_file), header = TRUE, stringsAsFactors = FALSE) 
+islet_df <- read.table(gzfile(islet_file), header = TRUE, stringsAsFactors = FALSE)
 
-islet_df$symbol <- mapIds( org.Hs.eg.db,
-                           keys = islet_df$ensembl,
-                           column = "SYMBOL",
-                           keytype = "ENSEMBL",
-                           multiVals = "first" )
+islet_df$symbol <- mapIds(org.Hs.eg.db,
+    keys = islet_df$ensembl,
+    column = "SYMBOL",
+    keytype = "ENSEMBL",
+    multiVals = "first"
+)
 
 islet_df <- islet_df[!is.na(islet_df$symbol), ]
 ```
@@ -521,9 +538,10 @@ prep_is <- preprocessCLAMP(
 iso_Yf <- prep_is$Y_filtered
 iso_rowS <- prep_is$rowStats
 
-iso_Yz <- zscoreCLAMP(Y_filtered = iso_Yf,
-                      rowStats = iso_rowS)
-
+iso_Yz <- zscoreCLAMP(
+    Y_filtered = iso_Yf,
+    rowStats = iso_rowS
+)
 ```
 
 ## Compute SVD and infer k
@@ -550,11 +568,20 @@ islet_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r islet-priors, message=FALSE}
+```{r islet-priors-download, eval=FALSE}
+# How to fetch the libraries; not run during vignette build.
 islet_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     Diabetes_Perturbations = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"),
     MSigDB_Hallmark = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+)
+```
+
+```{r islet-priors, message=FALSE}
+islet_gmtList <- list(
+    GTEx_Tissues           = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
+    Diabetes_Perturbations = readRDS(system.file("extdata", "Diabetes_Perturbations_GEO_2022.rds", package = "CLAMP")),
+    MSigDB_Hallmark        = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 islet_pathMat <- gmtListToSparseMat(islet_gmtList)
@@ -572,7 +599,7 @@ islet_fullRes <- CLAMPfull(
     svdres = islet_svd,
     clamp_k = islet_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
@@ -581,8 +608,6 @@ islet_fullRes <- CLAMPfull(
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
     filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
-    dplyr::rename(LV = "LV_index") %>%
-    dplyr::mutate(LV = paste0("LV", LV)) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -742,10 +767,10 @@ scan which pathways drive each latent variable.
 
 ```{r plot-U, message=FALSE, fig.width=14, fig.height=10}
 CLAMPplotU(
-  wb_fullRes,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.05,
-  top        = 3
+    wb_fullRes,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.05,
+    top        = 3
 )
 ```
 
@@ -760,10 +785,10 @@ are labelled directly.
 lv_with_paths <- wb_fullRes$withPrior[seq_len(min(4, length(wb_fullRes$withPrior)))]
 
 CLAMPplotTopZ(
-  wb_fullRes,
-  top       = 50,
-  label.top = 10,
-  index     = lv_with_paths
+    wb_fullRes,
+    top       = 50,
+    label.top = 10,
+    index     = lv_with_paths
 )
 ```
 
@@ -773,10 +798,10 @@ Only one LV:
 lv_with_paths <- wb_fullRes$withPrior[1]
 
 CLAMPplotTopZ(
-  wb_fullRes,
-  top       = 50,
-  label.top = 10,
-  index     = lv_with_paths
+    wb_fullRes,
+    top       = 50,
+    label.top = 10,
+    index     = lv_with_paths
 )
 ```
 ## Single-LV pathway dot plot (`CLAMPdotplot`)
@@ -790,13 +815,13 @@ Plot order by AUC:
 
 ```{r plot-dot, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
 CLAMPdotplot(
-  wb_fullRes,
-  lv         = 'LV2',
-  top        = 15,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.1,
-  x.axis     = "AUC",
-  order.by   = "AUC"
+    wb_fullRes,
+    lv         = "LV2",
+    top        = 15,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.1,
+    x.axis     = "AUC",
+    order.by   = "AUC"
 )
 ```
 
@@ -804,13 +829,13 @@ Plot order by FDR:
 
 ```{r plot-dot-fdr, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
 CLAMPdotplot(
-  wb_fullRes,
-  lv         = 'LV2',
-  top        = 15,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.1,
-  x.axis     = "-log10(FDR)",
-  order.by   = "-log10(FDR)"
+    wb_fullRes,
+    lv         = "LV2",
+    top        = 15,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.1,
+    x.axis     = "-log10(FDR)",
+    order.by   = "-log10(FDR)"
 )
 ```
 
@@ -822,10 +847,10 @@ encodes `-log10(FDR)`.
 
 ```{r plot-dotAll, message=FALSE, fig.width=10, fig.height=7.5, out.width='100%'}
 CLAMPdotplotAll(
-  wb_fullRes,
-  auc.cutoff = 0.65,
-  fdr.cutoff = 0.05,
-  top.per.lv = 5
+    wb_fullRes,
+    auc.cutoff = 0.65,
+    fdr.cutoff = 0.05,
+    top.per.lv = 5
 )
 ```
 

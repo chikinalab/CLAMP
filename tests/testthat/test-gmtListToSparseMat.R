@@ -1,4 +1,4 @@
-test_that("gmtListToSparseMat builds a sparse matrix with correct dims and values", {
+test_that("gmtListToSparseMat builds sparse matrix with correct dims/values", {
     nested <- list(
         lib1 = list(A = letters[1:3], B = letters[2:4]),
         lib2 = list(C = letters[5:6])

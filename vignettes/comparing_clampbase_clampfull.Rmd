@@ -15,12 +15,12 @@ vignette: >
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  cache = FALSE,
-  dev = "png",
-  dev.args = list(type = "cairo")
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    cache = FALSE,
+    dev = "png",
+    dev.args = list(type = "cairo")
 )
 library(CLAMP)
 ```
@@ -46,7 +46,7 @@ We illustrate how to:
 ```{r load-data}
 data("dataWholeBlood")
 data("majorCellTypes")
-data('celltypeTargets')
+data("celltypeTargets")
 
 # Scale each gene to mean 0 and variance 1
 dataWholeBlood <- tscale(dataWholeBlood)
@@ -54,17 +54,27 @@ dataWholeBlood <- tscale(dataWholeBlood)
 
 ## 2. Load Prior Knowledge Matrices
 
-```{r load-priors}
-# Download pathway and cell marker libraries from Enrichr
+```{r load-priors-download, eval=FALSE}
+# How to download pathway and cell marker libraries from Enrichr.
+# Not run during vignette build to avoid network calls; pre-fetched
+# .rds files are loaded in the next chunk instead.
 gmtList <- list(
-  CellMarkers = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
-    "CellMarker_2024"
-  ),
-  KEGG = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
-    "KEGG_2021_Human"
-  )
+    CellMarkers = getGMT(
+        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
+        "CellMarker_2024"
+    ),
+    KEGG = getGMT(
+        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
+        "KEGG_2021_Human"
+    )
+)
+```
+
+```{r load-priors}
+# Load pre-fetched gene set libraries bundled with the package
+gmtList <- list(
+    CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
+    KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
 )
 
 # Combine into a single sparse matrix
@@ -75,10 +85,10 @@ data("xCell")
 
 # Match pathways to the gene space of whole blood
 matchedPathsWB <- getMatchedPathwayMatList(
-  pathMatCell, 
-  xCell,
-  new.genes = rownames(dataWholeBlood),
-  min.genes = 2
+    pathMatCell,
+    xCell,
+    new.genes = rownames(dataWholeBlood),
+    min.genes = 2
 )
 ```
 
@@ -100,24 +110,24 @@ wb_clamp_k
 ```{r fit-clampbase}
 # Fit baseline CLAMP
 wb.clamp.base <- CLAMPbase(
-  dataWholeBlood,
-  svdres = dataWholeBlood.svd,
-  clamp_k = wb_clamp_k,
-  trace = FALSE,
-  adaptive.p = 0.05
+    dataWholeBlood,
+    svdres = dataWholeBlood.svd,
+    clamp_k = wb_clamp_k,
+    trace = FALSE,
+    adaptive.p = 0.05
 )
 ```
 
 ```{r fit-clampfull}
 # Fit variance-prior extended CLAMP model
 wb.clamp.full <- CLAMPfull(
-  dataWholeBlood,
-  priorMat = matchedPathsWB,
-  svdres = dataWholeBlood.svd,
-  clamp.base.result = wb.clamp.base,
-  clamp_k = wb_clamp_k,
-  trace = TRUE,
-  use_cpp = TRUE
+    dataWholeBlood,
+    priorMat = matchedPathsWB,
+    svdres = dataWholeBlood.svd,
+    clamp.base.result = wb.clamp.base,
+    clamp_k = wb_clamp_k,
+    trace = TRUE,
+    use_cpp = TRUE
 )
 ```
 
@@ -131,12 +141,12 @@ Most cell types show higher correlations under `CLAMPfull`, demonstrating that i
 
 ```{r compare-models, fig.width=6, fig.height=5}
 output <- compareBs(
-  wb.clamp.base,
-  wb.clamp.full,
-  celltypeTargets,
-  "CLAMPbase",
-  "CLAMPfull",
-  m = "s"
+    wb.clamp.base,
+    wb.clamp.full,
+    celltypeTargets,
+    "CLAMPbase",
+    "CLAMPfull",
+    m = "s"
 )
 
 output$plot
@@ -149,13 +159,13 @@ We verify that `CLAMPfull` produces identical results when using a file-backed m
 dataWholeBloodFBM <- bigstatsr::as_FBM(dataWholeBlood)
 
 wb.clamp.full.fbm <- CLAMPfull(
-  dataWholeBloodFBM,
-  priorMat = matchedPathsWB,
-  svdres = dataWholeBlood.svd,
-  clamp.base.result = wb.clamp.base,
-  clamp_k = wb_clamp_k,
-  trace = TRUE,
-  use_cpp = TRUE
+    dataWholeBloodFBM,
+    priorMat = matchedPathsWB,
+    svdres = dataWholeBlood.svd,
+    clamp.base.result = wb.clamp.base,
+    clamp_k = wb_clamp_k,
+    trace = TRUE,
+    use_cpp = TRUE
 )
 ```
 
@@ -163,12 +173,12 @@ The FBM implementation produces identical results:
 
 ```{r compare-fbm, fig.width=6, fig.height=5}
 output <- compareBs(
-  wb.clamp.full,
-  wb.clamp.full.fbm,
-  celltypeTargets,
-  "CLAMPbase",
-  "CLAMPfull",
-  m = "s"
+    wb.clamp.full,
+    wb.clamp.full.fbm,
+    celltypeTargets,
+    "CLAMPbase",
+    "CLAMPfull",
+    m = "s"
 )
 
 output$plot
