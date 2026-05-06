@@ -85,22 +85,28 @@ grViz('
    // ---- Inputs & Priors (gray) ----
    DF     [shape=folder,   style=filled, fillcolor=Gray90, label="data.frame"]
    H5     [shape=folder,   style=filled, fillcolor=Gray90, label="H5 file"]
-   GO     [shape=cylinder, style=filled, fillcolor=Gray90, label="GO Biological Process"]
-   MSIGDB [shape=cylinder, style=filled, fillcolor=Gray90, label="MSigDB Hallmark"]
+   GO [shape=cylinder, style=filled, fillcolor=Gray90,
+       label="GO Biological Process"]
+   MSIGDB [shape=cylinder, style=filled, fillcolor=Gray90,
+           label="MSigDB Hallmark"]
    GTEx   [shape=cylinder, style=filled, fillcolor=Gray90, label="GTEx Tissues"]
+   GMTFILE [shape=folder,  style=filled, fillcolor=Gray90, label="GMT file"]
 
    // ---- Functions (white) ----
    node [shape=rectangle, style=filled, fillcolor=White]
    cpmDF      [label="cpmCLAMP()"]
    preDF      [label="preprocessCLAMP()"]
    zDF        [label="zscoreCLAMP()"]
-   svdMem     [label="rsvd::rsvd()"]
+   selKMem    [label="select_svd_k()"]
+   svdMem     [label="compute_svd()"]
    cpmFBM     [label="cpmCLAMPFBM()"]
    preFBM     [label="preprocessCLAMPFBM()"]
    zFBM       [label="zscoreCLAMPFBM()"]
-   svdFBM     [label="big_randomSVD()"]
-   numPC      [label="num.pc()"]
+   selKFBM    [label="select_svd_k()"]
+   svdFBM     [label="compute_svd()"]
+   numPC      [label="select_clamp_k()"]
    getGMTfunc [label="getGMT()"]
+   readGMT    [label="read_gmt()"]
    gmtList    [label="gmtListToSparseMat()"]
    matchPaths [label="getMatchedPathwayMat()"]
    base       [label="CLAMPbase()"]
@@ -111,11 +117,13 @@ grViz('
    cpmOut       [label="Y_cpm"]
    filtered     [label="Y_filtered, rowStats"]
    zscored      [label="Y_zscored"]
+   svdK         [label="svd_k"]
    svdRes       [label="svdres"]
    clampK       [label="clamp_k"]
    cpmFBMOut    [label="FBM_cpm"]
    filteredFBM  [label="FBM_filtered, rowStats"]
    zscoredFBM   [label="FBM_zscored"]
+   svdKFBM      [label="svd_k"]
    svdResFBM    [label="svdres"]
    pathMat      [label="pathMat"]
    matchedPaths [label="matchedPathways"]
@@ -126,16 +134,25 @@ grViz('
    Umat         [label="U"]
 
    // ---- In-memory branch ----
-   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> zscored -> svdMem -> svdRes
-   svdRes -> numPC -> clampK
+   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> 
+        zscored -> selKMem -> svdK
+   svdK -> svdMem
+   zscored -> svdMem -> svdRes
+   svdRes -> numPC
+   svdK -> numPC
+   numPC -> clampK
    svdRes -> base
    clampK -> base
    zscored -> base
    base -> baseResult -> full
 
    // ---- On-disk branch ----
-   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> zFBM -> zscoredFBM -> svdFBM -> svdResFBM
+   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> 
+        zFBM -> zscoredFBM -> selKFBM -> svdKFBM
+   svdKFBM -> svdFBM
+   zscoredFBM -> svdFBM -> svdResFBM
    svdResFBM -> numPC
+   svdKFBM -> numPC
    svdResFBM -> base
    zscoredFBM -> base
 
@@ -143,7 +160,10 @@ grViz('
    GO -> getGMTfunc
    MSIGDB -> getGMTfunc
    GTEx -> getGMTfunc
-   getGMTfunc -> gmtList -> pathMat -> matchPaths -> matchedPaths
+   GMTFILE -> readGMT
+   getGMTfunc -> gmtList
+   readGMT -> gmtList
+   gmtList -> pathMat -> matchPaths -> matchedPaths
    matchedPaths -> full
 
    // ---- CLAMPfull outputs ----
@@ -152,8 +172,9 @@ grViz('
    full -> summaryTbl
    full -> Umat
  }',
- width = "100%",
- height = "900px")
+    width = "100%",
+    height = "900px"
+)
 ```
 
 # Quick Start
@@ -161,15 +182,15 @@ grViz('
 We provide three examples:
 
 1. **Data-frame example (whole blood):**  
-   A small dataset loaded entirely into memory. Shows basic preprocessing,
+    A small dataset loaded entirely into memory. Shows basic preprocessing,
     z-scoring, and running CLAMP without on-disk storage.  
 
 2. **HDF5 example (Alzheimer’s brain):**  
-   Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object,
+    Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object,
     and process larger datasets using the FBM interface.
 
 3. **Table example (pancreatic islets):**  
-   Illustrates reading a tab-delimited count file and comparing conditions via the B matrix.
+    Illustrates reading a tab-delimited count file and comparing conditions via the B matrix.
 
 Each example follows these steps:
 
@@ -205,8 +226,8 @@ head(dataWholeBlood) # genes x samples
 
 ## Preprocess and z-score
 
-We first CPM-normalize the data (when needed), filter for genes with mean expression ≥ 0.5 
-and variance ≥ 0.1, and then apply z-score normalization.
+We first CPM-normalize the data (when needed), filter for genes with mean 
+expression ≥ 0.5 and variance ≥ 0.1, and then apply z-score normalization.
 
 ```{r preprocess, message=TRUE}
 #  CPM normalization
@@ -233,28 +254,35 @@ wb_Y_z <- zscoreCLAMP(
 
 ## Compute SVD and infer k
 
-We compute the SVD using `rsvd::rsvd()` and infer the optimal number of latent variables using `num.pc()`.
+We compute the SVD using `select_svd_k()` and `compute_svd()`, then select `clamp_k` with `select_clamp_k()`.
 
 ```{r wb-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-wb_svd_k <- ncol(wb_Y_z) - 1
-wb_svd <- rsvd::rsvd(A = wb_Y_z, k = wb_svd_k)
+# Select SVD rank and compute SVD
+wb_svd_k   <- select_svd_k(wb_Y_z)
+wb_svd     <- compute_svd(wb_Y_z, k = wb_svd_k)
 
-# Infer clamp_k from singular values
-wb_clamp_k <- num.pc(list(d = wb_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+wb_clamp_k <- select_clamp_k(wb_svd, n_samples = ncol(wb_Y_z), svd_k = wb_svd_k)
 wb_clamp_k
 ```
 
 ## CLAMPbase initialization
 
-We initialize latent variables using `CLAMPbase`, providing the pre-computed SVD and inferred `k`.
+We initialize latent variables using `CLAMPbase`, providing the pre-computed SVD
+and inferred `k`.
 
-The argument `adaptive.p` defines the percentile used to determine the adaptive sparsity threshold applied to each latent variable's gene loadings.
-During alternating updates, negative entries in `Z` are treated as noise, and CLAMP estimates a cutoff based on the `adaptive.p` quantile of these negative values.
-All genes with loadings below this cutoff are set to zero.
-This produces **data-driven sparsity**, automatically filtering weak or noisy signals while retaining genes with the strongest positive contributions.
-Lower values of `adaptive.p` (e.g., 0.01) result in stronger sparsity, while higher values (e.g., 0.1) retain more genes.
-The default `adaptive.p = 0.05` typically yields interpretable, well-separated latent variables in large transcriptomic datasets.
+The argument `adaptive.p` defines the percentile used to determine the adaptive
+sparsity threshold applied to each latent variable's gene loadings.
+During alternating updates, negative entries in `Z` are treated as noise, and 
+CLAMP estimates a cutoff based on the `adaptive.p` quantile of these negative
+values. All genes with loadings below this cutoff are set to zero.
+
+This produces **data-driven sparsity**, automatically filtering weak or noisy 
+signals while retaining genes with the strongest positive contributions.
+Lower values of `adaptive.p` (e.g., 0.01) result in stronger sparsity, while 
+higher values (e.g., 0.1) retain more genes.
+The default `adaptive.p = 0.05` typically yields interpretable, well-separated 
+latent variables in large transcriptomic datasets.
 
 ```{r CLAMPbase, message=FALSE}
 wb_baseRes <- CLAMPbase(
@@ -266,29 +294,39 @@ wb_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
+Next, we build a prior matrix from curated gene sets and compute the Chat 
+object for `CLAMPfull`.
 
 ```{r priors-download, eval=FALSE}
 # How to download pathway and cell marker libraries from Enrichr.
 # Not run during vignette build to avoid network calls; pre-fetched
 # .rds files are loaded in the next chunk instead.
+```{r priors-download, eval=FALSE}
+# How to download pathway and cell marker libraries from Enrichr.
+# Not run during vignette build to avoid network calls; pre-fetched
+# .rds files are loaded in the next chunk instead.
+enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 gmtList <- list(
-  CellMarkers = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
-    "CellMarker_2024"
-  ),
-  KEGG = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
-    "KEGG_2021_Human"
-  )
+    CellMarkers = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=CellMarker_2024"),
+        "CellMarker_2024"
+    ),
+    KEGG = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=KEGG_2021_Human"),
+        "KEGG_2021_Human"
+    )
 )
 ```
 
 ```{r priors, message=FALSE}
 # Load pre-fetched gene set libraries bundled with the package
 gmtList <- list(
-  CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
-  KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
+    CellMarkers = readRDS(
+        system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")
+    ),
+    KEGG = readRDS(
+        system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP")
+    )
 )
 
 # Combine into a single sparse matrix
@@ -299,22 +337,24 @@ data("xCell")
 
 # Match pathways to the gene space of whole blood
 matchedPathsWB <- getMatchedPathwayMatList(
-  pathMatCell, xCell,
-  new.genes = rownames(dataWholeBlood),
-  min.genes = 2
+    pathMatCell, xCell,
+    new.genes = rownames(dataWholeBlood),
+    min.genes = 2
 )
 ```
 
 **Note**: GMT files can also be loaded from local storage using `read_gmt()`.
-This allows you to integrate custom or curated gene set libraries, such as *MSigDB* canonical pathways, directly into your analysis pipeline alongside remote resources.
+This allows you to integrate custom or curated gene set libraries, such as 
+*MSigDB* canonical pathways, directly into your analysis pipeline alongside
+remote resources.
 
 ## CLAMPfull
 
-Finally, we refine the base model by integrating pathway priors using `CLAMPfull`,
-which applies cross-validation to optimize latent variable regularization.
-In this new version, `CLAMPfull` incorporates **variable priors** that adjust
-the influence of each pathway adaptively, improving convergence and stability
-across heterogeneous datasets.
+Finally, we refine the base model by integrating pathway priors using 
+`CLAMPfull`, which applies cross-validation to optimize latent variable
+regularization. In this new version, `CLAMPfull` incorporates 
+**variable priors** that adjust the influence of each pathway adaptively, 
+improving convergence and stability across heterogeneous datasets.
 
 ```{r CLAMPfull, message=FALSE}
 wb_fullRes <- CLAMPfull(
@@ -324,7 +364,7 @@ wb_fullRes <- CLAMPfull(
     svdres = wb_svd,
     clamp_k = wb_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
@@ -364,8 +404,9 @@ file.remove(bk_paths[file.exists(bk_paths)])
 
 ### Computing CPM on a File-Backed Matrix (FBM)
 
-For file-backed matrices (FBMs), you can compute counts-per-million (CPM) in-place—without loading the entire dataset into
-RAM—using the `cpmCLAMPFBM()` function from **CLAMP**:
+For file-backed matrices (FBMs), you can compute counts-per-million (CPM) 
+in-place—without loading the entire dataset into RAM—using the 
+`cpmCLAMPFBM()` function from **CLAMP**:
 
 ## Load HDF5 expression
 
@@ -384,7 +425,10 @@ rownames(expr_mat) <- genes
 
 ```{r fbm-construct, message=FALSE}
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
-alzFBM <- FBM(nrow = nrow(expr_mat), ncol = ncol(expr_mat), backingfile = fbm_base)
+alzFBM <- FBM(
+    nrow = nrow(expr_mat), ncol = ncol(expr_mat),
+    backingfile = fbm_base
+)
 blk <- 1000
 
 for (i in seq_len(ceiling(nrow(expr_mat) / blk))) {
@@ -410,15 +454,16 @@ alz_genes <- genes[prep_alz$kept_rows]
 
 ## Compute SVD and infer k
 
-For file-backed matrices, we use `bigstatsr::big_randomSVD()` to compute the SVD without loading the entire matrix into RAM.
+For file-backed matrices, `compute_svd()` dispatches to `bigstatsr::big_SVD()` automatically, avoiding loading the entire matrix into RAM.
 
 ```{r fbm-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-alz_svd_k <- ncol(alz_fbm_filt) - 1
-alz_svd <- big_randomSVD(alz_fbm_filt, k = alz_svd_k)
+# Select SVD rank and compute SVD (dispatches to bigstatsr for FBM)
+alz_svd_k   <- select_svd_k(alz_fbm_filt)
+alz_svd     <- compute_svd(alz_fbm_filt, k = alz_svd_k)
 
-# Infer clamp_k from singular values
-alz_clamp_k <- num.pc(list(d = alz_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+alz_clamp_k <- select_clamp_k(alz_svd, n_samples = ncol(alz_fbm_filt),
+                              svd_k = alz_svd_k)
 alz_clamp_k
 ```
 
@@ -434,20 +479,11 @@ alz_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r fbm-priors-download, eval=FALSE}
-# How to fetch the libraries; not run during vignette build.
+```{r fbm-priors, message=FALSE}
 alz_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
     MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
-)
-```
-
-```{r fbm-priors, message=FALSE}
-alz_gmtList <- list(
-    GTEx_Tissues = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
-    BP           = readRDS(system.file("extdata", "GO_Biological_Process_2025.rds", package = "CLAMP")),
-    MSigDB       = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 alz_pathMat <- gmtListToSparseMat(alz_gmtList)
@@ -464,15 +500,15 @@ alz_fullRes <- CLAMPfull(
     svdres = alz_svd,
     clamp_k = alz_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
 
 ```{r fbm-summary}
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
-    filter(FDR < 0.05 & AUC > 0.7) %>%
-  dplyr::arrange(FDR) %>%
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::arrange(FDR) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
 datatable(
@@ -500,13 +536,17 @@ diabetic (T2D) samples.
 
 ```{r islet-load, message=FALSE}
 islet_file <- GSE164416_DP_htseq_counts_txt_gz()
-islet_df <- read.table(gzfile(islet_file), header = TRUE, stringsAsFactors = FALSE) 
+islet_df <- read.table(
+    gzfile(islet_file),
+    header = TRUE, stringsAsFactors = FALSE
+)
 
-islet_df$symbol <- mapIds( org.Hs.eg.db,
-                           keys = islet_df$ensembl,
-                           column = "SYMBOL",
-                           keytype = "ENSEMBL",
-                           multiVals = "first" )
+islet_df$symbol <- mapIds(org.Hs.eg.db,
+    keys = islet_df$ensembl,
+    column = "SYMBOL",
+    keytype = "ENSEMBL",
+    multiVals = "first"
+)
 
 islet_df <- islet_df[!is.na(islet_df$symbol), ]
 ```
@@ -536,20 +576,22 @@ prep_is <- preprocessCLAMP(
 iso_Yf <- prep_is$Y_filtered
 iso_rowS <- prep_is$rowStats
 
-iso_Yz <- zscoreCLAMP(Y_filtered = iso_Yf,
-                      rowStats = iso_rowS)
-
+iso_Yz <- zscoreCLAMP(
+    Y_filtered = iso_Yf,
+    rowStats = iso_rowS
+)
 ```
 
 ## Compute SVD and infer k
 
 ```{r islet-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-islet_svd_k <- ncol(iso_Yz) - 1
-islet_svd <- rsvd::rsvd(A = iso_Yz, k = islet_svd_k)
+# Select SVD rank and compute SVD
+islet_svd_k   <- select_svd_k(iso_Yz)
+islet_svd     <- compute_svd(iso_Yz, k = islet_svd_k)
 
-# Infer clamp_k from singular values
-islet_clamp_k <- num.pc(list(d = islet_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz),
+                                svd_k = islet_svd_k)
 islet_clamp_k
 ```
 
@@ -565,20 +607,11 @@ islet_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-```{r islet-priors-download, eval=FALSE}
-# How to fetch the libraries; not run during vignette build.
+```{r islet-priors, message=FALSE}
 islet_gmtList <- list(
     GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
     Diabetes_Perturbations = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"),
     MSigDB_Hallmark = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
-)
-```
-
-```{r islet-priors, message=FALSE}
-islet_gmtList <- list(
-    GTEx_Tissues           = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
-    Diabetes_Perturbations = readRDS(system.file("extdata", "Diabetes_Perturbations_GEO_2022.rds", package = "CLAMP")),
-    MSigDB_Hallmark        = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
 )
 
 islet_pathMat <- gmtListToSparseMat(islet_gmtList)
@@ -596,14 +629,14 @@ islet_fullRes <- CLAMPfull(
     svdres = islet_svd,
     clamp_k = islet_clamp_k,
     use_cpp = TRUE
-  )
+)
 ```
 
 ## Display significant latent variables
 
 ```{r islet-summary}
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
-    filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
@@ -622,8 +655,9 @@ datatable(
 
 ## Differential latent-variable expression between conditions
 
-Rows of the B matrix correspond to LVs and columns to samples. By grouping samples by condition (ND vs T2D),
-we compute average LV expression per group to identify LVs that differ between healthy and diabetic islets
+Rows of the B matrix correspond to LVs and columns to samples. By grouping 
+samples by condition (ND vs T2D), we compute average LV expression per group to
+identify LVs that differ between healthy and diabetic islets
 
 ```{r islet-diff, message=FALSE}
 B_df <- as.data.frame(as.matrix(islet_fullRes$B)) %>%
@@ -703,7 +737,10 @@ common_genes <- intersect(islet_model_genes, wb_project_genes)
 cat(
     "Overlapping genes:", length(common_genes), "/", length(islet_model_genes),
     "islet model genes",
-    sprintf("(%.1f%%)\n", 100 * length(common_genes) / length(islet_model_genes))
+    sprintf(
+        "(%.1f%%)\n",
+        100 * length(common_genes) / length(islet_model_genes)
+    )
 )
 
 # projectCLAMP aligns common row names in the model's gene order
@@ -721,15 +758,25 @@ wb_projected_B[
 
 CLAMP_K controls how many latent variables the model learns.  Too few and
 biologically distinct signals merge; too many and noise is absorbed into
-spurious components.  CLAMP provides two built-in strategies via `num.pc()`
-and supports the information-theoretic Gavish–Donoho threshold via
-**PCAtools**.
+spurious components.  `select_clamp_k()` is the unified interface: it takes
+the SVD result, the number of samples, the SVD truncation rank, and an
+optional `method` argument, and returns a list with `$clamp_k` (number of LVs)
+and `$scale` (regularization scale used downstream).
 
 ## Elbow method (default)
 
-`num.pc()` fits a smoothing spline to the singular-value scree plot and
-returns the index at which curvature is maximised — the "elbow".  This is the
-fastest option and works well when the signal-to-noise boundary is clear.
+The elbow heuristic fits a smoothing spline to the singular-value scree plot
+and returns the index at which curvature is maximised.  This is the fastest
+option and works well when the signal-to-noise boundary is clear.
+
+```{r k-elbow}
+select_clamp_k(
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "elbow"
+)
+```
 
 ## Permutation method
 
@@ -739,6 +786,17 @@ values.  The number of components whose observed singular value exceeds the
 95th percentile of the null is returned.  This is more conservative and
 slower, but robust to smooth scree plots.
 
+```{r k-permutation, eval=FALSE}
+select_clamp_k(
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "permutation",
+    data      = wb_Y_z,
+    B         = 2
+)
+```
+
 ## Gavish–Donoho optimal hard threshold (PCAtools)
 
 The Gavish–Donoho threshold (Gavish & Donoho, 2014) identifies the
@@ -746,9 +804,15 @@ singular-value cutoff below which components are statistically
 indistinguishable from noise, given matrix dimensions and an estimate of the
 noise level. **PCAtools** implements this via `chooseGavishDonoho()`.
 
-In practice, doubling the chosen `k` (as done throughout the examples with
-`num.pc(...) * 2`) inflates the initial search space so that `CLAMPfull`'s
-cross-validation can discard components that lack pathway support.
+```{r k-gavish, eval=FALSE}
+select_clamp_k(
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "gavish_donoho",
+    data      = wb_Y_z
+)
+```
 
 # Visualization
 
@@ -764,10 +828,10 @@ scan which pathways drive each latent variable.
 
 ```{r plot-U, message=FALSE, fig.width=14, fig.height=10}
 CLAMPplotU(
-  wb_fullRes,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.05,
-  top        = 3
+    wb_fullRes,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.05,
+    top        = 3
 )
 ```
 
@@ -779,13 +843,15 @@ are labelled directly.
 
 ```{r plot-topZ, message=FALSE, fig.width=9, fig.height=7}
 # Use the first few LVs that have pathway support
-lv_with_paths <- wb_fullRes$withPrior[seq_len(min(4, length(wb_fullRes$withPrior)))]
+lv_with_paths <- wb_fullRes$withPrior[
+    seq_len(min(4, length(wb_fullRes$withPrior)))
+]
 
 CLAMPplotTopZ(
-  wb_fullRes,
-  top       = 50,
-  label.top = 10,
-  index     = lv_with_paths
+    wb_fullRes,
+    top       = 50,
+    label.top = 10,
+    index     = lv_with_paths
 )
 ```
 
@@ -795,10 +861,10 @@ Only one LV:
 lv_with_paths <- wb_fullRes$withPrior[1]
 
 CLAMPplotTopZ(
-  wb_fullRes,
-  top       = 50,
-  label.top = 10,
-  index     = lv_with_paths
+    wb_fullRes,
+    top       = 50,
+    label.top = 10,
+    index     = lv_with_paths
 )
 ```
 ## Single-LV pathway dot plot (`CLAMPdotplot`)
@@ -812,13 +878,13 @@ Plot order by AUC:
 
 ```{r plot-dot, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
 CLAMPdotplot(
-  wb_fullRes,
-  lv         = 'LV2',
-  top        = 15,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.1,
-  x.axis     = "AUC",
-  order.by   = "AUC"
+    wb_fullRes,
+    lv         = "LV2",
+    top        = 15,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.1,
+    x.axis     = "AUC",
+    order.by   = "AUC"
 )
 ```
 
@@ -826,13 +892,13 @@ Plot order by FDR:
 
 ```{r plot-dot-fdr, message=FALSE, fig.width=7, fig.height=4, out.width='100%'}
 CLAMPdotplot(
-  wb_fullRes,
-  lv         = 'LV2',
-  top        = 15,
-  auc.cutoff = 0.6,
-  fdr.cutoff = 0.1,
-  x.axis     = "-log10(FDR)",
-  order.by   = "-log10(FDR)"
+    wb_fullRes,
+    lv         = "LV2",
+    top        = 15,
+    auc.cutoff = 0.6,
+    fdr.cutoff = 0.1,
+    x.axis     = "-log10(FDR)",
+    order.by   = "-log10(FDR)"
 )
 ```
 
@@ -844,17 +910,19 @@ encodes `-log10(FDR)`.
 
 ```{r plot-dotAll, message=FALSE, fig.width=10, fig.height=7.5, out.width='100%'}
 CLAMPdotplotAll(
-  wb_fullRes,
-  auc.cutoff = 0.65,
-  fdr.cutoff = 0.05,
-  top.per.lv = 5
+    wb_fullRes,
+    auc.cutoff = 0.65,
+    fdr.cutoff = 0.05,
+    top.per.lv = 5
 )
 ```
 
 # Parallelization in CLAMP
 
-CLAMP supports multi-core parallelization for computationally intensive operations, particularly when working with large datasets and file-backed matrices (FBMs).
-The `ncores` parameter can be used in several key functions to speed up processing.
+CLAMP supports multi-core parallelization for computationally intensive 
+operations, particularly when working with large datasets 
+and file-backed matrices (FBMs). The `ncores` parameter can be used in several 
+key functions to speed up processing.
 
 The following CLAMP functions accept an `ncores` parameter:
 

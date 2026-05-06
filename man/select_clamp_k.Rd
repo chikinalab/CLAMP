@@ -31,12 +31,7 @@ internally) and \code{"gavish_donoho"} (used for \code{n_genes}).}
 \item{B}{Number of permutations for \code{"permutation"}.}
 }
 \value{
-A list with:
-\describe{
-\item{\code{clamp_k}}{Selected number of latent variables.}
-\item{\code{scale}}{Scale value used downstream for default L1 / L2
-regularization.}
-}
+An integer: the selected number of latent variables.
 }
 \description{
 Chooses the default \code{clamp_k} used by the CLAMP solvers when the user

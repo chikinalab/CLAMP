@@ -53,7 +53,7 @@ CLAMPfull(
 \item{clamp.base.result}{Optional result from \code{CLAMPbase()} providing initial values.}
 
 \item{clamp_k}{Number of latent variables for CLAMP (final model rank).
-If \code{NULL}, it is chosen from the SVD via \code{getScaleFromSVs}.}
+If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
 
 \item{svd_k}{Number of singular values/components to compute in the SVD.
 If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}

@@ -1,0 +1,62 @@
+url: https://mchikina.github.io/CLAMP/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left:  [intro, articles, reference, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/mchikina/CLAMP
+      aria-label: GitHub
+
+articles:
+  - title: "Vignettes"
+    navbar: ~
+    contents:
+      - get_started
+      - comparing_clampbase_clampfull
+
+reference:
+  - title: "Main CLAMP functions"
+    contents: [CLAMPbase, CLAMPfull, CLAMPfullnVP, projectCLAMP]
+  - title: "SVD and rank selection"
+    contents: [select_svd_k, compute_svd, select_clamp_k, num.pc, getScaleFromSVs]
+  - title: "Preprocessing"
+    contents: [cpmCLAMP, cpmCLAMPFBM, preprocessCLAMP, preprocessCLAMPFBM,
+               zscoreCLAMP, zscoreCLAMPFBM, tscale]
+  - title: "Prior knowledge"
+    contents: [getGMT, read_gmt, gmtListToSparseMat, getMatchedPathwayMat,
+               getMatchedPathwayMatList, getChat]
+  - title: "Evaluation and visualization"
+    contents: [compareBs, allAgainstAllAUCs, CLAMPplotU, CLAMPplotTopZ,
+               CLAMPdotplot, CLAMPdotplotAll, plotTopZ_Complex]
+  - title: "FBM utilities"
+    contents: [cleanFBM, filterFBM]
+  - title: "Solvers and helpers"
+    contents: [cross_ZY, ridge_B, solveU, mat_mult, findSplineMax,
+               oneToOneMask, squashZscore, winsor_topk]
+  - title: "Datasets"
+    contents: [dataWholeBlood, celltypeTargets, majorCellTypes, panDB, xCell]
+  - title: internal
+    contents:
+      - AUC
+      - BH
+      - binarizeTop
+      - commonRows
+      - computeRowStatsFBM
+      - crossVal
+      - getAUCstats
+      - getMatchedPathwayMat2
+      - getMatchedPathwayMatOld
+      - getMaxAUC
+      - max_correspondence_greedy
+      - mymessage
+      - pinv.ridge
+      - rotateSVD
+      - row_cor
+      - run_elbow
+      - run_permutation

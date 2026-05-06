@@ -12,17 +12,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-  
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  cache = FALSE,
-  dev = "png",
-  dev.args = list(type = "cairo")
+    echo = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    cache = FALSE,
+    dev = "png",
+    dev.args = list(type = "cairo")
 )
 library(CLAMP)
+library(bigstatsr)
 ```
 
 # Overview
@@ -46,7 +47,7 @@ We illustrate how to:
 ```{r load-data}
 data("dataWholeBlood")
 data("majorCellTypes")
-data('celltypeTargets')
+data("celltypeTargets")
 
 # Scale each gene to mean 0 and variance 1
 dataWholeBlood <- tscale(dataWholeBlood)
@@ -59,14 +60,14 @@ dataWholeBlood <- tscale(dataWholeBlood)
 # Not run during vignette build to avoid network calls; pre-fetched
 # .rds files are loaded in the next chunk instead.
 gmtList <- list(
-  CellMarkers = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
-    "CellMarker_2024"
-  ),
-  KEGG = getGMT(
-    "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
-    "KEGG_2021_Human"
-  )
+    CellMarkers = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=CellMarker_2024"),
+        "CellMarker_2024"
+    ),
+    KEGG = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=KEGG_2021_Human"),
+        "KEGG_2021_Human"
+    )
 )
 ```
 
@@ -85,49 +86,47 @@ data("xCell")
 
 # Match pathways to the gene space of whole blood
 matchedPathsWB <- getMatchedPathwayMatList(
-  pathMatCell, 
-  xCell,
-  new.genes = rownames(dataWholeBlood),
-  min.genes = 2
+    pathMatCell,
+    xCell,
+    new.genes = rownames(dataWholeBlood),
+    min.genes = 2
 )
 ```
 
-## 3. Compute SVD and infer k
+## 3. Compute SVD and Infer k
 
 ```{r compute-svd}
-# Compute SVD (k = n_samples - 1)
 set.seed(1)
-wb_svd_k <- ncol(dataWholeBlood) - 1
-dataWholeBlood.svd <- rsvd::rsvd(dataWholeBlood, k = wb_svd_k)
-
-# Infer clamp_k from singular values
-wb_clamp_k <- num.pc(list(d = dataWholeBlood.svd$d)) * 2
+wb_svd_k <- select_svd_k(dataWholeBlood)
+wb_svd <- compute_svd(dataWholeBlood, k = wb_svd_k)
+wb_clamp_k <- select_clamp_k(wb_svd,
+    n_samples = ncol(dataWholeBlood),
+    svd_k = wb_svd_k
+)
 wb_clamp_k
 ```
 
 ## 4. Fit CLAMPbase and CLAMPfull
 
 ```{r fit-clampbase}
-# Fit baseline CLAMP
-wb.clamp.base <- CLAMPbase(
-  dataWholeBlood,
-  svdres = dataWholeBlood.svd,
-  clamp_k = wb_clamp_k,
-  trace = FALSE,
-  adaptive.p = 0.05
+wb_clamp_base <- CLAMPbase(
+    dataWholeBlood,
+    svdres     = wb_svd,
+    clamp_k    = wb_clamp_k,
+    trace      = FALSE,
+    adaptive.p = 0.05
 )
 ```
 
 ```{r fit-clampfull}
-# Fit variance-prior extended CLAMP model
-wb.clamp.full <- CLAMPfull(
-  dataWholeBlood,
-  priorMat = matchedPathsWB,
-  svdres = dataWholeBlood.svd,
-  clamp.base.result = wb.clamp.base,
-  clamp_k = wb_clamp_k,
-  trace = TRUE,
-  use_cpp = TRUE
+wb_clamp_full <- CLAMPfull(
+    dataWholeBlood,
+    priorMat          = matchedPathsWB,
+    svdres            = wb_svd,
+    clamp.base.result = wb_clamp_base,
+    clamp_k           = wb_clamp_k,
+    trace             = TRUE,
+    use_cpp           = TRUE
 )
 ```
 
@@ -141,31 +140,46 @@ Most cell types show higher correlations under `CLAMPfull`, demonstrating that i
 
 ```{r compare-models, fig.width=6, fig.height=5}
 output <- compareBs(
-  wb.clamp.base,
-  wb.clamp.full,
-  celltypeTargets,
-  "CLAMPbase",
-  "CLAMPfull",
-  m = "s"
+    wb_clamp_base,
+    wb_clamp_full,
+    celltypeTargets,
+    method = "s",
+    xlab   = "CLAMPbase",
+    ylab   = "CLAMPfull"
 )
 
 output$plot
 ```
+
+## 6. Inspect Named Matrix Outputs
+
+`CLAMPbase` and `CLAMPfull` now return `B` (gene loadings, LVs × genes) and `Z` (sample scores, LVs × samples) as proper named matrices.
+
+```{r named-matrices}
+# B: gene loadings (LVs × genes)
+dim(wb_clamp_full$B)
+wb_clamp_full$B[1:3, 1:4]
+
+# Z: sample scores (LVs × samples)
+dim(wb_clamp_full$Z)
+wb_clamp_full$Z[1:3, 1:4]
+```
+
 ## 7. Verify FBM Implementation
 
-We verify that `CLAMPfull` produces identical results when using a file-backed matrix (FBM) input instead of an in-memory matrix.
+We verify that `CLAMPfull` produces identical results when using a file-backed matrix (FBM) input instead of an in-memory matrix. We reuse the same pre-computed SVD and `clamp_k` so that any differences are attributable solely to the matrix format, not the randomized SVD.
 
 ```{r fit-clampfull-fbm}
 dataWholeBloodFBM <- bigstatsr::as_FBM(dataWholeBlood)
 
-wb.clamp.full.fbm <- CLAMPfull(
-  dataWholeBloodFBM,
-  priorMat = matchedPathsWB,
-  svdres = dataWholeBlood.svd,
-  clamp.base.result = wb.clamp.base,
-  clamp_k = wb_clamp_k,
-  trace = TRUE,
-  use_cpp = TRUE
+wb_clamp_full_fbm <- CLAMPfull(
+    dataWholeBloodFBM,
+    priorMat          = matchedPathsWB,
+    svdres            = wb_svd,
+    clamp.base.result = wb_clamp_base,
+    clamp_k           = wb_clamp_k,
+    trace             = TRUE,
+    use_cpp           = TRUE
 )
 ```
 
@@ -173,12 +187,12 @@ The FBM implementation produces identical results:
 
 ```{r compare-fbm, fig.width=6, fig.height=5}
 output <- compareBs(
-  wb.clamp.full,
-  wb.clamp.full.fbm,
-  celltypeTargets,
-  "CLAMPbase",
-  "CLAMPfull",
-  m = "s"
+    wb_clamp_full,
+    wb_clamp_full_fbm,
+    celltypeTargets,
+    method = "s",
+    xlab   = "CLAMPfull (matrix)",
+    ylab   = "CLAMPfull (FBM)"
 )
 
 output$plot

@@ -1,5 +1,8 @@
 test_that("getGMT reads a GMT file into a named list", {
-    url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"
+    url <- paste0(
+        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=",
+        "GTEx_Tissues_V8_2023"
+    )
     gmt <- getGMT(url)
 
     expect_type(gmt, "list")

@@ -7,5 +7,8 @@ test_that("preprocessCLAMP filters and returns correct structure", {
 })
 
 test_that("preprocessCLAMP errors on non-numeric input", {
-    expect_error(preprocessCLAMP(Y = data.frame(a = letters[1:5]), mean_cutoff = 0, var_cutoff = 0))
+    expect_error(preprocessCLAMP(
+        Y = data.frame(a = letters[1:5]),
+        mean_cutoff = 0, var_cutoff = 0
+    ))
 })
