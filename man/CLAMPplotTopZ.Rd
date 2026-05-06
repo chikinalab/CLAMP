@@ -47,12 +47,16 @@ genes are labelled with \code{ggrepel}.
 \examples{
 set.seed(1)
 genes <- paste0("Gene", 1:80)
-lvs   <- paste0("LV", 1:4)
+lvs <- paste0("LV", 1:4)
 paths <- paste0("Path", 1:10)
-Z     <- matrix(abs(rnorm(80 * 4)), nrow = 80,
-                dimnames = list(genes, lvs))
-U     <- matrix(abs(rnorm(10 * 4)), nrow = 10,
-                dimnames = list(paths, lvs))
+Z <- matrix(abs(rnorm(80 * 4)),
+    nrow = 80,
+    dimnames = list(genes, lvs)
+)
+U <- matrix(abs(rnorm(10 * 4)),
+    nrow = 10,
+    dimnames = list(paths, lvs)
+)
 clampRes <- list(Z = Z, U = U)
 CLAMPplotTopZ(clampRes, top = 20, index = 1:2)
 }

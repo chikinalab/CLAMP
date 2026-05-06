@@ -9,7 +9,8 @@ computeRowStatsFBM(fbm, ncores = 1)
 \arguments{
 \item{fbm}{A \code{bigstatsr::FBM} object.}
 
-\item{ncores}{Integer; number of cores to use for parallel operations (default 1).}
+\item{ncores}{Integer; number of cores to use for parallel operations
+(default 1).}
 }
 \value{
 A list with two numeric vectors:
@@ -19,6 +20,7 @@ A list with two numeric vectors:
 }
 }
 \description{
-Efficiently computes row sums and row sum-of-squares for a \code{bigstatsr::FBM} using
-column-wise chunking, suitable for large datasets that cannot be loaded fully into memory.
+Efficiently computes row sums and row sum-of-squares for a
+\code{bigstatsr::FBM} using column-wise chunking, suitable for large datasets
+that cannot be loaded fully into memory.
 }

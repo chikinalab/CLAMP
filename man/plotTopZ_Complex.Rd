@@ -20,7 +20,8 @@ plotTopZ_Complex(
 )
 }
 \arguments{
-\item{clampRes}{A CLAMP result list containing matrices \code{Z}, \code{U}, etc.}
+\item{clampRes}{A CLAMP result list containing matrices \code{Z},
+\code{U}, etc.}
 
 \item{data}{Expression matrix with genes as rows.}
 
@@ -34,7 +35,8 @@ plotTopZ_Complex(
 
 \item{allLVs}{Logical; include all LVs.}
 
-\item{Zheat}{Logical; whether to include the Z matrix as an additional heatmap.}
+\item{Zheat}{Logical; whether to include the Z matrix as an additional
+heatmap.}
 
 \item{LV.names}{Optional character vector for LV names.}
 
@@ -63,22 +65,28 @@ lvs <- paste0("LV", 1:3)
 
 # Simulated Z (gene loadings) and U (pathway loadings)
 Z <- matrix(rnorm(100 * 3), nrow = 100, dimnames = list(genes, lvs))
-U <- matrix(abs(rnorm(50 * 3)), nrow = 50,
-            dimnames = list(paste0("Path", 1:50), lvs))
+U <- matrix(abs(rnorm(50 * 3)),
+    nrow = 50,
+    dimnames = list(paste0("Path", 1:50), lvs)
+)
 
 # Expression data
-expr_data <- matrix(rnorm(100 * 20), nrow = 100,
-                    dimnames = list(genes, samples))
+expr_data <- matrix(rnorm(100 * 20),
+    nrow = 100,
+    dimnames = list(genes, samples)
+)
 
 # Binary gene × pathway matrix
 priorMat <- matrix(sample(0:1, 100 * 50, replace = TRUE, prob = c(0.9, 0.1)),
-                   nrow = 100, ncol = 50,
-                   dimnames = list(genes, paste0("Path", 1:50)))
+    nrow = 100, ncol = 50,
+    dimnames = list(genes, paste0("Path", 1:50))
+)
 
 # Create a CLAMP-like result list
 clampRes <- list(Z = Z, U = U)
 
 # Plot top genes and pathway memberships
 plotTopZ_Complex(clampRes, expr_data, priorMat,
-                 top = 5, top.pathway = 3, index = 1:2, Zheat = TRUE)
+    top = 5, top.pathway = 3, index = 1:2, Zheat = TRUE
+)
 }

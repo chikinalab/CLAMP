@@ -16,8 +16,9 @@ A numeric matrix of cell-type proportions.
 }
 \description{
 A numeric matrix of estimated cell-type proportions for whole-blood samples.
-Rows correspond to sample IDs and columns to major immune cell types. This dataset
-can be used for validation or illustrative purposes in CLAMP analyses.
+Rows correspond to sample IDs and columns to major immune cell types.
+This dataset can be used for validation or illustrative purposes in
+CLAMP analyses.
 }
 \examples{
 data(celltypeTargets)

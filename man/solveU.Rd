@@ -28,42 +28,56 @@ solveU(
 \arguments{
 \item{Z}{A numeric matrix with features (rows) and samples (columns).}
 
-\item{Chat}{(Optional) Precomputed pseudo-inverse of \code{priorMat}; if \code{NULL},
-it is calculated using ridge regularization.}
+\item{Chat}{(Optional) Precomputed pseudo-inverse of \code{priorMat};
+if \code{NULL}, it is calculated using ridge regularization.}
 
-\item{priorMat}{A numeric matrix with prior information (features x pathways).}
+\item{priorMat}{A numeric matrix with prior information
+(features x pathways).}
 
-\item{penalty.factor}{Optional penalty weights for features in \code{priorMat}.}
+\item{penalty.factor}{Optional penalty weights for features in
+\code{priorMat}.}
 
-\item{pathwaySelection}{Method to select candidate pathways: \code{"fast"} (default) or \code{"complete"}.}
+\item{pathwaySelection}{Method to select candidate pathways: \code{"fast"}
+(default) or \code{"complete"}.}
 
-\item{alpha}{Elastic net mixing parameter (0 = ridge, 1 = lasso). Default is 0.9.}
+\item{alpha}{Elastic net mixing parameter (0 = ridge, 1 = lasso).
+Default is 0.9.}
 
-\item{maxPath}{Maximum number of pathways/features selected per column. Default is 10.}
+\item{maxPath}{Maximum number of pathways/features selected per column.
+Default is 10.}
 
 \item{nfolds}{Number of cross-validation folds. Default is 5.}
 
-\item{useSE}{Whether to use the 1-standard-error rule for lambda selection. Default is \code{FALSE}.}
+\item{useSE}{Whether to use the 1-standard-error rule for lambda selection.
+Default is \code{FALSE}.}
 
-\item{top}{If set, sets to 0 all but the top entries of \code{Z} per column before fitting.}
+\item{top}{If set, sets to 0 all but the top entries of \code{Z} per
+column before fitting.}
 
-\item{binary}{If \code{TRUE}, fits a binomial model (e.g., classification) to \code{Z}>0.
-Can be used incombination with \code{top}. Default is \code{FALSE}.}
+\item{binary}{If \code{TRUE}, fits a binomial model (e.g., classification)
+to \code{Z}>0. Can be used in combination with \code{top}.
+Default is \code{FALSE}.}
 
 \item{nlambda}{Number of lambda values for glmnet. Default is 20.}
 
-\item{scale}{Whether to standardize predictors in glmnet. Default is \code{TRUE}.}
+\item{scale}{Whether to standardize predictors in glmnet.
+Default is \code{TRUE}.}
 
-\item{refit}{Whether to perform relaxed refitting using selected predictors. Default is \code{TRUE}.}
+\item{refit}{Whether to perform relaxed refitting using selected
+predictors. Default is \code{TRUE}.}
 
-\item{Uprev}{(Optional) Previous U matrix to reuse. In this mode only the columns of \code{U}
-that are all zero are estimated. Used internally in \code{CLAMP}.}
+\item{Uprev}{(Optional) Previous U matrix to reuse. In this mode only
+the columns of \code{U} that are all zero are estimated. Used
+internally in \code{CLAMP}.}
 
-\item{useAUC}{Logical; whether to compute pathway–LV associations using AUC (default TRUE) instead of OLS.}
+\item{useAUC}{Logical; whether to compute pathway-LV associations using
+AUC (default TRUE) instead of OLS.}
 
-\item{intercept}{Logical; whether to include an intercept term in glmnet models. Default is TRUE.}
+\item{intercept}{Logical; whether to include an intercept term in glmnet
+models. Default is TRUE.}
 
-\item{...}{Additional arguments passed to \code{glmnet()} or \code{cv.glmnet()}.}
+\item{...}{Additional arguments passed to \code{glmnet()} or
+\code{cv.glmnet()}.}
 }
 \value{
 A list with one element:
@@ -73,30 +87,32 @@ Columns are named \code{LV1}, \code{LV2}, ...}
 }
 }
 \description{
-For each column of a target matrix \code{Z} using pathway or prior annotation \code{priorMat}.
-It performs regularization selection using cross-validation and can apply either
-Supports continuous or binary response models. Relaxed refitting is supported for final
-coefficient estimation.
+For each column of a target matrix \code{Z} using pathway or prior
+annotation \code{priorMat}. It performs regularization selection using
+cross-validation and can apply either Supports continuous or binary
+response models. Relaxed refitting is supported for final coefficient
+estimation.
 }
 \examples{
 set.seed(123)
 genes <- paste0("G", 1:200)
-lvs   <- paste0("LV", 1:4)
+lvs <- paste0("LV", 1:4)
 paths <- paste0("Path", 1:60)
 
 Z <- matrix(rnorm(200 * 4), nrow = 200, dimnames = list(genes, lvs))
 
 priorMat <- matrix(rbinom(200 * 60, 1, 0.07),
-                   nrow = 200, dimnames = list(genes, paths))
+    nrow = 200, dimnames = list(genes, paths)
+)
 
 fit1 <- solveU(
-  Z = Z,
-  priorMat = priorMat,
-  pathwaySelection = "fast",
-  alpha = 0.9,
-  maxPath = 10,
-  nfolds = 5,
-  binary = FALSE,
-  refit = TRUE
+    Z = Z,
+    priorMat = priorMat,
+    pathwaySelection = "fast",
+    alpha = 0.9,
+    maxPath = 10,
+    nfolds = 5,
+    binary = FALSE,
+    refit = TRUE
 )
 }

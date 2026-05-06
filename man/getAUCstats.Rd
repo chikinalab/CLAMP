@@ -13,6 +13,6 @@ getAUCstats(summary)
 A named numeric vector with counts for thresholds 0.7, 0.8, and 0.9.
 }
 \description{
-Given a summary data frame from cross-validation, reports the number of latent variables
-with maximum AUC exceeding 0.7, 0.8, and 0.9.
+Given a summary data frame from cross-validation, reports the number of
+latent variables with maximum AUC exceeding 0.7, 0.8, and 0.9.
 }

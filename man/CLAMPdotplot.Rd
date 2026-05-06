@@ -50,18 +50,20 @@ The x-axis and pathway ordering can use either AUC or \code{-log10(FDR)}.
 \examples{
 set.seed(9)
 pathways <- paste0("Pathway_", 1:20)
-lvs      <- paste0("LV", 1:5)
-nr       <- length(pathways) * length(lvs)
+lvs <- paste0("LV", 1:5)
+nr <- length(pathways) * length(lvs)
 
 summ <- data.frame(
-  pathway = rep(pathways, length(lvs)),
-  LV      = rep(lvs, each = length(pathways)),
-  AUC     = runif(nr, 0.5, 1.0),
-  FDR     = runif(nr, 0, 0.05),
-  stringsAsFactors = FALSE
+    pathway = rep(pathways, length(lvs)),
+    LV = rep(lvs, each = length(pathways)),
+    AUC = runif(nr, 0.5, 1.0),
+    FDR = runif(nr, 0, 0.05),
+    stringsAsFactors = FALSE
 )
 
 CLAMPdotplot(list(summary = summ), lv = 1, top = 10)
-CLAMPdotplot(list(summary = summ), lv = "LV2", x.axis = "-log10(FDR)",
-             order.by = "-log10(FDR)")
+CLAMPdotplot(list(summary = summ),
+    lv = "LV2", x.axis = "-log10(FDR)",
+    order.by = "-log10(FDR)"
+)
 }

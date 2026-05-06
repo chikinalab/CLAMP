@@ -13,5 +13,6 @@ mymessage(...)
 Invisibly returns NULL. Called for side effects (messages).
 }
 \description{
-Wrapper around \code{message()} that pastes arguments together into a single string.
+Wrapper around \code{message()} that pastes arguments together into a single
+string.
 }

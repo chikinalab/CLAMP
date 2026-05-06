@@ -9,9 +9,11 @@ preprocessCLAMP(Y, mean_cutoff = 0, var_cutoff = 0)
 \arguments{
 \item{Y}{Numeric matrix of gene expression (rows = genes, cols = samples)}
 
-\item{mean_cutoff}{Numeric. Minimum row-mean required to keep a gene (default 0).}
+\item{mean_cutoff}{Numeric. Minimum row-mean required to keep a gene
+(default 0).}
 
-\item{var_cutoff}{Numeric. Minimum row-variance required to keep a gene (default 0).}
+\item{var_cutoff}{Numeric. Minimum row-variance required to keep a gene
+(default 0).}
 }
 \value{
 A list with components:
@@ -35,7 +37,7 @@ mat <- matrix(
         4, 8, 13
     ),
     nrow = 4, byrow = FALSE,
-    dimnames = list(paste0('gene', seq_len(4)), paste0('sample', seq_len(3)))
+    dimnames = list(paste0("gene", seq_len(4)), paste0("sample", seq_len(3)))
 )
 
 # keep genes with mean >= 6 and variance >= 2

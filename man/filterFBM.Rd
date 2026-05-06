@@ -21,11 +21,14 @@ filterFBM(
 \item{keep_samples_idx}{Optional integer vector of column indices to retain.
 Default is \code{filtered_fbm}.}
 
-\item{mean_cutoff}{Optional minimum mean threshold; rows with means below this are removed.}
+\item{mean_cutoff}{Optional minimum mean threshold; rows with means below
+this are removed.}
 
-\item{var_cutoff}{Optional minimum variance threshold; rows with variances below this are removed.}
+\item{var_cutoff}{Optional minimum variance threshold; rows with variances
+below this are removed.}
 
-\item{backingfile}{A character string specifying the filename (without extension) for the new FBM.}
+\item{backingfile}{A character string specifying the filename (without
+extension) for the new FBM.}
 }
 \value{
 A list with:
@@ -35,18 +38,24 @@ A list with:
 }
 }
 \description{
-Filters an FBM based on row-level mean and variance thresholds, returning a new FBM
+Filters an FBM based on row-level mean and variance thresholds, returning
+a new FBM
 with only the selected rows.
 }
 \details{
-This function creates a new FBM and copies over only the rows that pass the filtering criteria.
+This function creates a new FBM and copies over only the rows that pass
+the filtering criteria.
 The original FBM is unchanged.
 }
 \examples{
-\donttest{
-library(bigstatsr)
-fbm <- FBM(5, 3, init = matrix(rnorm(15), nrow = 5))
-rs <- list(row_means = rowMeans(fbm[]), row_variances = apply(fbm[], 1, var))
-out <- filterFBM(fbm, rs, mean_cutoff = -0.2, var_cutoff = 0.5, backingfile = tempfile())
-}
+fbm <- bigstatsr::FBM(5, 3, init = matrix(rnorm(15), nrow = 5))
+rs <- list(
+    row_means = rowMeans(fbm[]),
+    row_variances = apply(fbm[], 1, var)
+)
+out <- filterFBM(fbm, rs,
+    mean_cutoff = -0.2, var_cutoff = 0.5,
+    backingfile = tempfile()
+)
+
 }

@@ -9,12 +9,13 @@ getMaxAUC(summary, verbose = FALSE)
 \arguments{
 \item{summary}{A data frame (e.g., from \code{crossVal()}) .}
 
-\item{verbose}{Logical; if \code{TRUE}, prints counts of LVs exceeding AUC thresholds. Default is \code{FALSE}.}
+\item{verbose}{Logical; if \code{TRUE}, prints counts of LVs exceeding AUC
+thresholds. Default is \code{FALSE}.}
 }
 \value{
 A data frame with columns LV index and max_AUC.
 }
 \description{
-Summarizes a cross-validation results data frame to extract the highest AUC value
-associated with each latent variable (LV).
+Summarizes a cross-validation results data frame to extract the highest
+AUC value associated with each latent variable (LV).
 }

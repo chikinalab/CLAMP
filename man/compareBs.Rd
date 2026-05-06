@@ -17,7 +17,8 @@ compareBs(
 }
 \arguments{
 \item{res1, }{res2 Result objects or matrices containing factor loadings.
-If a list, must contain element \code{B}; if of class \code{"rsvd"}, \code{t(res$v)} is used.}
+If a list, must contain element \code{B}; if of class \code{"rsvd"},
+\code{t(res$v)} is used.}
 
 \item{res2}{Second result object or matrix to compare against.}
 
@@ -30,7 +31,8 @@ Pearson, Spearman, AUC, or t-statistic comparison.}
 
 \item{ylab}{Label for y-axis (used in plot).}
 
-\item{stat.method}{Statistical test to compare correlations (\code{"t"} or \code{"wilcox"}).}
+\item{stat.method}{Statistical test to compare correlations
+(\code{"t"} or \code{"wilcox"}).}
 
 \item{oneToOne}{Logical, whether to apply one-to-one masking of associations.}
 }
@@ -38,7 +40,8 @@ Pearson, Spearman, AUC, or t-statistic comparison.}
 A list with:
 \describe{
 \item{plot}{A ggplot object comparing maximal correlations across targets.}
-\item{df}{A data.frame with per-target metrics and (if available) top genes.}
+\item{df}{A data.frame with per-target metrics and (if available)
+top genes.}
 }
 }
 \description{
@@ -60,5 +63,7 @@ target <- matrix(rnorm(20 * 3), ncol = 3)
 colnames(target) <- c("Trait1", "Trait2", "Trait3")
 
 # Compare the two sets of embeddings
-res <- compareBs(svd1, svd2, target, method = "p", xlab = "SVD1", ylab = "SVD2")
+res <- compareBs(svd1, svd2, target,
+    method = "p", xlab = "SVD1", ylab = "SVD2"
+)
 }

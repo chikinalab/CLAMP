@@ -51,3 +51,10 @@ via \code{PCAtools::chooseGavishDonoho()}. Requires the raw \code{data} matrix
 \code{clamp_k <- min(floor(k * 1.5), svd_k)}, scale from the fit.}
 }
 }
+\examples{
+set.seed(1)
+Y <- matrix(rnorm(100 * 30), nrow = 100, ncol = 30)
+svdres <- compute_svd(Y, k = 25)
+select_clamp_k(svdres, n_samples = ncol(Y), svd_k = 25)
+
+}

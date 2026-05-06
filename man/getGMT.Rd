@@ -9,21 +9,26 @@ getGMT(url, name = NULL, cache_dir = NULL, redownload = FALSE)
 \arguments{
 \item{url}{A character string specifying the URL to a GMT file.}
 
-\item{name}{Optional name for the GMT file (defaults to the portion after the last '=' in the URL).}
+\item{name}{Optional name for the GMT file (defaults to the portion after
+the last '=' in the URL).}
 
 \item{cache_dir}{Optional directory in which to cache/download the GMT file.}
 
 \item{redownload}{Logical; if \code{TRUE}, forces re-download even if cached.}
 }
 \value{
-A named list where each element is a character vector of gene names for a given gene set.
+A named list where each element is a character vector of gene
+names for a given gene set.
 }
 \description{
-Downloads a Gene Matrix Transposed (GMT) file from a specified URL, reads it into R as a list,
-and removes the temporary file afterward.
+Downloads a Gene Matrix Transposed (GMT) file from a specified URL, reads
+it into R as a list, and removes the temporary file afterward.
 }
 \examples{
-url <- 'https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2019_Human'
+url <- paste0(
+    "https://maayanlab.cloud/Enrichr/geneSetLibrary",
+    "?mode=text&libraryName=KEGG_2019_Human"
+)
 gmt_list <- getGMT(url)
 # list available gene sets
 names(gmt_list)

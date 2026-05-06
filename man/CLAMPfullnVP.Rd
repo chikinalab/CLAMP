@@ -40,13 +40,16 @@ CLAMPfullnVP(
 )
 }
 \arguments{
-\item{Y}{Gene expression matrix (genes x samples). Can be dense, sparse (dgCMatrix), or FBM.}
+\item{Y}{Gene expression matrix (genes x samples). Can be dense, sparse
+(dgCMatrix), or FBM.}
 
-\item{priorMat}{Binary matrix (genes x pathways) representing prior annotations.}
+\item{priorMat}{Binary matrix (genes x pathways) representing prior
+annotations.}
 
 \item{svdres}{Optional SVD result used for initialization.}
 
-\item{clamp.base.result}{Optional result from \code{CLAMPbase()} to initialize B.}
+\item{clamp.base.result}{Optional result from \code{CLAMPbase()} to
+initialize B.}
 
 \item{clamp_k}{Number of latent variables for CLAMP (final model rank).
 If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
@@ -54,9 +57,11 @@ If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
 \item{svd_k}{Number of singular values/components to compute in the SVD.
 If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
-\item{L1}{Regularization strength for Z. If \code{NULL}, initialized from SVD or \code{clamp.base.result}.}
+\item{L1}{Regularization strength for Z. If \code{NULL}, initialized from
+SVD or \code{clamp.base.result}.}
 
-\item{L2}{Regularization strength for B. If \code{NULL}, initialized from SVD or \code{clamp.base.result}.}
+\item{L2}{Regularization strength for B. If \code{NULL}, initialized from
+SVD or \code{clamp.base.result}.}
 
 \item{top}{If set, keeps only top-n values per column in Z during U updates.}
 
@@ -68,11 +73,14 @@ If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
 \item{Chat}{Optional precomputed matrix for solving U.}
 
-\item{maxPath}{Maximum number of pathways/features selected per LV. Default is 10.}
+\item{maxPath}{Maximum number of pathways/features selected per LV.
+Default is 10.}
 
-\item{doCrossval}{Whether to perform pathway-level cross-validation. Default is \code{TRUE}.}
+\item{doCrossval}{Whether to perform pathway-level cross-validation.
+Default is \code{TRUE}.}
 
-\item{penalty.factor}{Vector of feature-specific penalties for glmnet. Default: all ones.}
+\item{penalty.factor}{Vector of feature-specific penalties for glmnet.
+Default: all ones.}
 
 \item{glm_alpha}{Elastic net mixing parameter for glmnet. Default is 0.9.}
 
@@ -80,32 +88,41 @@ If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
 \item{tol}{Convergence tolerance on relative change in B. Default is 5e-4.}
 
-\item{seed}{Seed for reproducibility of cross-validation masking. Default is 123456.}
+\item{seed}{Seed for reproducibility of cross-validation masking.
+Default is 123456.}
 
-\item{allGenes}{If \code{TRUE}, zero-fills \code{priorMat} for genes not present. Default is \code{FALSE}.}
+\item{allGenes}{If \code{TRUE}, zero-fills \code{priorMat} for genes not
+present. Default is \code{FALSE}.}
 
 \item{rseed}{Optional seed for randomly reinitializing B and Z.}
 
 \item{max.U.updates}{Maximum number of U updates. Default is 5.}
 
-\item{pathwaySelection}{Pathway selection mode: \code{"fast"} or \code{"complete"}.}
+\item{pathwaySelection}{Pathway selection mode: \code{"fast"} or
+\code{"complete"}.}
 
 \item{multiplier}{Scaling factor for adjusting L1 and L2.}
 
-\item{adaptive.p}{Quantile threshold for adaptively zeroing small Z values. After each update,
-the \code{adaptive.p}-quantile of negative entries in Z is used (flipped positive) to threshold
+\item{adaptive.p}{Quantile threshold for adaptively zeroing small Z
+values. After each update, the \code{adaptive.p}-quantile of negative
+entries in Z is used (flipped positive) to threshold
 small positive values, assuming they reflect noise. Default is 0.05.}
 
-\item{useNNLS}{If \code{TRUE}, uses non-negative least squares in U estimation. Default is \code{TRUE}.}
+\item{useNNLS}{If \code{TRUE}, uses non-negative least squares in U
+estimation. Default is \code{TRUE}.}
 
-\item{useRaw}{If \code{TRUE}, uses unthresholded Z for solving U. Default is \code{TRUE}.}
+\item{useRaw}{If \code{TRUE}, uses unthresholded Z for solving U.
+Default is \code{TRUE}.}
 
-\item{refitAll}{If \code{TRUE}, refits all U columns every update. Default is \code{FALSE}.}
+\item{refitAll}{If \code{TRUE}, refits all U columns every update.
+Default is \code{FALSE}.}
 
-\item{useSE}{Logical; passed to the internal \code{solveU()} call. If \code{TRUE},
-enables standard-error–aware selection when fitting U (pathway coefficients). Default is \code{FALSE}.}
+\item{useSE}{Logical; passed to the internal \code{solveU()} call. If
+\code{TRUE}, enables standard-error-aware selection when fitting U
+(pathway coefficients). Default is \code{FALSE}.}
 
-\item{ncores}{Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.}
+\item{ncores}{Number of cores to use for parallel computation (only used
+if Y is an FBM). Default is 1.}
 
 \item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
 One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
@@ -119,10 +136,12 @@ A list with the following components:
 \item{\code{U}}{Pathway loadings matrix (pathways x LVs)}
 \item{\code{C}}{Masked prior matrix used for training}
 \item{\code{L1}, \code{L2}}{Regularization parameters}
-\item{\code{heldOutGenes}}{List of held-out genes per pathway (if CV is enabled)}
+\item{\code{heldOutGenes}}{List of held-out genes per pathway (if CV
+is enabled)}
 \item{\code{Uauc}}{AUC matrix from CV evaluation (if enabled)}
 \item{\code{Up}}{-\code{log10(p)} values from CV evaluation (if enabled)}
-\item{\code{summary}}{Data frame of AUC, p-values, and FDR per pathway x LV (if enabled)}
+\item{\code{summary}}{Data frame of AUC, p-values, and FDR per pathway
+x LV (if enabled)}
 \item{\code{priorMatCV}}{Masked prior matrix used during CV}
 \item{\code{priorMat}}{Final filtered prior matrix}
 \item{\code{withPrior}}{Indices of LVs with non-zero pathway loadings}
@@ -131,13 +150,16 @@ A list with the following components:
 }
 \description{
 Runs the full CLAMP model using a gene expression matrix
-and prior pathway annotation matrix. This function performs latent variable decomposition
-guided by prior knowledge and includes optional cross-validation to evaluate pathway associations.
+and prior pathway annotation matrix. This function performs latent
+variable decomposition guided by prior knowledge and includes optional
+cross-validation to evaluate pathway associations.
 }
 \details{
-The model alternates between solving \code{Z}, \code{B}, and \code{U}. Adaptive sparsity is applied
-to \code{Z} using a dynamic threshold based on the negative tail of its distribution. Cross-validation
-is used to hold out gene annotations in \code{priorMat} and evaluate latent variable specificity.
+The model alternates between solving \code{Z}, \code{B}, and \code{U}.
+Adaptive sparsity is applied to \code{Z} using a dynamic threshold based
+on the negative tail of its distribution. Cross-validation is used to
+hold out gene annotations in \code{priorMat} and evaluate latent variable
+specificity.
 }
 \examples{
 mat <- matrix(rnorm(100), 10, 10)

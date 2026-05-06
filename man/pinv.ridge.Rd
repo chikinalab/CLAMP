@@ -10,7 +10,8 @@ pinv.ridge(m, alpha = 0)
 \item{m}{A symmetric numeric matrix (e.g., from \code{crossprod()}).}
 
 \item{alpha}{Non-negative scalar specifying the ridge penalty.
-A small positive value stabilizes the inversion by shrinking large singular values.}
+A small positive value stabilizes the inversion by shrinking large
+singular values.}
 }
 \value{
 A numeric matrix representing the ridge-regularized

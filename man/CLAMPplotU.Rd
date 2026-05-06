@@ -49,24 +49,30 @@ thresholds.  Only the top-\code{top} pathways per LV are shown.
 \examples{
 set.seed(42)
 pathways <- paste0("Path", 1:30)
-lvs      <- paste0("LV",   1:5)
+lvs <- paste0("LV", 1:5)
 
-U    <- matrix(abs(rnorm(30 * 5)), nrow = 30,
-               dimnames = list(pathways, lvs))
-Uauc <- matrix(runif(30 * 5, 0.5, 1.0), nrow = 30,
-               dimnames = list(pathways, lvs))
-Up   <- matrix(runif(30 * 5, 0, 3), nrow = 30,
-               dimnames = list(pathways, lvs))
+U <- matrix(abs(rnorm(30 * 5)),
+    nrow = 30,
+    dimnames = list(pathways, lvs)
+)
+Uauc <- matrix(runif(30 * 5, 0.5, 1.0),
+    nrow = 30,
+    dimnames = list(pathways, lvs)
+)
+Up <- matrix(runif(30 * 5, 0, 3),
+    nrow = 30,
+    dimnames = list(pathways, lvs)
+)
 
 # Build a minimal summary table
 nr <- 30 * 5
 summ <- data.frame(
-  pathway = rep(pathways, 5),
-  LV      = rep(lvs, each = 30),
-  AUC     = as.vector(Uauc),
-  p_value = runif(nr, 0, 0.1),
-  FDR     = runif(nr, 0, 0.1),
-  stringsAsFactors = FALSE
+    pathway = rep(pathways, 5),
+    LV = rep(lvs, each = 30),
+    AUC = as.vector(Uauc),
+    p_value = runif(nr, 0, 0.1),
+    FDR = runif(nr, 0, 0.1),
+    stringsAsFactors = FALSE
 )
 
 clampRes <- list(U = U, Uauc = Uauc, Up = Up, summary = summ)

@@ -359,14 +359,11 @@ commonRows <- function(data1, data2) {
 #' parallel-safe chunks.
 #' @importFrom bigstatsr big_apply rows_along FBM
 #' @examples
-#' \donttest{
-#' library(bigstatsr)
-#' fbm <- FBM(3, 4, init = matrix(
+#' fbm <- bigstatsr::FBM(3, 4, init = matrix(
 #'     c(0, 1, 2, NA, 100, 200, 300, 400, 5, 6, 7, 8),
 #'     nrow = 3
 #' ))
 #' cleanFBM(fbm, ncores = 1)
-#' }
 #'
 #' @export
 cleanFBM <- function(fbm, ncores = 1) {
@@ -474,15 +471,16 @@ computeRowStatsFBM <- function(fbm, ncores = 1) {
 #' the filtering criteria.
 #' The original FBM is unchanged.
 #' @examples
-#' \donttest{
-#' library(bigstatsr)
-#' fbm <- FBM(5, 3, init = matrix(rnorm(15), nrow = 5))
-#' rs <- list(row_means = rowMeans(fbm[]), row_variances = apply(fbm[], 1, var))
+#' fbm <- bigstatsr::FBM(5, 3, init = matrix(rnorm(15), nrow = 5))
+#' rs <- list(
+#'     row_means = rowMeans(fbm[]),
+#'     row_variances = apply(fbm[], 1, var)
+#' )
 #' out <- filterFBM(fbm, rs,
 #'     mean_cutoff = -0.2, var_cutoff = 0.5,
 #'     backingfile = tempfile()
 #' )
-#' }
+#'
 #' @importFrom bigstatsr cols_along big_copy
 #' @export
 filterFBM <- function(fbm, rowStats, keep_samples_idx = NULL,
@@ -1145,6 +1143,12 @@ compute_svd <- function(Y, k = NULL) {
 #' @param B Number of permutations for `"permutation"`.
 #'
 #' @return An integer: the selected number of latent variables.
+#'
+#' @examples
+#' set.seed(1)
+#' Y <- matrix(rnorm(100 * 30), nrow = 100, ncol = 30)
+#' svdres <- compute_svd(Y, k = 25)
+#' select_clamp_k(svdres, n_samples = ncol(Y), svd_k = 25)
 #'
 #' @export
 select_clamp_k <- function(svdres, n_samples, svd_k,

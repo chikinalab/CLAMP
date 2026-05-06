@@ -10,7 +10,8 @@ cpmCLAMP(counts)
 \item{counts}{A numeric matrix or data.frame of raw counts (genes x samples).}
 }
 \value{
-A numeric matrix of CPM values (same dimensions), ready for CLAMP input.
+A numeric matrix of CPM values (same dimensions), ready for CLAMP
+input.
 }
 \description{
 Compute counts-per-million (CPM) for CLAMP pipelines
