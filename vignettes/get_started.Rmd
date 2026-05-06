@@ -85,8 +85,10 @@ grViz('
    // ---- Inputs & Priors (gray) ----
    DF     [shape=folder,   style=filled, fillcolor=Gray90, label="data.frame"]
    H5     [shape=folder,   style=filled, fillcolor=Gray90, label="H5 file"]
-   GO     [shape=cylinder, style=filled, fillcolor=Gray90, label="GO Biological Process"]
-   MSIGDB [shape=cylinder, style=filled, fillcolor=Gray90, label="MSigDB Hallmark"]
+   GO [shape=cylinder, style=filled, fillcolor=Gray90,
+       label="GO Biological Process"]
+   MSIGDB [shape=cylinder, style=filled, fillcolor=Gray90,
+           label="MSigDB Hallmark"]
    GTEx   [shape=cylinder, style=filled, fillcolor=Gray90, label="GTEx Tissues"]
 
    // ---- Functions (white) ----
@@ -126,7 +128,8 @@ grViz('
    Umat         [label="U"]
 
    // ---- In-memory branch ----
-   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> zscored -> svdMem -> svdRes
+   DF -> cpmDF -> cpmOut -> preDF -> filtered ->
+       zDF -> zscored -> svdMem -> svdRes
    svdRes -> numPC -> clampK
    svdRes -> base
    clampK -> base
@@ -134,7 +137,8 @@ grViz('
    base -> baseResult -> full
 
    // ---- On-disk branch ----
-   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> zFBM -> zscoredFBM -> svdFBM -> svdResFBM
+   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM ->
+       zFBM -> zscoredFBM -> svdFBM -> svdResFBM
    svdResFBM -> numPC
    svdResFBM -> base
    zscoredFBM -> base
@@ -162,15 +166,15 @@ grViz('
 We provide three examples:
 
 1. **Data-frame example (whole blood):**  
-   A small dataset loaded entirely into memory. Shows basic preprocessing,
+    A small dataset loaded entirely into memory. Shows basic preprocessing,
     z-scoring, and running CLAMP without on-disk storage.  
 
 2. **HDF5 example (Alzheimer’s brain):**  
-   Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object,
+    Demonstrates how to import expression from an HDF5 file, create a file-backed FBM object,
     and process larger datasets using the FBM interface.
 
 3. **Table example (pancreatic islets):**  
-   Illustrates reading a tab-delimited count file and comparing conditions via the B matrix.
+    Illustrates reading a tab-delimited count file and comparing conditions via the B matrix.
 
 Each example follows these steps:
 
@@ -206,8 +210,8 @@ head(dataWholeBlood) # genes x samples
 
 ## Preprocess and z-score
 
-We first CPM-normalize the data (when needed), filter for genes with mean expression ≥ 0.5 
-and variance ≥ 0.1, and then apply z-score normalization.
+We first CPM-normalize the data (when needed), filter for genes with mean 
+expression ≥ 0.5 and variance ≥ 0.1, and then apply z-score normalization.
 
 ```{r preprocess, message=TRUE}
 #  CPM normalization
@@ -234,7 +238,8 @@ wb_Y_z <- zscoreCLAMP(
 
 ## Compute SVD and infer k
 
-We compute the SVD using `rsvd::rsvd()` and infer the optimal number of latent variables using `num.pc()`.
+We compute the SVD using `rsvd::rsvd()` and infer the optimal number of latent 
+variables using `num.pc()`.
 
 ```{r wb-svd, message=FALSE}
 # Compute SVD (k = n_samples - 1)
@@ -248,14 +253,21 @@ wb_clamp_k
 
 ## CLAMPbase initialization
 
-We initialize latent variables using `CLAMPbase`, providing the pre-computed SVD and inferred `k`.
+We initialize latent variables using `CLAMPbase`, providing the pre-computed SVD
+and inferred `k`.
 
-The argument `adaptive.p` defines the percentile used to determine the adaptive sparsity threshold applied to each latent variable's gene loadings.
-During alternating updates, negative entries in `Z` are treated as noise, and CLAMP estimates a cutoff based on the `adaptive.p` quantile of these negative values.
-All genes with loadings below this cutoff are set to zero.
-This produces **data-driven sparsity**, automatically filtering weak or noisy signals while retaining genes with the strongest positive contributions.
-Lower values of `adaptive.p` (e.g., 0.01) result in stronger sparsity, while higher values (e.g., 0.1) retain more genes.
-The default `adaptive.p = 0.05` typically yields interpretable, well-separated latent variables in large transcriptomic datasets.
+The argument `adaptive.p` defines the percentile used to determine the adaptive
+sparsity threshold applied to each latent variable's gene loadings.
+During alternating updates, negative entries in `Z` are treated as noise, and 
+CLAMP estimates a cutoff based on the `adaptive.p` quantile of these negative
+values. All genes with loadings below this cutoff are set to zero.
+
+This produces **data-driven sparsity**, automatically filtering weak or noisy 
+signals while retaining genes with the strongest positive contributions.
+Lower values of `adaptive.p` (e.g., 0.01) result in stronger sparsity, while 
+higher values (e.g., 0.1) retain more genes.
+The default `adaptive.p = 0.05` typically yields interpretable, well-separated 
+latent variables in large transcriptomic datasets.
 
 ```{r CLAMPbase, message=FALSE}
 wb_baseRes <- CLAMPbase(
@@ -267,19 +279,21 @@ wb_baseRes <- CLAMPbase(
 
 ## Prepare pathway priors
 
-Next, we build a prior matrix from curated gene sets and compute the Chat object for `CLAMPfull`.
+Next, we build a prior matrix from curated gene sets and compute the Chat 
+object for `CLAMPfull`.
 
 ```{r priors-download, eval=FALSE}
 # How to download pathway and cell marker libraries from Enrichr.
 # Not run during vignette build to avoid network calls; pre-fetched
 # .rds files are loaded in the next chunk instead.
+enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 gmtList <- list(
     CellMarkers = getGMT(
-        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
+        paste0(enrichr_url, "?mode=text&libraryName=CellMarker_2024"),
         "CellMarker_2024"
     ),
     KEGG = getGMT(
-        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
+        paste0(enrichr_url, "?mode=text&libraryName=KEGG_2021_Human"),
         "KEGG_2021_Human"
     )
 )
@@ -288,8 +302,12 @@ gmtList <- list(
 ```{r priors, message=FALSE}
 # Load pre-fetched gene set libraries bundled with the package
 gmtList <- list(
-    CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
-    KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
+    CellMarkers = readRDS(
+        system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")
+    ),
+    KEGG = readRDS(
+        system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP")
+    )
 )
 
 # Combine into a single sparse matrix
@@ -307,15 +325,17 @@ matchedPathsWB <- getMatchedPathwayMatList(
 ```
 
 **Note**: GMT files can also be loaded from local storage using `read_gmt()`.
-This allows you to integrate custom or curated gene set libraries, such as *MSigDB* canonical pathways, directly into your analysis pipeline alongside remote resources.
+This allows you to integrate custom or curated gene set libraries, such as 
+*MSigDB* canonical pathways, directly into your analysis pipeline alongside
+remote resources.
 
 ## CLAMPfull
 
-Finally, we refine the base model by integrating pathway priors using `CLAMPfull`,
-which applies cross-validation to optimize latent variable regularization.
-In this new version, `CLAMPfull` incorporates **variable priors** that adjust
-the influence of each pathway adaptively, improving convergence and stability
-across heterogeneous datasets.
+Finally, we refine the base model by integrating pathway priors using 
+`CLAMPfull`, which applies cross-validation to optimize latent variable
+regularization. In this new version, `CLAMPfull` incorporates 
+**variable priors** that adjust the influence of each pathway adaptively, 
+improving convergence and stability across heterogeneous datasets.
 
 ```{r CLAMPfull, message=FALSE}
 wb_fullRes <- CLAMPfull(
@@ -365,8 +385,9 @@ file.remove(bk_paths[file.exists(bk_paths)])
 
 ### Computing CPM on a File-Backed Matrix (FBM)
 
-For file-backed matrices (FBMs), you can compute counts-per-million (CPM) in-place—without loading the entire dataset into
-RAM—using the `cpmCLAMPFBM()` function from **CLAMP**:
+For file-backed matrices (FBMs), you can compute counts-per-million (CPM) 
+in-place—without loading the entire dataset into RAM—using the 
+`cpmCLAMPFBM()` function from **CLAMP**:
 
 ## Load HDF5 expression
 
@@ -385,7 +406,10 @@ rownames(expr_mat) <- genes
 
 ```{r fbm-construct, message=FALSE}
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
-alzFBM <- FBM(nrow = nrow(expr_mat), ncol = ncol(expr_mat), backingfile = fbm_base)
+alzFBM <- FBM(
+    nrow = nrow(expr_mat), ncol = ncol(expr_mat),
+    backingfile = fbm_base
+)
 blk <- 1000
 
 for (i in seq_len(ceiling(nrow(expr_mat) / blk))) {
@@ -411,7 +435,8 @@ alz_genes <- genes[prep_alz$kept_rows]
 
 ## Compute SVD and infer k
 
-For file-backed matrices, we use `bigstatsr::big_randomSVD()` to compute the SVD without loading the entire matrix into RAM.
+For file-backed matrices, we use `bigstatsr::big_randomSVD()` to compute the 
+SVD without loading the entire matrix into RAM.
 
 ```{r fbm-svd, message=FALSE}
 # Compute SVD (k = n_samples - 1)
@@ -437,18 +462,34 @@ alz_baseRes <- CLAMPbase(
 
 ```{r fbm-priors-download, eval=FALSE}
 # How to fetch the libraries; not run during vignette build.
+enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 alz_gmtList <- list(
-    GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
-    BP = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GO_Biological_Process_2025"),
-    MSigDB = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+    GTEx_Tissues = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=GTEx_Tissues_V8_2023")
+    ),
+    BP = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=GO_Biological_Process_2025")
+    ),
+    MSigDB = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=MSigDB_Hallmark_2020")
+    )
 )
 ```
 
 ```{r fbm-priors, message=FALSE}
 alz_gmtList <- list(
-    GTEx_Tissues = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
-    BP           = readRDS(system.file("extdata", "GO_Biological_Process_2025.rds", package = "CLAMP")),
-    MSigDB       = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
+    GTEx_Tissues = readRDS(
+        system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")
+    ),
+    BP = readRDS(
+        system.file(
+            "extdata", "GO_Biological_Process_2025.rds",
+            package = "CLAMP"
+        )
+    ),
+    MSigDB = readRDS(
+        system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP")
+    )
 )
 
 alz_pathMat <- gmtListToSparseMat(alz_gmtList)
@@ -501,7 +542,10 @@ diabetic (T2D) samples.
 
 ```{r islet-load, message=FALSE}
 islet_file <- GSE164416_DP_htseq_counts_txt_gz()
-islet_df <- read.table(gzfile(islet_file), header = TRUE, stringsAsFactors = FALSE)
+islet_df <- read.table(
+    gzfile(islet_file),
+    header = TRUE, stringsAsFactors = FALSE
+)
 
 islet_df$symbol <- mapIds(org.Hs.eg.db,
     keys = islet_df$ensembl,
@@ -570,18 +614,37 @@ islet_baseRes <- CLAMPbase(
 
 ```{r islet-priors-download, eval=FALSE}
 # How to fetch the libraries; not run during vignette build.
+enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 islet_gmtList <- list(
-    GTEx_Tissues = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=GTEx_Tissues_V8_2023"),
-    Diabetes_Perturbations = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"),
-    MSigDB_Hallmark = getGMT("https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=MSigDB_Hallmark_2020")
+    GTEx_Tissues = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=GTEx_Tissues_V8_2023")
+    ),
+    Diabetes_Perturbations = getGMT(
+        paste0(
+            enrichr_url,
+            "?mode=text&libraryName=Diabetes_Perturbations_GEO_2022"
+        )
+    ),
+    MSigDB_Hallmark = getGMT(
+        paste0(enrichr_url, "?mode=text&libraryName=MSigDB_Hallmark_2020")
+    )
 )
 ```
 
 ```{r islet-priors, message=FALSE}
 islet_gmtList <- list(
-    GTEx_Tissues           = readRDS(system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")),
-    Diabetes_Perturbations = readRDS(system.file("extdata", "Diabetes_Perturbations_GEO_2022.rds", package = "CLAMP")),
-    MSigDB_Hallmark        = readRDS(system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP"))
+    GTEx_Tissues = readRDS(
+        system.file("extdata", "GTEx_Tissues_V8_2023.rds", package = "CLAMP")
+    ),
+    Diabetes_Perturbations = readRDS(
+        system.file(
+            "extdata", "Diabetes_Perturbations_GEO_2022.rds",
+            package = "CLAMP"
+        )
+    ),
+    MSigDB_Hallmark = readRDS(
+        system.file("extdata", "MSigDB_Hallmark_2020.rds", package = "CLAMP")
+    )
 )
 
 islet_pathMat <- gmtListToSparseMat(islet_gmtList)
@@ -625,8 +688,9 @@ datatable(
 
 ## Differential latent-variable expression between conditions
 
-Rows of the B matrix correspond to LVs and columns to samples. By grouping samples by condition (ND vs T2D),
-we compute average LV expression per group to identify LVs that differ between healthy and diabetic islets
+Rows of the B matrix correspond to LVs and columns to samples. By grouping 
+samples by condition (ND vs T2D), we compute average LV expression per group to
+identify LVs that differ between healthy and diabetic islets
 
 ```{r islet-diff, message=FALSE}
 B_df <- as.data.frame(as.matrix(islet_fullRes$B)) %>%
@@ -706,7 +770,10 @@ common_genes <- intersect(islet_model_genes, wb_project_genes)
 cat(
     "Overlapping genes:", length(common_genes), "/", length(islet_model_genes),
     "islet model genes",
-    sprintf("(%.1f%%)\n", 100 * length(common_genes) / length(islet_model_genes))
+    sprintf(
+        "(%.1f%%)\n",
+        100 * length(common_genes) / length(islet_model_genes)
+    )
 )
 
 # projectCLAMP aligns common row names in the model's gene order
@@ -782,7 +849,9 @@ are labelled directly.
 
 ```{r plot-topZ, message=FALSE, fig.width=9, fig.height=7}
 # Use the first few LVs that have pathway support
-lv_with_paths <- wb_fullRes$withPrior[seq_len(min(4, length(wb_fullRes$withPrior)))]
+lv_with_paths <- wb_fullRes$withPrior[
+    seq_len(min(4, length(wb_fullRes$withPrior)))
+]
 
 CLAMPplotTopZ(
     wb_fullRes,
@@ -856,8 +925,10 @@ CLAMPdotplotAll(
 
 # Parallelization in CLAMP
 
-CLAMP supports multi-core parallelization for computationally intensive operations, particularly when working with large datasets and file-backed matrices (FBMs).
-The `ncores` parameter can be used in several key functions to speed up processing.
+CLAMP supports multi-core parallelization for computationally intensive 
+operations, particularly when working with large datasets 
+and file-backed matrices (FBMs). The `ncores` parameter can be used in several 
+key functions to speed up processing.
 
 The following CLAMP functions accept an `ncores` parameter:
 

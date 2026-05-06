@@ -58,13 +58,14 @@ dataWholeBlood <- tscale(dataWholeBlood)
 # How to download pathway and cell marker libraries from Enrichr.
 # Not run during vignette build to avoid network calls; pre-fetched
 # .rds files are loaded in the next chunk instead.
+enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 gmtList <- list(
     CellMarkers = getGMT(
-        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=CellMarker_2024",
+        paste0(enrichr_url, "?mode=text&libraryName=CellMarker_2024"),
         "CellMarker_2024"
     ),
     KEGG = getGMT(
-        "https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=KEGG_2021_Human",
+        paste0(enrichr_url, "?mode=text&libraryName=KEGG_2021_Human"),
         "KEGG_2021_Human"
     )
 )
@@ -73,8 +74,12 @@ gmtList <- list(
 ```{r load-priors}
 # Load pre-fetched gene set libraries bundled with the package
 gmtList <- list(
-    CellMarkers = readRDS(system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")),
-    KEGG        = readRDS(system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP"))
+    CellMarkers = readRDS(
+        system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")
+    ),
+    KEGG = readRDS(
+        system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP")
+    )
 )
 
 # Combine into a single sparse matrix
