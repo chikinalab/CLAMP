@@ -18,12 +18,14 @@ Parses a local GMT file and returns a list of gene sets. Each gene
 set is represented as a character vector of unique gene names.
 }
 \examples{
-# Bioconductor requires runnable examples. 
+# Bioconductor requires runnable examples.
 # We create a dummy GMT file for this example:
 gmt_file <- tempfile(fileext = ".gmt")
 writeLines(
-    c("PATHWAY_A\thttp://link.com\tGENE1\tGENE2\tGENE3",
-      "PATHWAY_B\thttp://link.com\tGENE2\tGENE4"),
+    c(
+        "PATHWAY_A\thttp://link.com\tGENE1\tGENE2\tGENE3",
+        "PATHWAY_B\thttp://link.com\tGENE2\tGENE4"
+    ),
     con = gmt_file
 )
 

@@ -5,21 +5,23 @@
 \alias{panDB}
 \title{panDB gene-set database}
 \format{
-A named list of length M, where each element is a gene-set collection.
+A named list of length M, where each element is a gene-set
+collection.
 }
 \usage{
 data(panDB)
 }
 \value{
-A list of gene-set collections used as priors for pathway-informed modeling.
+A list of gene-set collections used as priors for pathway-informed
+modeling.
 }
 \description{
-A list of curated pathway and biological process gene sets used as prior knowledge
-for CLAMP and other latent-variable models.
+A list of curated pathway and biological process gene sets used as prior
+knowledge for CLAMP and other latent-variable models.
 }
 \details{
-Each element corresponds to a functional collection (e.g., KEGG, Reactome, GO),
-where each entry contains a character vector of gene symbols.
+Each element corresponds to a functional collection (e.g., KEGG, Reactome,
+GO), where each entry contains a character vector of gene symbols.
 }
 \examples{
 data(panDB)

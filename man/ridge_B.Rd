@@ -27,7 +27,10 @@ samples <- paste0("S", 1:20)
 k <- 5
 
 Y <- matrix(rnorm(50 * 20), nrow = 50, dimnames = list(genes, samples))
-Z <- matrix(rnorm(50 * k),  nrow = 50, dimnames = list(genes, paste0("LV", 1:k)))
+Z <- matrix(rnorm(50 * k),
+    nrow = 50,
+    dimnames = list(genes, paste0("LV", 1:k))
+)
 
 lambda <- 0.1
 L2k <- diag(lambda, k)

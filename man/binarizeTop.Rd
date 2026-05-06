@@ -11,11 +11,13 @@ binarizeTop(Z, top, keepVals = TRUE)
 
 \item{top}{Number of top entries to keep in each column.}
 
-\item{keepVals}{If \code{TRUE}, retains original values above the cutoff; otherwise, sets them to 1.}
+\item{keepVals}{If \code{TRUE}, retains original values above the cutoff;
+otherwise, sets them to 1.}
 }
 \value{
 A modified matrix with only top entries retained per column.
 }
 \description{
-Keeps only the top \code{top} values in each column of a matrix, setting others to 0.
+Keeps only the top \code{top} values in each column of a matrix, setting
+others to 0.
 }

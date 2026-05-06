@@ -16,26 +16,33 @@ preprocessCLAMPFBM(
 \arguments{
 \item{fbm}{A bigstatsr::FBM (genes x samples), possibly read-only.}
 
-\item{mean_cutoff}{Numeric or NULL. Minimum row mean to keep (NULL = no mean filter).}
+\item{mean_cutoff}{Numeric or NULL. Minimum row mean to keep
+(NULL = no mean filter).}
 
-\item{var_cutoff}{Numeric or NULL. Minimum row variance to keep (NULL = no var filter).}
+\item{var_cutoff}{Numeric or NULL. Minimum row variance to keep
+(NULL = no var filter).}
 
-\item{backingfile}{Character or NULL. Base name for the \emph{copy} FBM and filtered FBM on disk.
-If NULL, defaults to paste0(fbm$backingfile, '_preproc') and '_filtered'.}
+\item{backingfile}{Character or NULL. Base name for the \emph{copy} FBM and
+filtered FBM on disk. If NULL, defaults to
+paste0(fbm$backingfile, '_preproc') and '_filtered'.}
 
-\item{block_size}{Number of rows to process at a time when copying data. Default is 1000.}
+\item{block_size}{Number of rows to process at a time when copying data.
+Default is 1000.}
 
-\item{ncores}{Integer; number of cores to use for parallel operations (default 1).}
+\item{ncores}{Integer; number of cores to use for parallel operations
+(default 1).}
 }
 \value{
 A list with:
 \item{fbm_filtered}{The filtered FBM (writable).}
 \item{rowStats}{List with row_means & row_variances for fbm_filtered.}
-\item{kept_rows}{Integer vector of original row indices that were retained.}
+\item{kept_rows}{Integer vector of original row indices that were
+retained.}
 }
 \description{
-Makes a writable copy of the input FBM, cleans it (log2 transform if needed, fill NAs),
-filters rows by mean/variance, and returns the filtered FBM plus stats and indices.
+Makes a writable copy of the input FBM, cleans it (log2 transform if
+needed, fill NAs), filters rows by mean/variance, and returns the filtered
+FBM plus stats and indices.
 }
 \examples{
 library(bigstatsr)
@@ -47,7 +54,7 @@ mat <- matrix(
         100, 200, 300 # geneC
     ),
     nrow = 3, byrow = TRUE,
-    dimnames = list(c('geneA', 'geneB', 'geneC'), paste0('s', seq_len(3)))
+    dimnames = list(c("geneA", "geneB", "geneC"), paste0("s", seq_len(3)))
 )
 fbm <- FBM(nrow(mat), ncol(mat), init = mat)
 

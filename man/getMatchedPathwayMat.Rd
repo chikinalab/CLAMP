@@ -11,10 +11,12 @@ getMatchedPathwayMat(pathMat, new.genes, min.genes = 10)
 
 \item{new.genes}{Character vector of gene names to match.}
 
-\item{min.genes}{Minimum number of overlapping genes required to keep a pathway.}
+\item{min.genes}{Minimum number of overlapping genes required to keep
+a pathway.}
 }
 \value{
-A sparse matrix of dimensions \code{length(new.genes)} x filtered pathways.
+A sparse matrix of dimensions \code{length(new.genes)} x
+filtered pathways.
 }
 \description{
 Filters a gene-by-pathway annotation matrix to retain only pathways

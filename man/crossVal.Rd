@@ -7,22 +7,28 @@
 crossVal(clampRes, priorMat, priorMatcv)
 }
 \arguments{
-\item{clampRes}{A list containing \code{U} (loadings) and \code{Z} (scores) from a CLAMP model.}
+\item{clampRes}{A list containing \code{U} (loadings) and \code{Z}
+(scores) from a CLAMP model.}
 
-\item{priorMat}{A binary matrix (genes x pathways) indicating original pathway annotations.}
+\item{priorMat}{A binary matrix (genes x pathways) indicating original
+pathway annotations.}
 
-\item{priorMatcv}{A version of \code{priorMat} used to mask held-out annotations for cross-validation.}
+\item{priorMatcv}{A version of \code{priorMat} used to mask held-out
+annotations for cross-validation.}
 }
 \value{
 A list with:
 \describe{
 \item{\code{Uauc}}{Matrix of AUC values (pathways x LVs)}
 \item{\code{Upval}}{Matrix of \code{-log10(p)} values (pathways x LVs)}
-\item{\code{summary}}{Data frame with pathway, LV index, AUC, p-value, and FDR}
+\item{\code{summary}}{Data frame with pathway, LV index, AUC, p-value,
+and FDR}
 }
 }
 \description{
-Evaluates how well each latent variable in a CLAMP model captures held-out pathway annotations,
-using cross-validation over the prior matrix. For each latent variable and associated pathway,
-held-out genes are selected and the AUC is computed using their scores in \code{clampRes$Z}.
+Evaluates how well each latent variable in a CLAMP model captures
+held-out pathway annotations, using cross-validation over the prior
+matrix. For each latent variable and associated pathway, held-out genes
+are selected and the AUC is computed using their scores in
+\code{clampRes$Z}.
 }

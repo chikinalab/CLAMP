@@ -371,7 +371,7 @@ plotTopZ_Complex <- function(clampRes, data, priorMat,
 #'
 #' @return Invisibly returns a [ggplot2::ggplot()] object.
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient theme_minimal
-#'   theme element_text element_blank labs unit
+#' @importFrom ggplot2 theme element_text element_blank labs unit
 #' @importFrom rlang .data
 #' @importFrom stats hclust dist
 #' @export
@@ -678,9 +678,10 @@ CLAMPplotTopZ <- function(clampRes, data = NULL, priorMat = NULL, top = 50,
 #'   to `x.axis`.
 #'
 #' @return Invisibly returns a [ggplot2::ggplot()] object.
-#' @importFrom ggplot2 ggplot aes geom_segment geom_point scale_size_continuous
-#'   scale_colour_gradient scale_x_continuous theme_minimal theme element_text
-#'   element_blank element_line labs unit
+#' @importFrom ggplot2 ggplot aes geom_segment geom_point
+#' @importFrom ggplot2 scale_size_continuous scale_colour_gradient
+#' @importFrom ggplot2 scale_x_continuous theme_minimal theme element_text
+#' @importFrom ggplot2 element_blank element_line labs unit
 #' @importFrom rlang .data
 #' @export
 #' @examples
@@ -828,7 +829,8 @@ CLAMPdotplot <- function(clampRes, lv = 1, top = 20, auc.cutoff = 0.6,
 #'
 #' @return Invisibly returns a [ggplot2::ggplot()] object.
 #' @importFrom ggplot2 ggplot aes geom_point scale_colour_gradient
-#'   scale_size_continuous theme_minimal theme element_text element_line labs
+#' @importFrom ggplot2 scale_size_continuous theme_minimal theme
+#' @importFrom ggplot2 element_text element_line labs
 #' @importFrom dplyr group_by slice_max ungroup
 #' @importFrom rlang .data
 #' @export

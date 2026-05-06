@@ -19,7 +19,8 @@ A numeric scalar giving the estimated scale. If linear extrapolation
 is unreliable, returns \code{sv[ceiling(0.75 * length(sv))]}.
 }
 \description{
-This function estimates a characteristic scale from a vector of singular values
+This function estimates a characteristic scale from a vector of singular
+values
 by fitting a linear model to the tail and extrapolating to length \code{n}.
 The median of the extrapolated values is returned as the estimate.
 If no sufficiently linear tail is detected (based on \code{min_r2}) or

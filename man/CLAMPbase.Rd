@@ -27,7 +27,8 @@ CLAMPbase(
 )
 }
 \arguments{
-\item{Y}{Input gene expression matrix (genes x samples). Can be dense, sparse (\code{dgCMatrix}), or FBM.}
+\item{Y}{Input gene expression matrix (genes x samples). Can be dense,
+sparse (\code{dgCMatrix}), or FBM.}
 
 \item{clamp_k}{Number of latent variables for CLAMP (final model rank).
 If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
@@ -35,40 +36,51 @@ If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
 \item{svd_k}{Number of singular values/components to compute in the SVD.
 If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
-\item{svdres}{Optional precomputed SVD result. If not supplied, it is computed internally.}
+\item{svdres}{Optional precomputed SVD result. If not supplied, it is
+computed internally.}
 
-\item{L1}{L1 regularization strength for Z. Defaults to scaled singular value.}
+\item{L1}{L1 regularization strength for Z. Defaults to scaled singular
+value.}
 
-\item{L2}{L2 regularization strength for B. Defaults to scaled singular value.}
+\item{L2}{L2 regularization strength for B. Defaults to scaled singular
+value.}
 
-\item{Zpos}{Logical; if \code{TRUE}, negative entries in Z are zeroed. Default is \code{TRUE}.}
+\item{Zpos}{Logical; if \code{TRUE}, negative entries in Z are zeroed.
+Default is \code{TRUE}.}
 
 \item{max.iter}{Maximum number of optimization iterations. Default is 200.}
 
 \item{tol}{Convergence tolerance for B update. Default is 5e-4.}
 
-\item{trace}{Logical; if \code{TRUE}, prints progress. Default is \code{FALSE}.}
+\item{trace}{Logical; if \code{TRUE}, prints progress. Default is
+\code{FALSE}.}
 
 \item{rseed}{Optional integer for reproducible random initialization of B.}
 
-\item{B}{Optional initial matrix for B. If not provided, initialized from SVD.}
+\item{B}{Optional initial matrix for B. If not provided, initialized
+from SVD.}
 
 \item{scale}{Scaling factor for L1 and L2 when not provided. Default is 1.}
 
 \item{pos.adj}{Positive constraint adjustment divisor for L1. Default is 3.}
 
-\item{adaptive.p}{Controls adaptive sparsity in \code{Z}. After each ALS update,
+\item{adaptive.p}{Controls adaptive sparsity in \code{Z}. After each ALS
+update,
 negative entries in \code{Z} are assumed to reflect noise.
-The cutoff for thresholding is set according to the probability of positive values under
-a reflected negative distribution—effectively zeroing out small positive entries likely to be noise.
+The cutoff for thresholding is set according to the probability of
+positive values under a reflected negative distribution-effectively
+zeroing out small positive entries likely to be noise.
 Smaller values lead to more sparsity. Default is 0.05.}
 
-\item{adaptive.iter}{Number of iterations before adaptive sparsity is applied. Default is 20.}
+\item{adaptive.iter}{Number of iterations before adaptive sparsity is
+applied. Default is 20.}
 
-\item{cutoff}{Scalar threshold to zero Z values when \code{Zpos = TRUE} and adaptive thresholding
+\item{cutoff}{Scalar threshold to zero Z values when \code{Zpos = TRUE}
+and adaptive thresholding
 is not used. Default is 0.}
 
-\item{ncores}{Number of cores to use for parallel computation (only used if Y is an FBM). Default is 1.}
+\item{ncores}{Number of cores to use for parallel computation (only used
+if Y is an FBM). Default is 1.}
 
 \item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
 One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
@@ -86,14 +98,16 @@ A list with components:
 }
 \description{
 Runs the core matrix factorization procedure of CLAMP,
-decomposing the gene expression matrix \code{Y} into latent variables \code{Z} and loadings \code{B}.
-It supports sparse, dense, and Filebacked Big Matrices (FBM) as input and includes options for
+decomposing the gene expression matrix \code{Y} into latent variables
+\code{Z} and loadings \code{B}. It supports sparse, dense, and Filebacked
+Big Matrices (FBM) as input and includes options for
 adaptive sparsity, positive constraints, and regularization.
 }
 \details{
-This function is the low-level implementation of CLAMP. It alternates between solving for \code{Z}
-given \code{B} and solving for \code{B} given \code{Z}, with optional sparsity and non-negativity
-constraints on \code{Z}. Convergence is assessed via relative change in \code{B}.
+This function is the low-level implementation of CLAMP. It alternates
+between solving for \code{Z} given \code{B} and solving for \code{B}
+given \code{Z}, with optional sparsity and non-negativity constraints on
+\code{Z}. Convergence is assessed via relative change in \code{B}.
 }
 \examples{
 # small toy dataset: 5 genes x 4 samples

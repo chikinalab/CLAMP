@@ -7,7 +7,8 @@
 num.pc(data, method = c("elbow", "permutation"), B = 20, seed = NULL)
 }
 \arguments{
-\item{data}{Either a matrix (e.g. z-scored data) or an SVD result (list with $d).}
+\item{data}{Either a matrix (e.g. z-scored data) or an SVD result
+(list with $d).}
 
 \item{method}{One of "elbow" (fast) or "permutation" (slower).}
 

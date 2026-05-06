@@ -30,5 +30,5 @@ Z <- matrix(rnorm(genes * k), nrow = genes)
 
 # Compute Z^T Y
 res1 <- cross_ZY(Y, Z)
-dim(res1)   # k × samples
+dim(res1) # k × samples
 }

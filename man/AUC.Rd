@@ -7,19 +7,23 @@
 AUC(labels, values)
 }
 \arguments{
-\item{labels}{A numeric or logical vector indicating class labels. Values > 0 are treated as positive.}
+\item{labels}{A numeric or logical vector indicating class labels.
+Values > 0 are treated as positive.}
 
-\item{values}{A numeric vector of prediction scores corresponding to \code{labels}.}
+\item{values}{A numeric vector of prediction scores corresponding to
+\code{labels}.}
 }
 \value{
 A list with:
 \describe{
 \item{\code{auc}}{Estimated AUC, or 0.5 if one class is missing}
-\item{\code{pval}}{Wilcoxon test p-value, or \code{NA} if one class is missing}
+\item{\code{pval}}{Wilcoxon test p-value, or \code{NA} if one class
+is missing}
 }
 }
 \description{
-Computes the area under the ROC curve (AUC) by applying a Wilcoxon rank-sum test
-between predicted values for positive and negative labels. This is equivalent to
+Computes the area under the ROC curve (AUC) by applying a Wilcoxon
+rank-sum test between predicted values for positive and negative labels.
+This is equivalent to
 computing the Mann-Whitney U statistic.
 }

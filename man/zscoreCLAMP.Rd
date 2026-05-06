@@ -7,13 +7,15 @@
 zscoreCLAMP(Y_filtered, rowStats)
 }
 \arguments{
-\item{Y_filtered}{Numeric matrix (genes x samples) returned by preprocessCLAMP}
+\item{Y_filtered}{Numeric matrix (genes x samples) returned by
+preprocessCLAMP}
 
 \item{rowStats}{Data frame with numeric columns \code{mean} and \code{variance},
 row-named to match \code{rownames(Y_filtered)}}
 }
 \value{
-Numeric matrix of the same dimensions as Y_filtered, with each row centered and scaled.
+Numeric matrix of the same dimensions as Y_filtered, with each
+row centered and scaled.
 }
 \description{
 Centers each gene to mean 0 and scales to unit variance.
@@ -26,7 +28,7 @@ Y <- matrix(
         8, 10, 12 # gene2 counts
     ),
     nrow = 2, byrow = TRUE,
-    dimnames = list(c('gene1', 'gene2'), paste0('sample', seq_len(3)))
+    dimnames = list(c("gene1", "gene2"), paste0("sample", seq_len(3)))
 )
 
 # compute per‐gene mean and variance

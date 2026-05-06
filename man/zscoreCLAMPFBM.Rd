@@ -13,7 +13,8 @@ zscoreCLAMPFBM(fbm_filtered, rowStats, chunk_size = 1000, ncores = 1)
 
 \item{chunk_size}{Columns per block (default 1000).}
 
-\item{ncores}{Integer; number of cores to use for parallel operations (default 1).}
+\item{ncores}{Integer; number of cores to use for parallel operations
+(default 1).}
 }
 \value{
 A normalized FBM with z-scored rows.

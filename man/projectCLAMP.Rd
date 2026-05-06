@@ -20,9 +20,11 @@ projectCLAMP(
 \item{newdata}{A gene expression matrix (genes x samples) to be projected.
 Can be a standard matrix, sparse matrix, or FBM/big.matrix.}
 
-\item{scale}{Optional numeric multiplier for the L2 regularization terms. Default is 1.}
+\item{scale}{Optional numeric multiplier for the L2 regularization terms.
+Default is 1.}
 
-\item{ncores}{Number of cores to use for parallel computation (only used if newdata is an FBM).
+\item{ncores}{Number of cores to use for parallel computation (only used
+if newdata is an FBM).
 Default is 1.}
 
 \item{align}{Logical; if \code{TRUE} (default), row names shared by
@@ -34,7 +36,8 @@ available, dimensions must already match.}
 rows are used for projection.}
 }
 \value{
-A matrix \code{B} of projected latent loadings (LVs x samples) for the new dataset.
+A matrix \code{B} of projected latent loadings (LVs x samples)
+for the new dataset.
 }
 \description{
 Computes the latent loadings \code{B} for new gene expression data using
@@ -51,12 +54,16 @@ subsetting, the computation is optimized using
 }
 \examples{
 # fit a tiny CLAMP model for projection
-Y0 <- matrix(rnorm(5 * 3), nrow = 5,
-             dimnames = list(paste0("Gene", 1:5), paste0("S", 1:3)))
+Y0 <- matrix(rnorm(5 * 3),
+    nrow = 5,
+    dimnames = list(paste0("Gene", 1:5), paste0("S", 1:3))
+)
 base <- CLAMPbase(Y0, clamp_k = 2, max.iter = 1, trace = FALSE)
 # new data can be provided in a different row order
-newY <- matrix(rnorm(5 * 2), nrow = 5,
-               dimnames = list(rev(rownames(Y0)), paste0("N", 1:2)))
+newY <- matrix(rnorm(5 * 2),
+    nrow = 5,
+    dimnames = list(rev(rownames(Y0)), paste0("N", 1:2))
+)
 projB <- projectCLAMP(base, newdata = newY)
 # check dimensions: 2 latent vars x 2 samples
 dim(projB)

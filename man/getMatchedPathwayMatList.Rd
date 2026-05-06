@@ -7,20 +7,25 @@
 getMatchedPathwayMatList(..., new.genes, min.genes = 10)
 }
 \arguments{
-\item{...}{One or more binary matrices (genes × pathways), either base \code{matrix}
+\item{...}{One or more binary matrices (genes x pathways), either base
+\code{matrix}
 or sparse \code{Matrix} objects. Row names must be gene identifiers.}
 
-\item{new.genes}{Character vector of gene names to align all pathway matrices to.}
+\item{new.genes}{Character vector of gene names to align all pathway
+matrices to.}
 
-\item{min.genes}{Integer; minimum number of overlapping genes required for a pathway
+\item{min.genes}{Integer; minimum number of overlapping genes required
+for a pathway
 to be retained. Default is 10.}
 }
 \value{
-A sparse binary matrix with rows equal to \code{new.genes} and columns equal to
+A sparse binary matrix with rows equal to \code{new.genes} and
+columns equal to
 the union of filtered pathways from all input matrices.
 }
 \description{
-Filters one or more gene-by-pathway annotation matrices to retain only pathways
+Filters one or more gene-by-pathway annotation matrices to retain only
+pathways
 with sufficient overlap with a given target gene set. Each input matrix is
 restricted to \code{new.genes}, and pathways with fewer than \code{min.genes}
 overlapping genes are removed. The resulting matrices are column-bound into a
@@ -36,15 +41,19 @@ pathways1 <- paste0("Path", 1:5)
 pathways2 <- paste0("Path", 6:10)
 
 mat1 <- matrix(sample(c(0, 1), 100 * 5, replace = TRUE, prob = c(0.9, 0.1)),
-               nrow = 100, ncol = 5,
-               dimnames = list(genes, pathways1))
+    nrow = 100, ncol = 5,
+    dimnames = list(genes, pathways1)
+)
 mat2 <- matrix(sample(c(0, 1), 100 * 5, replace = TRUE, prob = c(0.9, 0.1)),
-               nrow = 100, ncol = 5,
-               dimnames = list(genes, pathways2))
+    nrow = 100, ncol = 5,
+    dimnames = list(genes, pathways2)
+)
 
 # Define target genes (subset of total)
 new.genes <- sample(genes, 50)
 
 # Match and filter pathways with at least 5 genes
-matched <- getMatchedPathwayMatList(mat1, mat2, new.genes = new.genes, min.genes = 5)
+matched <- getMatchedPathwayMatList(mat1, mat2,
+    new.genes = new.genes, min.genes = 5
+)
 }

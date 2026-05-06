@@ -12,7 +12,8 @@ winsor_topk(M, k)
 \item{k}{Integer; number of top elements to cap. Must be >= 1 and <= nrow(M).}
 }
 \value{
-A numeric matrix of the same dimensions as \code{M}, winsorized per column.
+A numeric matrix of the same dimensions as \code{M}, winsorized
+per column.
 }
 \description{
 For each column, replaces values greater than the k-th largest
@@ -20,8 +21,10 @@ entry with that threshold.
 }
 \examples{
 set.seed(123)
-M <- matrix(rnorm(20 * 5, mean = 0, sd = 2), nrow = 20,
-            dimnames = list(paste0("Gene", 1:20), paste0("S", 1:5)))
+M <- matrix(rnorm(20 * 5, mean = 0, sd = 2),
+    nrow = 20,
+    dimnames = list(paste0("Gene", 1:20), paste0("S", 1:5))
+)
 
 # Display column maxima before winsorization
 apply(M, 2, max)

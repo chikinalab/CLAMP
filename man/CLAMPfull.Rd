@@ -42,15 +42,18 @@ CLAMPfull(
 )
 }
 \arguments{
-\item{Y}{Gene expression matrix (genes × samples). Can be dense, sparse (dgCMatrix), or FBM.}
+\item{Y}{Gene expression matrix (genes x samples). Can be dense, sparse
+(dgCMatrix), or FBM.}
 
-\item{priorMat}{Binary or weighted prior matrix (genes × pathways) linking genes to pathways.}
+\item{priorMat}{Binary or weighted prior matrix (genes x pathways)
+linking genes to pathways.}
 
 \item{Chat}{Ignored in this version (kept for interface compatibility).}
 
 \item{svdres}{Optional precomputed SVD result for initialization.}
 
-\item{clamp.base.result}{Optional result from \code{CLAMPbase()} providing initial values.}
+\item{clamp.base.result}{Optional result from \code{CLAMPbase()}
+providing initial values.}
 
 \item{clamp_k}{Number of latent variables for CLAMP (final model rank).
 If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
@@ -58,7 +61,8 @@ If \code{NULL}, it is chosen automatically via \code{select_clamp_k()}.}
 \item{svd_k}{Number of singular values/components to compute in the SVD.
 If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
-\item{L1, L2}{Regularization parameters for \code{Z} and \code{B}. Defaults use values from
+\item{L1, L2}{Regularization parameters for \code{Z} and \code{B}.
+Defaults use values from
 \code{clamp.base.result}.}
 
 \item{cvn}{Number of folds for pathway-level cross-validation. Default: 5.}
@@ -67,11 +71,14 @@ If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
 \item{trace}{Logical; print iteration progress. Default: \code{TRUE}.}
 
-\item{maxPath}{Maximum number of pathways per LV during U-fitting. Default: 10.}
+\item{maxPath}{Maximum number of pathways per LV during U-fitting.
+Default: 10.}
 
-\item{doCrossval}{Whether to mask prior entries for CV evaluation. Default: \code{TRUE}.}
+\item{doCrossval}{Whether to mask prior entries for CV evaluation.
+Default: \code{TRUE}.}
 
-\item{penalty.factor}{Optional vector of per-pathway penalties for glmnet. Default: 1.}
+\item{penalty.factor}{Optional vector of per-pathway penalties for glmnet.
+Default: 1.}
 
 \item{glm_alpha}{Elastic net mixing parameter for U estimation. Default: 0.9.}
 
@@ -81,34 +88,44 @@ If \code{NULL}, defaults to \code{max(2, min(n_genes, n_samples) - 1)}.}
 
 \item{seed}{Random seed for CV masking. Default: 123456.}
 
-\item{allGenes}{If \code{TRUE}, adds zero-filled rows for missing genes. Default: \code{FALSE}.}
+\item{allGenes}{If \code{TRUE}, adds zero-filled rows for missing genes.
+Default: \code{FALSE}.}
 
-\item{rseed}{Reproducibility, coordinate descent updates are done in random order.}
+\item{rseed}{Reproducibility, coordinate descent updates are done in
+random order.}
 
 \item{max.U.updates}{Maximum number of U updates (capped by max.iter).}
 
-\item{pathwaySelection}{Pathway selection mode for U fitting (\code{"fast"} or \code{"complete"}).}
+\item{pathwaySelection}{Pathway selection mode for U fitting
+(\code{"fast"} or \code{"complete"}).}
 
 \item{multiplier}{Variance-prior scaling factor. Default: 5.}
 
-\item{adaptive.p}{Quantile of negative Z values used to define adaptive thresholding. Default: 0.05.}
+\item{adaptive.p}{Quantile of negative Z values used to define adaptive
+thresholding. Default: 0.05.}
 
-\item{useNNLS}{Whether to use non-negative least squares for U estimation. Default: \code{TRUE}.}
+\item{useNNLS}{Whether to use non-negative least squares for U estimation.
+Default: \code{TRUE}.}
 
-\item{useRaw}{If \code{TRUE}, uses unthresholded Z in U updates. Default: \code{TRUE}.}
+\item{useRaw}{If \code{TRUE}, uses unthresholded Z in U updates.
+Default: \code{TRUE}.}
 
 \item{refitEvery}{Frequency (in U updates) of full refits. Default: 3.}
 
-\item{useSE}{Logical; whether to use the 1-standard-error rule for internal glmnet fitting. Default is FALSE.}
+\item{useSE}{Logical; whether to use the 1-standard-error rule for
+internal glmnet fitting. Default is FALSE.}
 
-\item{var.prior}{Logical; if \code{TRUE}, enables adaptive variance prior updates for Z.
+\item{var.prior}{Logical; if \code{TRUE}, enables adaptive variance prior
+updates for Z.
 Default: \code{TRUE}.}
 
 \item{Uscale}{Logical; whether to scale U columns. Default: \code{FALSE}.}
 
-\item{robust.vp}{Logical; winsorize prior-predicted Z2 values to reduce outlier effects. Default: \code{TRUE}.}
+\item{robust.vp}{Logical; winsorize prior-predicted Z2 values to reduce
+outlier effects. Default: \code{TRUE}.}
 
-\item{use_cpp}{Logical; if TRUE, use C++ implementation for Z updates. Default is FALSE.}
+\item{use_cpp}{Logical; if TRUE, use C++ implementation for Z updates.
+Default is FALSE.}
 
 \item{clamp_k_method}{Method for selecting \code{clamp_k} when not provided.
 One of \code{"elbow"} (default), \code{"permutation"}, \code{"gavish_donoho"}, or
@@ -129,22 +146,28 @@ A list with elements:
 }
 }
 \description{
-This version performs latent-variable decomposition of a gene expression matrix \code{Y}
-guided by prior pathway annotations \code{priorMat}, with simplified and lighter regularization
-compared to the original extended CLAMP variant. The algorithm alternates updates of \code{Z},
-\code{B}, and \code{U}, where \code{U} captures pathway–latent variable associations inferred
-directly from the data without ridge-regularized projections (\code{Chat} is not used).
+This version performs latent-variable decomposition of a gene expression
+matrix \code{Y} guided by prior pathway annotations \code{priorMat}, with
+simplified and lighter regularization compared to the original extended
+CLAMP variant. The algorithm alternates updates of \code{Z}, \code{B},
+and \code{U}, where \code{U} captures pathway-latent variable
+associations inferred directly from the data without ridge-regularized
+projections (\code{Chat} is not used).
 }
 \details{
-Cross-validation can be used to evaluate pathway–LV specificity, and a variance-based prior
-(\code{var.prior = TRUE}) introduces adaptive shrinkage of \code{Z} based on how strongly
-each latent component aligns with prior pathways. The scaling factor \code{multiplier} (default 5)
+Cross-validation can be used to evaluate pathway-LV specificity, and a
+variance-based prior (\code{var.prior = TRUE}) introduces adaptive
+shrinkage of \code{Z} based on how strongly each latent component aligns
+with prior pathways. The scaling factor \code{multiplier} (default 5)
 controls the strength of this adaptive shrinkage.
 
-This implementation omits ridge-projected priors (\code{Chat}) and uses a lighter variance prior
-with a lower default \code{multiplier = 5}, allowing more flexible latent representations.
-Setting \code{var.prior = FALSE} reproduces standard CLAMP-like updates. Cross-validation, if
-enabled, masks 20\% of gene–pathway associations per column to estimate pathway–LV specificity
+This implementation omits ridge-projected priors (\code{Chat}) and uses
+a lighter variance prior with a lower default \code{multiplier = 5},
+allowing more flexible latent representations. Setting
+\code{var.prior = FALSE} reproduces standard CLAMP-like updates.
+Cross-validation, if
+enabled, masks 20\% of gene-pathway associations per column to estimate
+pathway-LV specificity
 (reported via AUC and p-values).
 }
 \examples{
@@ -152,15 +175,16 @@ set.seed(1)
 mat <- matrix(rnorm(100), nrow = 10, ncol = 10)
 base <- CLAMPbase(mat, clamp_k = 5, trace = FALSE, max.iter = 5)
 prior <- matrix(sample(0:1, 10 * 6, TRUE, prob = c(0.9, 0.1)),
-                nrow = 10, ncol = 6)
+    nrow = 10, ncol = 6
+)
 fit <- CLAMPfull(
-  Y = mat,
-  priorMat = prior,
-  clamp.base.result = base,
-  doCrossval = FALSE,
-  adaptive.p = 0,
-  max.U.updates = 0,
-  max.iter = 1,
-  trace = FALSE
+    Y = mat,
+    priorMat = prior,
+    clamp.base.result = base,
+    doCrossval = FALSE,
+    adaptive.p = 0,
+    max.U.updates = 0,
+    max.iter = 1,
+    trace = FALSE
 )
 }

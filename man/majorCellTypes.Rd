@@ -6,7 +6,8 @@
 \title{Major cell-type annotations}
 \format{
 A factor (or character) vector of length N,
-where each element corresponds to a sample and indicates its major cell type.
+where each element corresponds to a sample and indicates its major
+cell type.
 }
 \usage{
 data(majorCellTypes)
