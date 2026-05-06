@@ -10,7 +10,7 @@ select_svd_k(Y)
 \item{Y}{A matrix-like object (dense matrix, \code{dgCMatrix}, or \code{FBM}).}
 }
 \value{
-An integer: \code{max(2, min(nrow(Y), ncol(Y)) - 1)}.
+An integer: \code{max(2, floor((min(nrow(Y), ncol(Y)) - 1) / 4))}.
 }
 \description{
 Returns the default number of components to compute in a truncated SVD

@@ -90,19 +90,23 @@ grViz('
    MSIGDB [shape=cylinder, style=filled, fillcolor=Gray90,
            label="MSigDB Hallmark"]
    GTEx   [shape=cylinder, style=filled, fillcolor=Gray90, label="GTEx Tissues"]
+   GMTFILE [shape=folder,  style=filled, fillcolor=Gray90, label="GMT file"]
 
    // ---- Functions (white) ----
    node [shape=rectangle, style=filled, fillcolor=White]
    cpmDF      [label="cpmCLAMP()"]
    preDF      [label="preprocessCLAMP()"]
    zDF        [label="zscoreCLAMP()"]
-   svdMem     [label="rsvd::rsvd()"]
+   selKMem    [label="select_svd_k()"]
+   svdMem     [label="compute_svd()"]
    cpmFBM     [label="cpmCLAMPFBM()"]
    preFBM     [label="preprocessCLAMPFBM()"]
    zFBM       [label="zscoreCLAMPFBM()"]
-   svdFBM     [label="big_randomSVD()"]
-   numPC      [label="num.pc()"]
+   selKFBM    [label="select_svd_k()"]
+   svdFBM     [label="compute_svd()"]
+   numPC      [label="select_clamp_k()"]
    getGMTfunc [label="getGMT()"]
+   readGMT    [label="read_gmt()"]
    gmtList    [label="gmtListToSparseMat()"]
    matchPaths [label="getMatchedPathwayMat()"]
    base       [label="CLAMPbase()"]
@@ -113,11 +117,13 @@ grViz('
    cpmOut       [label="Y_cpm"]
    filtered     [label="Y_filtered, rowStats"]
    zscored      [label="Y_zscored"]
+   svdK         [label="svd_k"]
    svdRes       [label="svdres"]
    clampK       [label="clamp_k"]
    cpmFBMOut    [label="FBM_cpm"]
    filteredFBM  [label="FBM_filtered, rowStats"]
    zscoredFBM   [label="FBM_zscored"]
+   svdKFBM      [label="svd_k"]
    svdResFBM    [label="svdres"]
    pathMat      [label="pathMat"]
    matchedPaths [label="matchedPathways"]
@@ -128,18 +134,23 @@ grViz('
    Umat         [label="U"]
 
    // ---- In-memory branch ----
-   DF -> cpmDF -> cpmOut -> preDF -> filtered ->
-       zDF -> zscored -> svdMem -> svdRes
-   svdRes -> numPC -> clampK
+   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> zscored -> selKMem -> svdK
+   svdK -> svdMem
+   zscored -> svdMem -> svdRes
+   svdRes -> numPC
+   svdK -> numPC
+   numPC -> clampK
    svdRes -> base
    clampK -> base
    zscored -> base
    base -> baseResult -> full
 
    // ---- On-disk branch ----
-   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM ->
-       zFBM -> zscoredFBM -> svdFBM -> svdResFBM
+   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> zFBM -> zscoredFBM -> selKFBM -> svdKFBM
+   svdKFBM -> svdFBM
+   zscoredFBM -> svdFBM -> svdResFBM
    svdResFBM -> numPC
+   svdKFBM -> numPC
    svdResFBM -> base
    zscoredFBM -> base
 
@@ -147,7 +158,10 @@ grViz('
    GO -> getGMTfunc
    MSIGDB -> getGMTfunc
    GTEx -> getGMTfunc
-   getGMTfunc -> gmtList -> pathMat -> matchPaths -> matchedPaths
+   GMTFILE -> readGMT
+   getGMTfunc -> gmtList
+   readGMT -> gmtList
+   gmtList -> pathMat -> matchPaths -> matchedPaths
    matchedPaths -> full
 
    // ---- CLAMPfull outputs ----
@@ -238,16 +252,15 @@ wb_Y_z <- zscoreCLAMP(
 
 ## Compute SVD and infer k
 
-We compute the SVD using `rsvd::rsvd()` and infer the optimal number of latent 
-variables using `num.pc()`.
+We compute the SVD using `select_svd_k()` and `compute_svd()`, then select `clamp_k` with `select_clamp_k()`.
 
 ```{r wb-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-wb_svd_k <- ncol(wb_Y_z) - 1
-wb_svd <- rsvd::rsvd(A = wb_Y_z, k = wb_svd_k)
+# Select SVD rank and compute SVD
+wb_svd_k   <- select_svd_k(wb_Y_z)
+wb_svd     <- compute_svd(wb_Y_z, k = wb_svd_k)
 
-# Infer clamp_k from singular values
-wb_clamp_k <- num.pc(list(d = wb_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+wb_clamp_k <- select_clamp_k(wb_svd, n_samples = ncol(wb_Y_z), svd_k = wb_svd_k)
 wb_clamp_k
 ```
 
@@ -435,16 +448,15 @@ alz_genes <- genes[prep_alz$kept_rows]
 
 ## Compute SVD and infer k
 
-For file-backed matrices, we use `bigstatsr::big_randomSVD()` to compute the 
-SVD without loading the entire matrix into RAM.
+For file-backed matrices, `compute_svd()` dispatches to `bigstatsr::big_SVD()` automatically, avoiding loading the entire matrix into RAM.
 
 ```{r fbm-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-alz_svd_k <- ncol(alz_fbm_filt) - 1
-alz_svd <- big_randomSVD(alz_fbm_filt, k = alz_svd_k)
+# Select SVD rank and compute SVD (dispatches to bigstatsr for FBM)
+alz_svd_k   <- select_svd_k(alz_fbm_filt)
+alz_svd     <- compute_svd(alz_fbm_filt, k = alz_svd_k)
 
-# Infer clamp_k from singular values
-alz_clamp_k <- num.pc(list(d = alz_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+alz_clamp_k <- select_clamp_k(alz_svd, n_samples = ncol(alz_fbm_filt), svd_k = alz_svd_k)
 alz_clamp_k
 ```
 
@@ -513,7 +525,7 @@ alz_fullRes <- CLAMPfull(
 
 ```{r fbm-summary}
 alz_summary_df <- as.data.frame(alz_fullRes$summary) %>%
-    filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
@@ -591,12 +603,12 @@ iso_Yz <- zscoreCLAMP(
 ## Compute SVD and infer k
 
 ```{r islet-svd, message=FALSE}
-# Compute SVD (k = n_samples - 1)
-islet_svd_k <- ncol(iso_Yz) - 1
-islet_svd <- rsvd::rsvd(A = iso_Yz, k = islet_svd_k)
+# Select SVD rank and compute SVD
+islet_svd_k   <- select_svd_k(iso_Yz)
+islet_svd     <- compute_svd(iso_Yz, k = islet_svd_k)
 
-# Infer clamp_k from singular values
-islet_clamp_k <- num.pc(list(d = islet_svd$d)) * 2
+# Select clamp_k (elbow method by default)
+islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz), svd_k = islet_svd_k)
 islet_clamp_k
 ```
 
@@ -669,7 +681,7 @@ islet_fullRes <- CLAMPfull(
 
 ```{r islet-summary}
 islet_summary_df <- as.data.frame(islet_fullRes$summary) %>%
-    filter(FDR < 0.05 & AUC > 0.7) %>%
+    dplyr::filter(FDR < 0.05 & AUC > 0.7) %>%
     dplyr::arrange(FDR) %>%
     dplyr::select(LV, pathway, FDR, AUC)
 
@@ -791,15 +803,25 @@ wb_projected_B[
 
 CLAMP_K controls how many latent variables the model learns.  Too few and
 biologically distinct signals merge; too many and noise is absorbed into
-spurious components.  CLAMP provides two built-in strategies via `num.pc()`
-and supports the information-theoretic Gavish–Donoho threshold via
-**PCAtools**.
+spurious components.  `select_clamp_k()` is the unified interface: it takes
+the SVD result, the number of samples, the SVD truncation rank, and an
+optional `method` argument, and returns a list with `$clamp_k` (number of LVs)
+and `$scale` (regularization scale used downstream).
 
 ## Elbow method (default)
 
-`num.pc()` fits a smoothing spline to the singular-value scree plot and
-returns the index at which curvature is maximised — the "elbow".  This is the
-fastest option and works well when the signal-to-noise boundary is clear.
+The elbow heuristic fits a smoothing spline to the singular-value scree plot
+and returns the index at which curvature is maximised.  This is the fastest
+option and works well when the signal-to-noise boundary is clear.
+
+```{r k-elbow}
+select_clamp_k(
+  wb_svd,
+  n_samples = ncol(wb_Y_z),
+  svd_k     = wb_svd_k,
+  method    = "elbow"
+)
+```
 
 ## Permutation method
 
@@ -809,6 +831,17 @@ values.  The number of components whose observed singular value exceeds the
 95th percentile of the null is returned.  This is more conservative and
 slower, but robust to smooth scree plots.
 
+```{r k-permutation, eval=FALSE}
+select_clamp_k(
+  wb_svd,
+  n_samples = ncol(wb_Y_z),
+  svd_k     = wb_svd_k,
+  method    = "permutation",
+  data      = wb_Y_z,
+  B         = 2
+)
+```
+
 ## Gavish–Donoho optimal hard threshold (PCAtools)
 
 The Gavish–Donoho threshold (Gavish & Donoho, 2014) identifies the
@@ -816,9 +849,15 @@ singular-value cutoff below which components are statistically
 indistinguishable from noise, given matrix dimensions and an estimate of the
 noise level. **PCAtools** implements this via `chooseGavishDonoho()`.
 
-In practice, doubling the chosen `k` (as done throughout the examples with
-`num.pc(...) * 2`) inflates the initial search space so that `CLAMPfull`'s
-cross-validation can discard components that lack pathway support.
+```{r k-gavish, eval=FALSE}
+select_clamp_k(
+  wb_svd,
+  n_samples = ncol(wb_Y_z),
+  svd_k     = wb_svd_k,
+  method    = "gavish_donoho",
+  data      = wb_Y_z
+)
+```
 
 # Visualization
 
