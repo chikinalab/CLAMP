@@ -301,10 +301,6 @@ object for `CLAMPfull`.
 # How to download pathway and cell marker libraries from Enrichr.
 # Not run during vignette build to avoid network calls; pre-fetched
 # .rds files are loaded in the next chunk instead.
-```{r priors-download, eval=FALSE}
-# How to download pathway and cell marker libraries from Enrichr.
-# Not run during vignette build to avoid network calls; pre-fetched
-# .rds files are loaded in the next chunk instead.
 enrichr_url <- "https://maayanlab.cloud/Enrichr/geneSetLibrary"
 gmtList <- list(
     CellMarkers = getGMT(
