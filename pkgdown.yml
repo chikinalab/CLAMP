@@ -1,0 +1,10 @@
+pandoc: 3.9.0.2
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  comparing_clampbase_clampfull: comparing_clampbase_clampfull.html
+  get_started: get_started.html
+last_built: 2026-05-06T21:54Z
+urls:
+  reference: https://chikinalab.github.io/CLAMP/reference
+  article: https://chikinalab.github.io/CLAMP/articles
