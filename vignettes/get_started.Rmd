@@ -134,7 +134,8 @@ grViz('
    Umat         [label="U"]
 
    // ---- In-memory branch ----
-   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> zscored -> selKMem -> svdK
+   DF -> cpmDF -> cpmOut -> preDF -> filtered -> zDF -> 
+        zscored -> selKMem -> svdK
    svdK -> svdMem
    zscored -> svdMem -> svdRes
    svdRes -> numPC
@@ -146,7 +147,8 @@ grViz('
    base -> baseResult -> full
 
    // ---- On-disk branch ----
-   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> zFBM -> zscoredFBM -> selKFBM -> svdKFBM
+   H5 -> cpmFBM -> cpmFBMOut -> preFBM -> filteredFBM -> 
+        zFBM -> zscoredFBM -> selKFBM -> svdKFBM
    svdKFBM -> svdFBM
    zscoredFBM -> svdFBM -> svdResFBM
    svdResFBM -> numPC
@@ -456,7 +458,8 @@ alz_svd_k   <- select_svd_k(alz_fbm_filt)
 alz_svd     <- compute_svd(alz_fbm_filt, k = alz_svd_k)
 
 # Select clamp_k (elbow method by default)
-alz_clamp_k <- select_clamp_k(alz_svd, n_samples = ncol(alz_fbm_filt), svd_k = alz_svd_k)
+alz_clamp_k <- select_clamp_k(alz_svd, n_samples = ncol(alz_fbm_filt),
+                              svd_k = alz_svd_k)
 alz_clamp_k
 ```
 
@@ -608,7 +611,8 @@ islet_svd_k   <- select_svd_k(iso_Yz)
 islet_svd     <- compute_svd(iso_Yz, k = islet_svd_k)
 
 # Select clamp_k (elbow method by default)
-islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz), svd_k = islet_svd_k)
+islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz),
+                                svd_k = islet_svd_k)
 islet_clamp_k
 ```
 
@@ -816,10 +820,10 @@ option and works well when the signal-to-noise boundary is clear.
 
 ```{r k-elbow}
 select_clamp_k(
-  wb_svd,
-  n_samples = ncol(wb_Y_z),
-  svd_k     = wb_svd_k,
-  method    = "elbow"
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "elbow"
 )
 ```
 
@@ -833,12 +837,12 @@ slower, but robust to smooth scree plots.
 
 ```{r k-permutation, eval=FALSE}
 select_clamp_k(
-  wb_svd,
-  n_samples = ncol(wb_Y_z),
-  svd_k     = wb_svd_k,
-  method    = "permutation",
-  data      = wb_Y_z,
-  B         = 2
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "permutation",
+    data      = wb_Y_z,
+    B         = 2
 )
 ```
 
@@ -851,11 +855,11 @@ noise level. **PCAtools** implements this via `chooseGavishDonoho()`.
 
 ```{r k-gavish, eval=FALSE}
 select_clamp_k(
-  wb_svd,
-  n_samples = ncol(wb_Y_z),
-  svd_k     = wb_svd_k,
-  method    = "gavish_donoho",
-  data      = wb_Y_z
+    wb_svd,
+    n_samples = ncol(wb_Y_z),
+    svd_k     = wb_svd_k,
+    method    = "gavish_donoho",
+    data      = wb_Y_z
 )
 ```
 
