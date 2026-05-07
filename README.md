@@ -17,23 +17,6 @@
 
 The goal of CLAMP (**C**urated **L**atent-variable **A**nalysis with **M**olecular **P**riors) is to provide an easy-to-use package to extract interpretable latent variables from large transcriptomic datasets using biological priors.
 
-## Local development via Conda
-
-We keep a fully specified environment file at `envs/clamp.yaml`. From your package root, create and activate it like so:
-
-```bash
-# Create and activate the environment
-conda env create -f envs/clamp.yaml
-conda activate clamp
-
-# Define the repository path (adjust as needed)
-REPO_PATH=~/path/to/CLAMP
-
-# Install and check CLAMP using devtools
-Rscript -e "devtools::install_local('$REPO_PATH', force=TRUE, dependencies=FALSE)"
-Rscript -e "library(CLAMP); cat('CLAMP version:', as.character(packageVersion('CLAMP')), '\n')"
-```
-
 ## Installation
 
 You can install the latest release of `CLAMP` from Bioconductor:
@@ -49,7 +32,7 @@ BiocManager::install("CLAMP")
 If you want to test the development version, you can install it from the github repository:
 
 ``` r
-BiocManager::install("mchikina/CLAMP")
+BiocManager::install("chikinalab/CLAMP")
 ```
 
 Now you can load the package using:
@@ -60,11 +43,26 @@ library(CLAMP)
 
 ## Basic usage
 
-For detailed instructions on how to use CLAMP, please see the [vignette](https://mchikina.github.io/CLAMP/articles/CLAMP.html).
+Full documentation is available at [chikinalab.org/CLAMP](https://chikinalab.org/CLAMP/). For detailed instructions on how to use CLAMP, please see the [vignette](https://chikinalab.github.io/CLAMP/articles/get_started.html).
 
 ``` r
 library(CLAMP)
-#some example
+
+# Load example dataset (genes × samples)
+data("dataWholeBlood")
+
+# CPM-normalize, filter low-expressed genes, and z-score
+dataWholeBlood_cpm <- cpmCLAMP(dataWholeBlood)
+prep <- preprocessCLAMP(dataWholeBlood_cpm, mean_cutoff = 0.5, var_cutoff = 0.1)
+Y_z  <- zscoreCLAMP(prep$Y_filtered, prep$rowStats)
+
+# Compute truncated SVD and select number of latent variables
+svd_k    <- select_svd_k(Y_z)
+svd_res  <- compute_svd(Y_z, k = svd_k)
+clamp_k  <- select_clamp_k(svd_res, n_samples = ncol(Y_z), svd_k = svd_k)
+
+# Run CLAMPbase to initialize latent variables
+baseRes <- CLAMPbase(Y = Y_z, svdres = svd_res, clamp_k = clamp_k)
 ```
 
 ## Code of Conduct
