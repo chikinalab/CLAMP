@@ -1,0 +1,10 @@
+^\.github$
+^envs$
+^.*\.Rproj$
+^\.Rproj\.user$
+^output$
+^docs$
+^data-raw$
+^\.lintr$
+^_pkgdown\.yml$
+^pkgdown$

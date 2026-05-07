@@ -64,7 +64,6 @@ Suggests:
     knitr,
     org.Hs.eg.db,
     PCAtools,
-    rappdirs,
     magick,
     rmarkdown,
     testthat (>= 3.0.0)
