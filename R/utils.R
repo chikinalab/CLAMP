@@ -1082,14 +1082,17 @@ select_svd_k <- function(Y) {
 
 #' Compute a truncated SVD for a CLAMP input matrix
 #'
-#' Dispatches to the appropriate SVD backend based on the class of `Y`:
+#' By default, the SVD backend is auto-detected from the class of `Y`:
 #' `bigstatsr::big_SVD` for `FBM` objects, `irlba::irlba` for sparse
-#' `dgCMatrix` objects, and `rsvd::rsvd` otherwise. Used by the CLAMP
-#' solvers so that the SVD step is handled in one place.
+#' `dgCMatrix` objects, and `rsvd::rsvd` otherwise. A specific backend
+#' can be forced via `method`. Used by the CLAMP solvers so that the SVD
+#' step is handled in one place.
 #'
 #' @param Y A matrix-like object (dense matrix, `dgCMatrix`, or `FBM`).
 #' @param k Integer number of components to compute. If `NULL` (the
 #'   default), `select_svd_k(Y)` is used.
+#' @param method One of `"rsvd"`, `"irlba"`, or `"big_SVD"`. If `NULL`
+#'   (the default), the backend is auto-detected from the class of `Y`.
 #'
 #' @return A list with `d`, `u`, `v` components (structure depends on the
 #'   backend but these three fields are always present).
@@ -1100,16 +1103,29 @@ select_svd_k <- function(Y) {
 #' res <- compute_svd(Y, k = 3)
 #' length(res$d)
 #'
+#' # Force a specific backend:
+#' res2 <- compute_svd(Y, k = 3, method = "rsvd")
+#'
 #' @export
-compute_svd <- function(Y, k = NULL) {
+compute_svd <- function(Y, k = NULL, method = NULL) {
     if (is.null(k)) k <- select_svd_k(Y)
-    if (inherits(Y, "FBM")) {
-        return(bigstatsr::big_SVD(X = Y, k = k))
+
+    if (is.null(method)) {
+        method <- if (inherits(Y, "FBM")) {
+            "big_SVD"
+        } else if (inherits(Y, "dgCMatrix")) {
+            "irlba"
+        } else {
+            "rsvd"
+        }
     }
-    if (inherits(Y, "dgCMatrix")) {
-        return(irlba::irlba(Y, nv = k))
-    }
-    rsvd::rsvd(Y, k = k)
+    method <- match.arg(method, c("rsvd", "irlba", "big_SVD"))
+
+    switch(method,
+        big_SVD = bigstatsr::big_SVD(X = Y, k = k),
+        irlba = irlba::irlba(Y, nv = k),
+        rsvd = rsvd::rsvd(Y, k = k)
+    )
 }
 
 #' Select default number of CLAMP latent variables from an SVD

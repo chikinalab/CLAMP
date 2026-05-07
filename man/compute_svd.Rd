@@ -4,28 +4,35 @@
 \alias{compute_svd}
 \title{Compute a truncated SVD for a CLAMP input matrix}
 \usage{
-compute_svd(Y, k = NULL)
+compute_svd(Y, k = NULL, method = NULL)
 }
 \arguments{
 \item{Y}{A matrix-like object (dense matrix, \code{dgCMatrix}, or \code{FBM}).}
 
 \item{k}{Integer number of components to compute. If \code{NULL} (the
 default), \code{select_svd_k(Y)} is used.}
+
+\item{method}{One of \code{"rsvd"}, \code{"irlba"}, or \code{"big_SVD"}. If \code{NULL}
+(the default), the backend is auto-detected from the class of \code{Y}.}
 }
 \value{
 A list with \code{d}, \code{u}, \code{v} components (structure depends on the
 backend but these three fields are always present).
 }
 \description{
-Dispatches to the appropriate SVD backend based on the class of \code{Y}:
+By default, the SVD backend is auto-detected from the class of \code{Y}:
 \code{bigstatsr::big_SVD} for \code{FBM} objects, \code{irlba::irlba} for sparse
-\code{dgCMatrix} objects, and \code{rsvd::rsvd} otherwise. Used by the CLAMP
-solvers so that the SVD step is handled in one place.
+\code{dgCMatrix} objects, and \code{rsvd::rsvd} otherwise. A specific backend
+can be forced via \code{method}. Used by the CLAMP solvers so that the SVD
+step is handled in one place.
 }
 \examples{
 set.seed(1)
 Y <- matrix(rnorm(100), nrow = 20, ncol = 5)
 res <- compute_svd(Y, k = 3)
 length(res$d)
+
+# Force a specific backend:
+res2 <- compute_svd(Y, k = 3, method = "rsvd")
 
 }
