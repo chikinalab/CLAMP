@@ -4,56 +4,89 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Curated Latent-variable Analysis with Molecular Priors • CLAMP</title>
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Curated Latent-variable Analysis with Molecular Priors">
-<meta name="description" content="CLAMP performs prior-informed latent variable decomposition of high-dimensional transcriptomic data. It integrates curated gene sets to learn biologically interpretable latent variables, supports file-backed matrices for large datasets, and provides tools for preprocessing, normalization, projection, and evaluation of latent structures. CLAMP is designed to scale to tens of thousands of samples, making it suitable for large public resources such as recount3 and ARCHS4. It enables researchers to uncover biologically meaningful patterns that connect genes, pathways, and complex traits in transcriptomics studies.">
+<!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="pkgdown.js"></script><meta property="og:title" content="Curated Latent-variable Analysis with Molecular Priors">
 <meta property="og:description" content="CLAMP performs prior-informed latent variable decomposition of high-dimensional transcriptomic data. It integrates curated gene sets to learn biologically interpretable latent variables, supports file-backed matrices for large datasets, and provides tools for preprocessing, normalization, projection, and evaluation of latent structures. CLAMP is designed to scale to tens of thousands of samples, making it suitable for large public resources such as recount3 and ARCHS4. It enables researchers to uncover biologically meaningful patterns that connect genes, pathways, and complex traits in transcriptomics studies.">
+<meta property="og:image" content="/logo.png">
+<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
 </head>
-<body>
-    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+<body data-spy="scroll" data-target="#toc">
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <div class="container template-home">
+      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="index.html">CLAMP</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
+      </span>
+    </div>
 
-    <a class="navbar-brand me-2" href="index.html">CLAMP</a>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+<li>
+  <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.0</small>
-
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto">
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/get_started.html">Analyzing human RNA-Seq data with CLAMP</a></li>
-    <li><a class="dropdown-item" href="articles/comparing_clampbase_clampfull.html">Comparing CLAMPbase and CLAMPfull</a></li>
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/comparing_clampbase_clampfull.html">Comparing CLAMPbase and CLAMPfull</a>
+    </li>
+    <li>
+      <a href="articles/get_started.html">Analyzing human RNA-Seq data with CLAMP</a>
+    </li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
       </ul>
-<ul class="navbar-nav">
-<li class="nav-item"><form class="form-inline" role="search">
- <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
-</form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/chikinalab/CLAMP" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/chikinalab/CLAMP/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
       </ul>
 </div>
-
-
+<!--/.nav-collapse -->
   </div>
-</nav><div class="container template-home">
-<div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
+<!--/.container -->
+</div>
+<!--/.navbar -->
+
+
+
+      </header><div class="row">
+  <div class="contents col-md-9">
+<div class="section level1">
 <div class="page-header"><h1 id="clamp-">CLAMP <img src="reference/figures/clamp.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;"><a class="anchor" aria-label="anchor" href="#clamp-"></a>
 </h1></div>
 <!-- badges: start -->
@@ -88,44 +121,119 @@
 <p>The goal of CLAMP (<strong>C</strong>urated <strong>L</strong>atent-variable <strong>A</strong>nalysis with <strong>M</strong>olecular <strong>P</strong>riors) is to provide an easy-to-use package to extract interpretable latent variables from large transcriptomic datasets using biological priors.</p>
 </div>
 <div class="section level2">
-<h2 id="local-development-via-conda">Local development via Conda<a class="anchor" aria-label="anchor" href="#local-development-via-conda"></a>
-</h2>
-<p>We keep a fully specified environment file at <code>envs/clamp.yaml</code>. From your package root, create and activate it like so:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Create and activate the environment</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> envs/clamp.yaml</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="ex">conda</span> activate clamp</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Define the repository path (adjust as needed)</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="va">REPO_PATH</span><span class="op">=</span>~/path/to/CLAMP</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># Install and check CLAMP using devtools</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">"devtools::install_local('</span><span class="va">$REPO_PATH</span><span class="st">', force=TRUE, dependencies=FALSE)"</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">"library(CLAMP); cat('CLAMP version:', as.character(packageVersion('CLAMP')), '\n')"</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the latest release of <code>CLAMP</code> from Bioconductor:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"CLAMP"</span><span class="op">)</span></span></code></pre></div>
 <p>If you want to test the development version, you can install it from the github repository:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"mchikina/CLAMP"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"chikinalab/CLAMP"</span><span class="op">)</span></span></code></pre></div>
 <p>Now you can load the package using:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chikinalab.github.io/CLAMP/">CLAMP</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chikinalab.github.io/CLAMP/" class="external-link">CLAMP</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h2>
-<p>For detailed instructions on how to use CLAMP, please see the <a href="https://mchikina.github.io/CLAMP/articles/CLAMP.html" class="external-link">vignette</a>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chikinalab.github.io/CLAMP/">CLAMP</a></span><span class="op">)</span></span>
-<span><span class="co">#some example</span></span></code></pre></div>
+<p>Full documentation is available at <a href="https://chikinalab.org/CLAMP/" class="external-link">chikinalab.org/CLAMP</a>. For detailed instructions on how to use CLAMP, please see the <a href="https://chikinalab.github.io/CLAMP/articles/get_started.html" class="external-link">vignette</a>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chikinalab.github.io/CLAMP/" class="external-link">CLAMP</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load example dataset (genes × samples)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"dataWholeBlood"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># CPM-normalize, filter low-expressed genes, log2 and z-score normalizations</span></span>
+<span><span class="va">dataWholeBlood_cpm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cpmCLAMP.html">cpmCLAMP</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preprocessCLAMP.html">preprocessCLAMP</a></span><span class="op">(</span></span>
+<span>    <span class="va">dataWholeBlood_cpm</span>,</span>
+<span>    mean_cutoff <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    var_cutoff <span class="op">=</span> <span class="fl">0.1</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Y_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/zscoreCLAMP.html">zscoreCLAMP</a></span><span class="op">(</span></span>
+<span>    <span class="va">prep</span><span class="op">$</span><span class="va">Y_filtered</span>,</span>
+<span>    <span class="va">prep</span><span class="op">$</span><span class="va">rowStats</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compute truncated SVD and select number of latent variables</span></span>
+<span><span class="va">svd_k</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_svd_k.html">select_svd_k</a></span><span class="op">(</span><span class="va">Y_z</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">svd_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_svd.html">compute_svd</a></span><span class="op">(</span></span>
+<span>    <span class="va">Y_z</span>,</span>
+<span>    k <span class="op">=</span> <span class="va">svd_k</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">clamp_k</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span></span>
+<span>    <span class="va">svd_res</span>,</span>
+<span>    n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Y_z</span><span class="op">)</span>,</span>
+<span>    svd_k <span class="op">=</span> <span class="va">svd_k</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run CLAMPbase to initialize latent variables</span></span>
+<span><span class="va">baseRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/CLAMPbase.html">CLAMPbase</a></span><span class="op">(</span></span>
+<span>    Y <span class="op">=</span> <span class="va">Y_z</span>,</span>
+<span>    svdres <span class="op">=</span> <span class="va">svd_res</span>,</span>
+<span>    clamp_k <span class="op">=</span> <span class="va">clamp_k</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load pre-fetched gene set libraries bundled with the package</span></span>
+<span><span class="va">gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    CellMarkers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"CellMarker_2024.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    KEGG <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"KEGG_2021_Human.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Combine gene set libraries into a single sparse matrix</span></span>
+<span><span class="va">pathMatCell</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gmtListToSparseMat.html">gmtListToSparseMat</a></span><span class="op">(</span><span class="va">gmtList</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load additional xCell reference matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"xCell"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Match pathways to the filtered gene space used by CLAMP</span></span>
+<span><span class="va">matchedPathsWB</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getMatchedPathwayMatList.html">getMatchedPathwayMatList</a></span><span class="op">(</span></span>
+<span>    <span class="va">pathMatCell</span>,</span>
+<span>    <span class="va">xCell</span>,</span>
+<span>    new.genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">Y_z</span><span class="op">)</span>,</span>
+<span>    min.genes <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run CLAMPfull using CLAMPbase initialization and matched priors</span></span>
+<span><span class="va">fullRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/CLAMPfull.html">CLAMPfull</a></span><span class="op">(</span></span>
+<span>    Y <span class="op">=</span> <span class="va">Y_z</span>,</span>
+<span>    priorMat <span class="op">=</span> <span class="va">matchedPathsWB</span>,</span>
+<span>    clamp.base.result <span class="op">=</span> <span class="va">baseRes</span>,</span>
+<span>    svdres <span class="op">=</span> <span class="va">svd_res</span>,</span>
+<span>    clamp_k <span class="op">=</span> <span class="va">clamp_k</span>,</span>
+<span>    use_cpp <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect outputs</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fullRes</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fullRes</span><span class="op">$</span><span class="va">B</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">fullRes</span><span class="op">$</span><span class="va">U</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect significant pathway annotations</span></span>
+<span><span class="va">summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sig_summary</span> <span class="op">&lt;-</span> <span class="va">summary_df</span><span class="op">[</span></span>
+<span>    <span class="va">summary_df</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">summary_df</span><span class="op">$</span><span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LV"</span>, <span class="st">"pathway"</span>, <span class="st">"FDR"</span>, <span class="st">"AUC"</span><span class="op">)</span></span>
+<span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">sig_summary</span> <span class="op">&lt;-</span> <span class="va">sig_summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sig_summary</span><span class="op">$</span><span class="va">FDR</span><span class="op">)</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_summary</span>, <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
@@ -133,11 +241,14 @@
 <p>Please note that the CLAMP project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="links">
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/chikinalab/CLAMP/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/chikinalab/CLAMP/issues/" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/chikinalab/CLAMP/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -161,33 +272,41 @@
 <ul class="list-unstyled">
 <li>Marc Subirana-Granes <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3934-839X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Maria Chikina <br><small class="roles"> Author </small>   </li>
+<li>National Human Genome Research Institute <br><small class="roles"> Funder </small>   </li>
+<li>Eunice Kennedy Shriver National Institute of Child Health and Human Development <br><small class="roles"> Funder </small>   </li>
+<li>National Science Foundation <br><small class="roles"> Funder </small>   </li>
+<li>National Eye Institute <br><small class="roles"> Funder </small>   </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/mchikina/mchikina/CLAMP" class="external-link"><img src="https://img.shields.io/github/issues/mchikina/CLAMP" alt="GitHub issues"></a></li>
+<li><a href="https://github.com/chikinalab/CLAMP/issues" class="external-link"><img src="https://img.shields.io/github/issues/chikinalab/CLAMP" alt="GitHub issues"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-green.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://github.com/chikinalab/CLAMP/actions/workflows/BiocCheck.yaml" class="external-link"><img src="https://github.com/mchikina/CLAMP/actions/workflows/BiocCheck.yaml/badge.svg" alt="BiocCheck"></a></li>
 <li><a href="https://github.com/chikinalab/CLAMP/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/chikinalab/CLAMP/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
-  </aside>
+  </div>
 </div>
 
 
-    <footer><div class="pkgdown-footer-left">
-  <p>Developed by Marc Subirana-Granes, Maria Chikina.</p>
+      <footer><div class="copyright">
+  <p></p>
+<p>Developed by Marc Subirana-Granes, Maria Chikina, National Human Genome Research Institute, Eunice Kennedy Shriver National Institute of Child Health and Human Development, National Science Foundation, National Eye Institute.</p>
 </div>
 
-<div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<div class="pkgdown">
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
-    </footer>
+      </footer>
 </div>
+
 
 
 
