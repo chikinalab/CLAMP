@@ -31,7 +31,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
+          # it will then be picked up automatically from DESCRIPTION.
+          extra-packages: |
+            any::pkgdown
+            local::.
+            pivlab/CLAMPData
           needs: website
 
       - name: Build site
