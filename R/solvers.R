@@ -52,6 +52,9 @@ row_cor <- function(A, B) {
 #' res1 <- mat_mult(mat1, mat2)
 #' res1
 mat_mult <- function(mat1, mat2, ncores = 1) {
+    .assert_matrix_like(mat1)
+    .assert_matrix_like(mat2)
+    .assert_positive_count(ncores)
     is_fbm <- inherits(mat1, "FBM")
     if (is_fbm) {
         # For FBM objects, use the specific multiplication method
@@ -210,10 +213,25 @@ binarizeTop <- function(Z, top, keepVals = TRUE) {
 #'     refit = TRUE
 #' )
 solveU <- function(
-  Z, Chat = NULL, priorMat, penalty.factor, pathwaySelection = "fast",
+  Z, Chat = NULL, priorMat, penalty.factor,
+  pathwaySelection = c("fast", "complete"),
   alpha = 0.9, maxPath = 10, nfolds = 5, useSE = FALSE, top = NULL,
     binary = FALSE, nlambda = 20, scale = TRUE, refit = TRUE,
     Uprev = NULL, useAUC = TRUE, intercept = TRUE, ...) {
+    pathwaySelection <- match.arg(pathwaySelection)
+    .assert_proportion(alpha)
+    .assert_positive_count(maxPath)
+    .assert_positive_count(nfolds)
+    .assert_positive_count(nlambda)
+    if (!is.null(top)) .assert_positive_count(top)
+    .assert_flag(useSE)
+    .assert_flag(binary)
+    .assert_flag(scale)
+    .assert_flag(refit)
+    .assert_flag(useAUC)
+    .assert_flag(intercept)
+    .assert_matrix_like(Z)
+    .assert_matrix_like(priorMat)
     if (nrow(Z) != nrow(priorMat)) {
         cm <- commonRows(Z, priorMat)
         Z <- Z[cm, ]
@@ -393,6 +411,8 @@ solveU <- function(
 #' Chat <- getChat(priorMat)
 #' @export
 getChat <- function(priorMat, scale = TRUE) {
+    .assert_matrix_like(priorMat)
+    .assert_flag(scale)
     if (scale) {
         col_means <- Matrix::colMeans(priorMat)
         col_sds <- sqrt(Matrix::colMeans(priorMat^2) - col_means^2)
@@ -436,6 +456,9 @@ getChat <- function(priorMat, scale = TRUE) {
 #' filtered <- getMatchedPathwayMat(pathMat, new.genes, min.genes = 2)
 #' @export
 getMatchedPathwayMat <- function(pathMat, new.genes, min.genes = 10) {
+    .assert_positive_count(min.genes)
+    .assert_matrix_like(pathMat)
+    .assert_nonempty_character(new.genes)
     cm <- intersect(rownames(pathMat), new.genes)
     mymessage(
         "There are ", length(cm),
@@ -730,8 +753,25 @@ CLAMPbase <- function(
   Zpos = TRUE, max.iter = 200, tol = 5e-4, trace = FALSE,
   rseed = NULL, B = NULL, scale = 1, pos.adj = 3,
   adaptive.p = 0.05, adaptive.iter = 20,
-  cutoff = 0, ncores = 1, clamp_k_method = "elbow"
+  cutoff = 0, ncores = 1,
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")
 ) {
+    clamp_k_method <- match.arg(clamp_k_method)
+    .assert_positive_count(max.iter)
+    .assert_positive_count(adaptive.iter)
+    .assert_positive_count(ncores)
+    .assert_proportion(adaptive.p)
+    .assert_positive_number(tol)
+    if (!is.null(clamp_k)) .assert_positive_count(clamp_k)
+    if (!is.null(svd_k)) .assert_positive_count(svd_k)
+    if (!is.null(L1)) .assert_nonnegative_number(L1)
+    if (!is.null(L2)) .assert_nonnegative_number(L2)
+    .assert_flag(Zpos)
+    .assert_flag(trace)
+    .assert_positive_number(scale)
+    if (!is.null(pos.adj)) .assert_positive_number(pos.adj)
+    .assert_numeric_scalar(cutoff)
+    .assert_matrix_like(Y)
     if (ncores > 1) {
         # if we are parallelizing, then disable BLAS parallelization
         options(bigstatsr.check.parallel.blas = FALSE)
@@ -1010,10 +1050,38 @@ CLAMPfullnVP <- function(
   penalty.factor = rep(1, ncol(priorMat)), glm_alpha = 0.9,
   minGenes = 10, tol = 5e-4, seed = 123456,
   allGenes = FALSE, rseed = NULL,
-  max.U.updates = 5, pathwaySelection = c("fast"), multiplier = 1,
+  max.U.updates = 5,
+  pathwaySelection = c("fast", "complete"), multiplier = 1,
   adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE,
   refitAll = FALSE, useSE = FALSE, ncores = 1,
-  clamp_k_method = "elbow") {
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")) {
+    clamp_k_method <- match.arg(clamp_k_method)
+    pathwaySelection <- match.arg(pathwaySelection)
+    .assert_positive_count(max.iter)
+    .assert_positive_count(ncores)
+    .assert_proportion(adaptive.p)
+    .assert_positive_number(tol)
+    if (!is.null(clamp_k)) .assert_positive_count(clamp_k)
+    if (!is.null(svd_k)) .assert_positive_count(svd_k)
+    if (!is.null(L1)) .assert_nonnegative_number(L1)
+    if (!is.null(L2)) .assert_nonnegative_number(L2)
+    if (!is.null(top)) .assert_positive_count(top)
+    .assert_positive_count(cvn)
+    .assert_positive_count(maxPath)
+    .assert_proportion(glm_alpha)
+    .assert_count(minGenes)
+    .assert_positive_number(multiplier)
+    .assert_numeric_scalar(max.U.updates)
+    if (is.finite(max.U.updates)) .assert_count(max.U.updates)
+    .assert_flag(trace)
+    .assert_flag(doCrossval)
+    .assert_flag(allGenes)
+    .assert_flag(useNNLS)
+    .assert_flag(useRaw)
+    .assert_flag(refitAll)
+    .assert_flag(useSE)
+    .assert_matrix_like(Y)
+    .assert_matrix_like(priorMat)
     if (ncores > 1) {
         # if we are parallelizing, then disable BLAS parallelization
         options(bigstatsr.check.parallel.blas = FALSE)
@@ -1400,6 +1468,11 @@ CLAMPfullnVP <- function(
 #' @export
 projectCLAMP <- function(CLAMPres, newdata, scale = 1, ncores = 1,
                          align = TRUE, verbose = TRUE) {
+    .assert_positive_number(scale)
+    .assert_positive_count(ncores)
+    .assert_flag(align)
+    .assert_flag(verbose)
+    .assert_matrix_like(newdata)
     if (is.null(CLAMPres$Z)) stop("'CLAMPres' must contain a 'Z' matrix.")
     if (is.null(CLAMPres$L2)) stop("'CLAMPres' must contain an 'L2' value.")
 
@@ -1551,6 +1624,7 @@ run_permutation <- function(data, d, B = 20) {
 num.pc <- function(data, method = c("elbow", "permutation"),
                    B = 20, seed = NULL) {
     method <- match.arg(method)
+    .assert_positive_count(B)
     if (!is.null(seed)) {
         warning(
             "`seed` is deprecated and ignored. ",
@@ -1560,6 +1634,7 @@ num.pc <- function(data, method = c("elbow", "permutation"),
     }
     # Prepare SVD result
     if (!inherits(data, "list") || is.null(data$d)) {
+        .assert_matrix_like(data)
         message("Computing SVD")
         # row-normalize
         row_sds <- apply(data, 1, sd)
@@ -1612,6 +1687,8 @@ num.pc <- function(data, method = c("elbow", "permutation"),
 #' # Winsorize each column by capping top 3 values
 #' M_winsor <- winsor_topk(M, k = 3)
 winsor_topk <- function(M, k) {
+    .assert_matrix_like(M)
+    .assert_positive_count(k)
     if (nrow(M) < 10 * k) {
         return(M)
     }
@@ -1647,6 +1724,9 @@ winsor_topk <- function(M, k) {
 #' res1 <- cross_ZY(Y, Z)
 #' dim(res1) # k × samples
 cross_ZY <- function(Y, Z) {
+    .assert_matrix_like(Y)
+    .assert_matrix_like(Z)
+
     if (inherits(Y, "FBM")) {
         Matrix::t(bigstatsr::big_cprodMat(Y, as.matrix(Z)))
     } else {
@@ -1683,6 +1763,10 @@ cross_ZY <- function(Y, Z) {
 #' # Solve for B = (Z'Z + L2)^(-1) Z'Y
 #' B <- ridge_B(Y, Z, L2k)
 ridge_B <- function(Y, Z, L2k) {
+    .assert_matrix_like(Y)
+    .assert_matrix_like(Z)
+    .assert_matrix_like(L2k)
+
     Zm <- as.matrix(Z)
     ZtZ <- Matrix::crossprod(Zm) # Z^T Z
     ZY <- cross_ZY(Y, Zm) # Z^T Y
@@ -1817,7 +1901,36 @@ CLAMPfull <- function(
   adaptive.p = 0.05, useNNLS = TRUE, useRaw = TRUE, refitEvery = 3,
   useSE = FALSE, var.prior = TRUE, Uscale = FALSE,
   robust.vp = TRUE, use_cpp = FALSE,
-  clamp_k_method = "elbow") {
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")) {
+    clamp_k_method <- match.arg(clamp_k_method)
+    pathwaySelection <- match.arg(pathwaySelection)
+    .assert_positive_count(max.iter)
+    .assert_proportion(adaptive.p)
+    .assert_positive_number(tol)
+    .assert_positive_count(refitEvery)
+    if (!is.null(clamp_k)) .assert_positive_count(clamp_k)
+    if (!is.null(svd_k)) .assert_positive_count(svd_k)
+    if (!is.null(L1)) .assert_nonnegative_number(L1)
+    if (!is.null(L2)) .assert_nonnegative_number(L2)
+    .assert_positive_count(cvn)
+    .assert_positive_count(maxPath)
+    .assert_proportion(glm_alpha)
+    .assert_count(minGenes)
+    .assert_positive_number(multiplier)
+    .assert_numeric_scalar(max.U.updates)
+    if (is.finite(max.U.updates)) .assert_count(max.U.updates)
+    .assert_flag(trace)
+    .assert_flag(doCrossval)
+    .assert_flag(allGenes)
+    .assert_flag(useNNLS)
+    .assert_flag(useRaw)
+    .assert_flag(useSE)
+    .assert_flag(var.prior)
+    .assert_flag(Uscale)
+    .assert_flag(robust.vp)
+    .assert_flag(use_cpp)
+    .assert_matrix_like(Y)
+    .assert_matrix_like(priorMat)
     if (is.infinite(max.U.updates)) max.U.updates <- max.iter
 
     getT <- function(x) -stats::quantile(x[x < 0], adaptive.p)
@@ -2241,11 +2354,16 @@ CLAMPfull <- function(
 #'     new.genes = new.genes, min.genes = 5
 #' )
 getMatchedPathwayMatList <- function(..., new.genes, min.genes = 10) {
+    .assert_positive_count(min.genes)
     pathMats <- list(...)
 
-    stopifnot(is.character(new.genes), length(new.genes) > 0)
+    .assert_nonempty_character(new.genes)
+    if (length(pathMats) == 0) {
+        stop("At least one pathway matrix must be supplied.", call. = FALSE)
+    }
 
     filtered <- lapply(pathMats, function(pathMat) {
+        .assert_matrix_like(pathMat)
         # coerce to sparse
         if (!inherits(pathMat, "Matrix")) {
             pathMat <- Matrix::Matrix(pathMat, sparse = TRUE)

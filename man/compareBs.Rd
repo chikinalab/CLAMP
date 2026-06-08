@@ -8,10 +8,10 @@ compareBs(
   res1,
   res2,
   target,
-  method = "p",
+  method = c("p", "s", "a", "t"),
   xlab = "1",
   ylab = "2",
-  stat.method = "t",
+  stat.method = c("t", "wilcox"),
   oneToOne = TRUE
 )
 }

@@ -38,7 +38,7 @@ CLAMPfull(
   Uscale = FALSE,
   robust.vp = TRUE,
   use_cpp = FALSE,
-  clamp_k_method = "elbow"
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")
 )
 }
 \arguments{

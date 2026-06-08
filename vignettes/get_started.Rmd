@@ -24,30 +24,48 @@ knitr::opts_chunk$set(
     dev = "png"
 )
 
-library(dplyr)
-library(CLAMP)
-library(CLAMPData)
-library(rsvd)
-library(glmnet)
-library(Matrix)
-library(hdf5r)
-library(data.table)
-library(bigstatsr)
-library(here)
-library(rsvd)
-library(Matrix)
-library(AnnotationDbi)
-library(org.Hs.eg.db)
-library(DT)
-library(DiagrammeR)
-
 options(bitmapType = "cairo")
-
 set.seed(1)
 ```
 
 ```{r logo, echo=FALSE, eval=TRUE, out.width='40%'}
 knitr::include_graphics("../man/figures/clamp.png", dpi = 800)
+```
+
+# Installation
+
+Install the released version of CLAMP from Bioconductor:
+
+```{r install, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("CLAMP")
+```
+
+The development version can be installed from GitHub:
+
+```{r install-dev, eval=FALSE}
+BiocManager::install("chikinalab/CLAMP")
+```
+
+# Load packages
+
+```{r load-packages}
+library(CLAMP)
+library(CLAMPData)
+library(dplyr)
+library(rsvd)
+library(glmnet)
+library(Matrix)
+library(rhdf5)
+library(data.table)
+library(bigstatsr)
+library(here)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(DT)
+library(DiagrammeR)
 ```
 
 # Introduction
@@ -179,6 +197,15 @@ grViz('
 
 # Quick Start
 
+## Available datasets
+
+CLAMPData ships three curated datasets used throughout this vignette. You can
+inspect them with `list_clamp_data()`:
+
+```{r list-clamp-data}
+list_clamp_data()
+```
+
 We provide three examples:
 
 1. **Data-frame example (whole blood):**  
@@ -214,6 +241,11 @@ After computing the SVD, infer the optimal number of latent variables
 
 # Example 1: In-memory data.frame (Whole Blood)
 
+This example uses whole-blood RNA-seq data available from GEO under accession
+[GSE130824](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE130824)
+(Homo sapiens, 36 samples). It demonstrates the standard in-memory CLAMP
+workflow for bulk transcriptomic data from peripheral blood.
+
 ## Load example data
 
 In this chunk, we load the whole-blood expression matrix.
@@ -221,7 +253,7 @@ In this chunk, we load the whole-blood expression matrix.
 ```{r load-data, message=FALSE}
 data("dataWholeBlood") # expression matrix
 dim(dataWholeBlood) # genes x samples
-head(dataWholeBlood) # genes x samples
+dataWholeBlood[1:6, 1:6] # genes x samples
 ```
 
 ## Preprocess and z-score
@@ -385,6 +417,12 @@ datatable(
     formatSignif(c("AUC", "FDR"), 3)
 ```
 
+The recovered LVs are biologically coherent for whole blood. LV13 aligns with neutrophil
+signatures, LV10 with platelets, LV14 with erythrocytes, LV12 with NK cells,
+and LV11 with plasma cells, covering the major cellular constituents of whole
+blood. Together, these results indicate that CLAMP successfully decomposes the
+bulk transcriptomic signal into its dominant blood-cell-type components.
+
 # Example 2: File-Backed Matrix (Alzheimer’s Brain)
 
 This example uses data from Alzheimer’s brain samples from a *Neurobiology of Disease* study (Barbash et al., 2017; DOI: https://doi.org/10.1016/j.nbd.2017.06.008). It demonstrates the on‑disk workflow with a file‑backed FBM to handle large‑scale transcriptomic datasets.
@@ -404,17 +442,22 @@ For file-backed matrices (FBMs), you can compute counts-per-million (CPM)
 in-place—without loading the entire dataset into RAM—using the 
 `cpmCLAMPFBM()` function from **CLAMP**:
 
+## HDF5 schema
+
+CLAMP HDF5 files follow a fixed layout. You can inspect the expected structure with `clamp_h5_schema()`:
+
+```{r alz-schema}
+clamp_h5_schema()
+```
+
 ## Load HDF5 expression
 
+`read_clamp_alz_expression()` downloads the file via ExperimentHub, validates it
+against the schema, and returns a genes × samples matrix with row and column names ready to use.
+
 ```{r hdf5-load, message=FALSE}
-alz_path <- human_gene_v2_5_alz_h5()
-h5 <- H5File$new(alz_path, mode = "r")
-expr_mat <- t(h5[["data/expression"]]$read())
-genes <- h5[["meta/genes/symbol"]]$read()
-samples <- h5[["meta/samples/geo_accession"]]$read()
-h5$close_all()
-colnames(expr_mat) <- samples
-rownames(expr_mat) <- genes
+expr_mat <- read_clamp_alz_expression()
+genes <- rownames(expr_mat)
 ```
 
 ## Construct file‑backed FBM
@@ -545,6 +588,12 @@ datatable(
     formatSignif(c("AUC", "FDR"), 3)
 ```
 
+The significant LVs align with brain-relevant transcriptional programs implicated in Alzheimer’s disease.
+LV3 and LV10 are enriched for GTEx brain-region signatures, including spinal cord, substantia nigra,
+frontal cortex, and cortex, suggesting that these axes capture genuine neural transcriptional variation.
+LV1 further supports disease relevance through enrichment for mitochondrial respiration and oxidative phosphorylation pathways,
+which are linked to impaired brain energy metabolism in Alzheimer’s disease.
+
 # Example 3: Tab-Delimited Count File (Pancreatic Islets)
 
 In this example, we apply the in‑memory CLAMP workflow to RNA‑Seq count data from GEO accession **GSE164416** 
@@ -556,11 +605,7 @@ diabetic (T2D) samples.
 ## Load count data and map gene symbols
 
 ```{r islet-load, message=FALSE}
-islet_file <- GSE164416_DP_htseq_counts_txt_gz()
-islet_df <- read.table(
-    gzfile(islet_file),
-    header = TRUE, stringsAsFactors = FALSE
-)
+islet_df <- read_islet_counts()
 
 islet_df$symbol <- mapIds(org.Hs.eg.db,
     keys = islet_df$ensembl,
@@ -702,48 +747,28 @@ datatable(
     formatSignif(c("AUC", "FDR"), 3)
 ```
 
+The significant LVs reflect key biological processes relevant to type 2 diabetes. 
+LV20 and LV16 capture alpha- and beta-cell identity programs, highlighting pancreatic islet endocrine biology. 
+LV21 aligns with pancreas-specific GTEx tissue signatures, supporting tissue relevance, 
+while LV1 captures oxidative phosphorylation, protein secretion, and beta-cell-related programs. 
+
 ## Differential latent-variable expression between conditions
 
 Rows of the B matrix correspond to LVs and columns to samples. By grouping 
-samples by condition (ND vs T2D), we compute average LV expression per group to
-identify LVs that differ between healthy and diabetic islets
+samples by condition (ND vs T2D), `differentialLVActivity()` computes average
+LV expression per group and tests for LVs that differ between healthy and
+diabetic islets.
 
 ```{r islet-diff, message=FALSE}
-B_df <- as.data.frame(as.matrix(islet_fullRes$B)) %>%
-    dplyr::mutate(LV = rownames(.))
+islet_metadata <- read_islet_metadata()
 
-islet_meta <- islets_metadata_csv()
-iselt_metadata <- read.csv(islet_meta, header = TRUE)
-
-sample_types <- iselt_metadata %>%
-    dplyr::mutate(
-        id   = as.character(id),
-        type = as.character(type)
-    )
-
-sample_cols <- setdiff(colnames(B_df), "LV")
-nd_cols <- intersect(sample_cols, sample_types$id[sample_types$type == "ND"])
-other_cols <- intersect(sample_cols, sample_types$id[sample_types$type != "ND"])
-
-if (length(nd_cols) == 0 || length(other_cols) == 0) {
-    stop("No matching ND or non-ND sample columns found")
-}
-
-lv_stats_all_vs_nd <- B_df %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
-        Mean_ND = mean(dplyr::c_across(dplyr::all_of(nd_cols))),
-        Mean_All = mean(dplyr::c_across(dplyr::all_of(other_cols))),
-        Mean_Diff = Mean_All - Mean_ND,
-        P_Value = stats::wilcox.test(
-            dplyr::c_across(dplyr::all_of(nd_cols)),
-            dplyr::c_across(dplyr::all_of(other_cols))
-        )$p.value
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(FDR = stats::p.adjust(P_Value, method = "fdr")) %>%
-    dplyr::select(LV, Mean_ND, Mean_All, Mean_Diff, P_Value, FDR) %>%
-    dplyr::arrange(FDR)
+lv_stats_all_vs_nd <- differentialLVActivity(
+    islet_fullRes,
+    metadata = islet_metadata,
+    sample_col = "id",
+    group_col = "type",
+    reference = "ND"
+)
 
 sig_lv_all_vs_nd <- lv_stats_all_vs_nd %>%
     dplyr::filter(FDR < 0.1)
@@ -766,6 +791,13 @@ datatable(
 ) %>%
     formatSignif(c("AUC", "FDR"), 3)
 ```
+
+The top differentially active LVs highlight biological axes distinguishing T2D from ND islets. 
+LV7 links to diabetic adipose tissue and TNF-alpha signaling via NF-kB, consistent with inflammation and metabolic dysfunction.
+LV20 and LV16 map to alpha- and beta-cell programs. 
+LV9 and LV3 are associated with islet perturbation and diabetic mouse islet signatures, 
+supporting disease-relevant changes in islet transcriptional states,
+while LV10 suggests a vascular component relevant to T2D.
 
 # Projection: Applying one CLAMP model to another dataset
 

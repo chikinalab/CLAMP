@@ -23,7 +23,7 @@ CLAMPbase(
   adaptive.iter = 20,
   cutoff = 0,
   ncores = 1,
-  clamp_k_method = "elbow"
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")
 )
 }
 \arguments{

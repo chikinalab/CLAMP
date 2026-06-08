@@ -44,8 +44,15 @@
 #' res <- compareBs(svd1, svd2, target,
 #'     method = "p", xlab = "SVD1", ylab = "SVD2"
 #' )
-compareBs <- function(res1, res2, target, method = "p", xlab = "1", ylab = "2",
-                        stat.method = "t", oneToOne = TRUE) {
+compareBs <- function(res1, res2, target,
+                      method = c("p", "s", "a", "t"),
+                      xlab = "1", ylab = "2",
+                      stat.method = c("t", "wilcox"),
+                      oneToOne = TRUE) {
+    method <- match.arg(method)
+    stat.method <- match.arg(stat.method)
+    .assert_matrix_like(target)
+    .assert_flag(oneToOne)
     extract_B <- function(res) {
         if (is.list(res) & !is.null(res$B)) {
             return(as.matrix(res$B))
@@ -232,6 +239,14 @@ plotTopZ_Complex <- function(clampRes, data, priorMat,
                              index = NULL, allLVs = FALSE, Zheat = FALSE,
                              LV.names = NULL, max.genes = 100, max.col = 50,
                              seed = 1234) {
+    .assert_positive_count(top)
+    .assert_positive_count(top.pathway)
+    .assert_positive_count(max.genes)
+    .assert_positive_count(max.col)
+    .assert_flag(allLVs)
+    .assert_flag(Zheat)
+    .assert_matrix_like(data)
+    .assert_matrix_like(priorMat)
     data <- data[rownames(clampRes$Z), , drop = FALSE]
     if (top * length(index) > max.genes) {
         stop(
@@ -409,6 +424,9 @@ plotTopZ_Complex <- function(clampRes, data, priorMat,
 CLAMPplotU <- function(clampRes, auc.cutoff = 0.6, fdr.cutoff = 0.05,
                        indexCol = NULL, indexRow = NULL, top = 3,
                        sort.row = FALSE, cluster.rows = TRUE) {
+    .assert_proportion(auc.cutoff)
+    .assert_proportion(fdr.cutoff)
+    .assert_positive_count(top)
     indexCol <- if (is.null(indexCol)) seq_len(ncol(clampRes$U)) else indexCol
     indexRow <- if (is.null(indexRow)) seq_len(nrow(clampRes$U)) else indexRow
 
@@ -526,6 +544,10 @@ CLAMPplotU <- function(clampRes, auc.cutoff = 0.6, fdr.cutoff = 0.05,
 CLAMPplotTopZ <- function(clampRes, data = NULL, priorMat = NULL, top = 50,
                           index = NULL, allLVs = FALSE,
                           label.top = min(10, top), max.name.len = 50) {
+    .assert_positive_count(top)
+    .assert_count(label.top)
+    .assert_positive_count(max.name.len)
+    .assert_flag(allLVs)
     if (is.null(clampRes$Z)) {
         stop("'clampRes' must contain a 'Z' matrix.")
     }
@@ -707,6 +729,10 @@ CLAMPdotplot <- function(clampRes, lv = 1, top = 20, auc.cutoff = 0.6,
                          fdr.cutoff = 0.05, max.name.len = 50,
                          x.axis = c("AUC", "-log10(FDR)", "log10FDR"),
                          order.by = x.axis) {
+    .assert_positive_count(top)
+    .assert_proportion(auc.cutoff)
+    .assert_proportion(fdr.cutoff)
+    .assert_positive_count(max.name.len)
     summ <- if (is.data.frame(clampRes)) clampRes else clampRes$summary
     if (is.null(summ)) {
         stop("'clampRes' must contain a 'summary' data frame or be one itself.")
@@ -851,6 +877,10 @@ CLAMPdotplot <- function(clampRes, lv = 1, top = 20, auc.cutoff = 0.6,
 #' CLAMPdotplotAll(list(summary = summ), auc.cutoff = 0.6, fdr.cutoff = 0.15)
 CLAMPdotplotAll <- function(clampRes, auc.cutoff = 0.6, fdr.cutoff = 0.05,
                             top.per.lv = NULL, max.name.len = 40) {
+    .assert_proportion(auc.cutoff)
+    .assert_proportion(fdr.cutoff)
+    if (!is.null(top.per.lv)) .assert_positive_count(top.per.lv)
+    .assert_positive_count(max.name.len)
     summ <- if (is.data.frame(clampRes)) clampRes else clampRes$summary
 
     if (is.null(summ)) {

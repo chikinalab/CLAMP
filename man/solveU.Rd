@@ -9,7 +9,7 @@ solveU(
   Chat = NULL,
   priorMat,
   penalty.factor,
-  pathwaySelection = "fast",
+  pathwaySelection = c("fast", "complete"),
   alpha = 0.9,
   maxPath = 10,
   nfolds = 5,

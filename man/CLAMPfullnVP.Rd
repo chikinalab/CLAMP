@@ -28,7 +28,7 @@ CLAMPfullnVP(
   allGenes = FALSE,
   rseed = NULL,
   max.U.updates = 5,
-  pathwaySelection = c("fast"),
+  pathwaySelection = c("fast", "complete"),
   multiplier = 1,
   adaptive.p = 0.05,
   useNNLS = TRUE,
@@ -36,7 +36,7 @@ CLAMPfullnVP(
   refitAll = FALSE,
   useSE = FALSE,
   ncores = 1,
-  clamp_k_method = "elbow"
+  clamp_k_method = c("elbow", "permutation", "gavish_donoho", "scaleSVs")
 )
 }
 \arguments{

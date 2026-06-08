@@ -1,3 +1,68 @@
+# Internal assertion helpers. Each names the offending argument in the
+# error message so callers see exactly which parameter failed.
+
+.assert_count <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) ||
+        x < 0 || x %% 1 != 0) {
+        stop("`", name, "` must be a non-negative integer.", call. = FALSE)
+    }
+}
+
+.assert_positive_count <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) ||
+        x <= 0 || x %% 1 != 0) {
+        stop("`", name, "` must be a positive integer.", call. = FALSE)
+    }
+}
+
+.assert_proportion <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) || x < 0 || x > 1) {
+        stop("`", name, "` must be a single number in [0, 1].", call. = FALSE)
+    }
+}
+
+.assert_positive_number <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) || x <= 0) {
+        stop("`", name, "` must be a single positive number.", call. = FALSE)
+    }
+}
+
+.assert_nonnegative_number <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x) || x < 0) {
+        stop(
+            "`", name, "` must be a single non-negative number.",
+            call. = FALSE
+        )
+    }
+}
+
+.assert_numeric_scalar <- function(x, name = deparse(substitute(x))) {
+    if (!is.numeric(x) || length(x) != 1 || is.na(x)) {
+        stop("`", name, "` must be a single numeric value.", call. = FALSE)
+    }
+}
+
+.assert_flag <- function(x, name = deparse(substitute(x))) {
+    if (!is.logical(x) || length(x) != 1 || is.na(x)) {
+        stop("`", name, "` must be TRUE or FALSE.", call. = FALSE)
+    }
+}
+
+.assert_nonempty_character <- function(x, name = deparse(substitute(x))) {
+    if (!is.character(x) || length(x) == 0 || any(is.na(x))) {
+        stop(
+            "`", name, "` must be a non-empty character vector.",
+            call. = FALSE
+        )
+    }
+}
+
+.assert_matrix_like <- function(x, name = deparse(substitute(x))) {
+    if (is.null(dim(x)) || length(dim(x)) != 2) {
+        stop("`", name, "` must be a matrix-like object.", call. = FALSE)
+    }
+}
+
 #' Compute all-vs-all AUC matrix
 #'
 #' Calculates the area under the ROC curve (AUC) for all pairs of columns
@@ -189,6 +254,10 @@ max_correspondence_greedy <- function(cor_mat) {
 #' head(gmt_list[[1]])
 #' @export
 getGMT <- function(url, name = NULL, cache_dir = NULL, redownload = FALSE) {
+    .assert_nonempty_character(url)
+    if (!is.null(name)) .assert_nonempty_character(name)
+    if (!is.null(cache_dir)) .assert_nonempty_character(cache_dir)
+    .assert_flag(redownload)
     if (is.null(name)) {
         name <- sub(".*[=]", "", url)
         message("Auto-detected name: ", name)
@@ -243,6 +312,7 @@ getGMT <- function(url, name = NULL, cache_dir = NULL, redownload = FALSE) {
 #' names(gs)
 #' gs[["PATHWAY_A"]]
 read_gmt <- function(filename) {
+    .assert_nonempty_character(filename)
     if (!file.exists(filename)) {
         stop("The file '", filename, "' does not exist.", call. = FALSE)
     }
@@ -292,6 +362,9 @@ read_gmt <- function(filename) {
 #' sparseMat <- gmtListToSparseMat(nestedList)
 #' @export
 gmtListToSparseMat <- function(gmtList) {
+    if (!is.list(gmtList) || length(gmtList) == 0) {
+        stop("`gmtList` must be a non-empty list.", call. = FALSE)
+    }
     allnames <- unlist(lapply(gmtList, names))
     # there are usually no duplicates
     stopifnot(all(table(allnames) == 1))
@@ -367,6 +440,10 @@ commonRows <- function(data1, data2) {
 #'
 #' @export
 cleanFBM <- function(fbm, ncores = 1) {
+    .assert_positive_count(ncores)
+    if (!inherits(fbm, "FBM")) {
+        stop("`fbm` must be a bigstatsr::FBM object.", call. = FALSE)
+    }
     # Block‐wise scan for max and NA
     stats <- big_apply(fbm, a.FUN = function(X, ind) {
         vals <- X[, ind, drop = FALSE]
@@ -486,6 +563,19 @@ computeRowStatsFBM <- function(fbm, ncores = 1) {
 filterFBM <- function(fbm, rowStats, keep_samples_idx = NULL,
                       mean_cutoff = NULL, var_cutoff = NULL,
                       backingfile = "filtered_fbm") {
+    if (!is.null(mean_cutoff)) .assert_numeric_scalar(mean_cutoff)
+    if (!is.null(var_cutoff)) .assert_numeric_scalar(var_cutoff)
+    if (!inherits(fbm, "FBM")) {
+        stop("`fbm` must be a bigstatsr::FBM object.", call. = FALSE)
+    }
+    if (!is.list(rowStats) ||
+        !all(c("row_means", "row_variances") %in% names(rowStats))) {
+        stop(
+            "`rowStats` must contain `row_means` and `row_variances`.",
+            call. = FALSE
+        )
+    }
+    .assert_nonempty_character(backingfile)
     row_means <- rowStats$row_means
     row_variances <- rowStats$row_variances
 
@@ -633,6 +723,14 @@ preprocessCLAMPFBM <- function(
     fbm, mean_cutoff = NULL, var_cutoff = NULL, backingfile = NULL,
     block_size = 1000, ncores = 1
 ) {
+    if (!is.null(mean_cutoff)) .assert_numeric_scalar(mean_cutoff)
+    if (!is.null(var_cutoff)) .assert_numeric_scalar(var_cutoff)
+    .assert_positive_count(block_size)
+    .assert_positive_count(ncores)
+    if (!inherits(fbm, "FBM")) {
+        stop("`fbm` must be a bigstatsr::FBM object.", call. = FALSE)
+    }
+    if (!is.null(backingfile)) .assert_nonempty_character(backingfile)
     n_r <- nrow(fbm)
     n_c <- ncol(fbm)
 
@@ -722,6 +820,18 @@ preprocessCLAMPFBM <- function(
 #' @export
 zscoreCLAMPFBM <- function(fbm_filtered, rowStats,
                            chunk_size = 1000, ncores = 1) {
+    .assert_positive_count(chunk_size)
+    .assert_positive_count(ncores)
+    if (!inherits(fbm_filtered, "FBM")) {
+        stop("`fbm_filtered` must be a bigstatsr::FBM object.", call. = FALSE)
+    }
+    if (!is.list(rowStats) ||
+        !all(c("row_means", "row_variances") %in% names(rowStats))) {
+        stop(
+            "`rowStats` must contain `row_means` and `row_variances`.",
+            call. = FALSE
+        )
+    }
     message("Applying Z-score transformation")
     means <- rowStats$row_means
     sds <- sqrt(rowStats$row_variances)
@@ -790,6 +900,8 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats,
 #' res <- preprocessCLAMP(mat, mean_cutoff = 6, var_cutoff = 2)
 #' @export
 preprocessCLAMP <- function(Y, mean_cutoff = 0, var_cutoff = 0) {
+    .assert_numeric_scalar(mean_cutoff)
+    .assert_numeric_scalar(var_cutoff)
     if (!is.matrix(Y) || !is.numeric(Y)) {
         stop("`Y` must be a numeric matrix (genes x samples).")
     }
@@ -832,6 +944,7 @@ preprocessCLAMP <- function(Y, mean_cutoff = 0, var_cutoff = 0) {
 #' cpmCLAMP(mat)
 #' @export
 cpmCLAMP <- function(counts) {
+    .assert_matrix_like(counts)
     mat <- if (is.data.frame(counts)) {
         as.matrix(counts)
     } else {
@@ -863,6 +976,8 @@ cpmCLAMP <- function(counts) {
 #' cpmCLAMPFBM(fbm, block_size = 1)
 #' @export
 cpmCLAMPFBM <- function(fbm_counts, block_size = 1000, ncores = 1) {
+    .assert_positive_count(block_size)
+    .assert_positive_count(ncores)
     if (!inherits(fbm_counts, "FBM")) {
         stop("`fbm_counts` must be a bigstatsr::FBM object.")
     }
@@ -933,6 +1048,8 @@ cpmCLAMPFBM <- function(fbm_counts, block_size = 1000, ncores = 1) {
 #' @importFrom stats smooth.spline predict
 #' @export
 findSplineMax <- function(x, y, n = 1000, spar = NULL) {
+    .assert_positive_count(n)
+    if (!is.null(spar)) .assert_numeric_scalar(spar)
     stopifnot(is.numeric(x), is.numeric(y), length(x) == length(y))
     fit <- stats::smooth.spline(x, y, spar = spar)
     grid <- seq(min(x), max(x), length.out = n)
@@ -955,7 +1072,8 @@ findSplineMax <- function(x, y, n = 1000, spar = NULL) {
 #'
 #' @export
 squashZscore <- function(zdata, maxScore = 2) {
-    stopifnot(is.numeric(zdata), is.numeric(maxScore), length(maxScore) == 1)
+    .assert_positive_number(maxScore)
+    stopifnot(is.numeric(zdata))
     maxScore * tanh(zdata / maxScore)
 }
 
@@ -984,6 +1102,12 @@ squashZscore <- function(zdata, maxScore = 2) {
 #'
 #' @export
 getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
+    .assert_positive_count(n)
+    .assert_proportion(min_r2)
+    if (!is.numeric(sv) || anyNA(sv)) {
+        stop("`sv` must be a numeric vector without missing values.",
+             call. = FALSE)
+    }
     k <- length(sv)
     if (k < 20) {
         stop("Need at least 20 singular values ")
@@ -1050,6 +1174,7 @@ getScaleFromSVs <- function(sv, n, min_r2 = 0.95) {
 #'
 #' @export
 oneToOneMask <- function(cc) {
+    .assert_matrix_like(cc)
     cc <- as.matrix(cc)
     cc_out <- matrix(-100, nrow(cc), ncol(cc))
     tmp <- cc
@@ -1060,6 +1185,70 @@ oneToOneMask <- function(cc) {
         tmp[, imax[2]] <- -100
     }
     return(cc_out)
+}
+
+#' Differential latent-variable activity between sample groups
+#'
+#' For each row of a CLAMP \code{B} matrix, compares mean activity in a
+#' reference sample group against all other samples using a Wilcoxon
+#' rank-sum test, with Benjamini–Hochberg FDR adjustment.
+#'
+#' @param x A CLAMP result list (with element \code{B}) or a numeric matrix
+#'   with latent variables in rows and samples in columns.
+#' @param metadata Data frame with sample identifiers and group labels.
+#' @param sample_col Name of the column in \code{metadata} holding sample
+#'   identifiers matching \code{colnames(B)}.
+#' @param group_col Name of the column in \code{metadata} holding group labels.
+#' @param reference Label of the reference group. All other samples are
+#'   treated as the comparison group.
+#'
+#' @return A data frame with one row per latent variable, ordered by FDR.
+#'   Columns: \code{LV}, \code{Mean_Reference}, \code{Mean_Comparison},
+#'   \code{Mean_Diff}, \code{P_Value}, \code{FDR}.
+#'
+#' @examples
+#' B <- matrix(rnorm(30), nrow = 3)
+#' rownames(B) <- paste0("LV", seq_len(3))
+#' colnames(B) <- paste0("S", seq_len(10))
+#' meta <- data.frame(
+#'     id = colnames(B),
+#'     type = rep(c("Control", "Case"), each = 5)
+#' )
+#' differentialLVActivity(B, meta, reference = "Control")
+#'
+#' @export
+differentialLVActivity <- function(
+    x, metadata, sample_col = "id", group_col = "type", reference
+) {
+    B <- if (is.list(x) && !is.null(x$B)) x$B else x
+    B <- as.matrix(B)
+
+    sample_ids <- as.character(metadata[[sample_col]])
+    groups <- as.character(metadata[[group_col]])
+    ref_cols <- intersect(colnames(B), sample_ids[groups == reference])
+    cmp_cols <- intersect(colnames(B), sample_ids[groups != reference])
+    if (length(ref_cols) == 0 || length(cmp_cols) == 0) {
+        stop("No matching reference or comparison samples.", call. = FALSE)
+    }
+
+    P_Value <- vapply(
+        seq_len(nrow(B)),
+        function(i) stats::wilcox.test(B[i, ref_cols], B[i, cmp_cols])$p.value,
+        numeric(1)
+    )
+    Mean_Reference <- rowMeans(B[, ref_cols, drop = FALSE])
+    Mean_Comparison <- rowMeans(B[, cmp_cols, drop = FALSE])
+
+    out <- data.frame(
+        LV = rownames(B),
+        Mean_Reference = Mean_Reference,
+        Mean_Comparison = Mean_Comparison,
+        Mean_Diff = Mean_Comparison - Mean_Reference,
+        P_Value = P_Value,
+        FDR = stats::p.adjust(P_Value, method = "fdr"),
+        stringsAsFactors = FALSE
+    )
+    out[order(out$FDR, out$P_Value), , drop = FALSE]
 }
 
 #' Select default number of components for a CLAMP solver SVD
@@ -1077,6 +1266,7 @@ oneToOneMask <- function(cc) {
 #'
 #' @export
 select_svd_k <- function(Y) {
+    .assert_matrix_like(Y)
     return(max(2, floor((min(nrow(Y), ncol(Y)) - 1) / 4)))
 }
 
@@ -1108,7 +1298,9 @@ select_svd_k <- function(Y) {
 #'
 #' @export
 compute_svd <- function(Y, k = NULL, method = NULL) {
+    .assert_matrix_like(Y)
     if (is.null(k)) k <- select_svd_k(Y)
+    .assert_positive_count(k)
 
     if (is.null(method)) {
         method <- if (inherits(Y, "FBM")) {
@@ -1174,6 +1366,17 @@ select_clamp_k <- function(svdres, n_samples, svd_k,
                            ),
                            data = NULL, B = 20) {
     method <- match.arg(method)
+    if (!is.list(svdres) || is.null(svdres$d)) {
+        stop("`svdres` must be an SVD result with a `d` component.",
+             call. = FALSE)
+    }
+    .assert_positive_count(n_samples)
+    .assert_positive_count(svd_k)
+    .assert_positive_count(B)
+    if (!is.numeric(svdres$d) || anyNA(svdres$d)) {
+        stop("`svdres$d` must be numeric without missing values.",
+             call. = FALSE)
+    }
 
     if (method == "scaleSVs") {
         scale.res <- getScaleFromSVs(svdres$d, n_samples)

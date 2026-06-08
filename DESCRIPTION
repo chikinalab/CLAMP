@@ -1,7 +1,11 @@
 Package: CLAMP
 Type: Package
 Title: Curated Latent-variable Analysis with Molecular Priors
+<<<<<<< HEAD
 Version: 0.99.1
+=======
+Version: 0.99.3
+>>>>>>> devel
 Authors@R:
     c(
       person("Marc", "Subirana-Granes", role = c("aut","cre"),
@@ -59,7 +63,7 @@ Suggests:
     data.table,
     DiagrammeR,
     DT,
-    hdf5r,
+    rhdf5,
     here,
     knitr,
     org.Hs.eg.db,
@@ -77,3 +81,4 @@ LazyData: false
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3
