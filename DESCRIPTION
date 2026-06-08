@@ -1,11 +1,7 @@
 Package: CLAMP
 Type: Package
 Title: Curated Latent-variable Analysis with Molecular Priors
-<<<<<<< HEAD
-Version: 0.99.1
-=======
 Version: 0.99.3
->>>>>>> devel
 Authors@R:
     c(
       person("Marc", "Subirana-Granes", role = c("aut","cre"),
