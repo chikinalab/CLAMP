@@ -1,3 +1,9 @@
+# CLAMP 0.99.5
+
+## Improvements
+- Added automated BiocCheck and cross-platform R CMD check workflows.
+- Added automatic pkgdown deployment after updates to `devel`.
+
 # CLAMP 0.99.4
 
 ## Bug fixes

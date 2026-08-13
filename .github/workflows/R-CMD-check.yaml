@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, devel]
+    branches: [devel]
   pull_request:
 
 name: R-CMD-check.yaml
@@ -42,14 +42,23 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
+      - name: Select Bioconductor devel
+        run: |
+          config <- readLines("https://bioconductor.org/config.yaml")
+          line <- grep("^devel_version:", config, value = TRUE)
+          stopifnot(length(line) == 1L)
+          version <- trimws(sub("^devel_version:", "", line))
+          cat(
+            sprintf("R_BIOC_VERSION=%s\n", version),
+            file = Sys.getenv("GITHUB_ENV"), append = TRUE
+          )
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache: always
           extra-packages: |
             any::rcmdcheck
-            pivlab/CLAMPData
-          # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
-          # it will then be picked up automatically from DESCRIPTION.
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2

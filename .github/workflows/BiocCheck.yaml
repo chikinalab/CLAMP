@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main, devel]
+    branches: [devel]
   pull_request:
 
 name: BiocCheck.yaml
@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
@@ -22,25 +22,47 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: release
+          r-version: devel
           http-user-agent: release
           use-public-rspm: true
+
+      - name: Select Bioconductor devel
+        run: |
+          config <- readLines("https://bioconductor.org/config.yaml")
+          line <- grep("^devel_version:", config, value = TRUE)
+          stopifnot(length(line) == 1L)
+          version <- trimws(sub("^devel_version:", "", line))
+          cat(
+            sprintf("R_BIOC_VERSION=%s\n", version),
+            file = Sys.getenv("GITHUB_ENV"), append = TRUE
+          )
+        shell: Rscript {0}
 
       - name: Install Deps
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache: always
-          # Remove pivlab/CLAMPData once CLAMPData is on Bioconductor;
-          # it will then be picked up automatically from DESCRIPTION.
           extra-packages: |
             bioc::BiocCheck
-            pivlab/CLAMPData
+          needs: check
+
+      - name: Run BiocCheck on git clone
+        run: |
+          BiocCheck::BiocCheckGitClone(
+            ".",
+            `quit-with-status` = TRUE
+          )
+        shell: Rscript {0}
 
       - name: Build tarball
         run: R CMD build --no-manual .
 
-      - name: Run BiocCheck
+      - name: Run BiocCheck on tarball
         run: |
           tarball <- list.files(pattern = "^CLAMP_.*\\.tar\\.gz$")[1]
-          BiocCheck::BiocCheck(tarball, `quit-with-status` = TRUE)
+          BiocCheck::BiocCheck(
+            tarball,
+            `new-package` = FALSE,
+            `quit-with-status` = TRUE
+          )
         shell: Rscript {0}
