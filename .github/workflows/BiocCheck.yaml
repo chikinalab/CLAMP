@@ -32,6 +32,7 @@ jobs:
           line <- grep("^devel_version:", config, value = TRUE)
           stopifnot(length(line) == 1L)
           version <- trimws(sub("^devel_version:", "", line))
+          version <- gsub('"', "", version, fixed = TRUE)
           cat(
             sprintf("R_BIOC_VERSION=%s\n", version),
             file = Sys.getenv("GITHUB_ENV"), append = TRUE
