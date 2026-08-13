@@ -1,4 +1,4 @@
-# CLAMP ![CLAMP logo](reference/figures/clamp.png)
+# CLAMP
 
 ## Bioconductor release status
 
