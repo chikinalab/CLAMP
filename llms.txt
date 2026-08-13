@@ -1,0 +1,292 @@
+# CLAMP ![CLAMP logo](reference/figures/clamp.png)
+
+## Bioconductor release status
+
+| Branch | R CMD check | Last updated |
+|:--:|:--:|:--:|
+| [*devel*](https://bioconductor.org/packages/devel/bioc/html/CLAMP.html) | [![Bioconductor-devel Build Status](https://bioconductor.org/shields/build/devel/bioc/CLAMP.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/CLAMP) | ![Bioconductor-devel last commit](https://bioconductor.org/shields/lastcommit/devel/bioc/CLAMP.svg) |
+| [*release*](https://bioconductor.org/packages/release/bioc/html/CLAMP.html) | [![Bioconductor-release Build Status](https://bioconductor.org/shields/build/release/bioc/CLAMP.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/CLAMP) | ![Bioconductor-release last commit](https://bioconductor.org/shields/lastcommit/release/bioc/CLAMP.svg) |
+
+The goal of CLAMP (**C**urated **L**atent-variable **A**nalysis with
+**M**olecular **P**riors) is to provide an easy-to-use package to
+extract interpretable latent variables from large transcriptomic
+datasets using biological priors.
+
+## Installation
+
+You can install the latest release of `CLAMP` from Bioconductor:
+
+``` r
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("CLAMP")
+```
+
+If you want to test the development version, you can install it from the
+github repository:
+
+``` r
+
+BiocManager::install("chikinalab/CLAMP")
+```
+
+Now you can load the package using:
+
+``` r
+
+library(CLAMP)
+```
+
+## Basic usage
+
+Full documentation is available at
+[chikinalab.org/CLAMP](https://chikinalab.org/CLAMP/). For detailed
+instructions on how to use CLAMP, please see the
+[vignette](https://chikinalab.github.io/CLAMP/articles/get_started.html).
+
+``` r
+
+library(CLAMP)
+
+set.seed(1)
+
+# Load example dataset (genes × samples)
+data("dataWholeBlood")
+
+# CPM-normalize, filter low-expressed genes, log2 and z-score normalizations
+dataWholeBlood_cpm <- cpmCLAMP(dataWholeBlood)
+
+prep <- preprocessCLAMP(
+    dataWholeBlood_cpm,
+    mean_cutoff = 0.5,
+    var_cutoff = 0.1
+)
+
+Y_z <- zscoreCLAMP(
+    prep$Y_filtered,
+    prep$rowStats
+)
+
+# Compute truncated SVD and select number of latent variables
+svd_k <- select_svd_k(Y_z)
+
+svd_res <- compute_svd(
+    Y_z,
+    k = svd_k
+)
+
+clamp_k <- select_clamp_k(
+    svd_res,
+    n_samples = ncol(Y_z),
+    svd_k = svd_k
+)
+
+# Run CLAMPbase to initialize latent variables
+baseRes <- CLAMPbase(
+    Y = Y_z,
+    svdres = svd_res,
+    clamp_k = clamp_k
+)
+
+# Load pre-fetched gene set libraries bundled with the package
+gmtList <- list(
+    CellMarkers = readRDS(
+        system.file("extdata", "CellMarker_2024.rds", package = "CLAMP")
+    ),
+    KEGG = readRDS(
+        system.file("extdata", "KEGG_2021_Human.rds", package = "CLAMP")
+    )
+)
+
+# Combine gene set libraries into a single sparse matrix
+pathMatCell <- gmtListToSparseMat(gmtList)
+
+# Load additional xCell reference matrix
+data("xCell")
+
+# Match pathways to the filtered gene space used by CLAMP
+matchedPathsWB <- getMatchedPathwayMatList(
+    pathMatCell,
+    xCell,
+    new.genes = rownames(Y_z),
+    min.genes = 2
+)
+
+# Run CLAMPfull using CLAMPbase initialization and matched priors
+fullRes <- CLAMPfull(
+    Y = Y_z,
+    priorMat = matchedPathsWB,
+    clamp.base.result = baseRes,
+    svdres = svd_res,
+    clamp_k = clamp_k,
+    use_cpp = TRUE
+)
+
+# Inspect outputs
+dim(fullRes$Z)
+dim(fullRes$B)
+dim(fullRes$U)
+
+# Inspect significant pathway annotations
+summary_df <- as.data.frame(fullRes$summary)
+
+sig_summary <- summary_df[
+    summary_df$FDR < 0.05 & summary_df$AUC > 0.7,
+    c("LV", "pathway", "FDR", "AUC")
+]
+
+sig_summary <- sig_summary[order(sig_summary$FDR), ]
+
+head(sig_summary, 20)
+```
+
+## Code of Conduct
+
+Please note that the CLAMP project is released with a [Contributor Code
+of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
+# Package index
+
+## All functions
+
+- [`AUC()`](https://chikinalab.org/CLAMP/reference/AUC.md) : Compute AUC
+  using Wilcoxon rank-sum test
+- [`BH()`](https://chikinalab.org/CLAMP/reference/BH.md) : Adjust
+  p-values using Benjamini-Hochberg method
+- [`CLAMPbase()`](https://chikinalab.org/CLAMP/reference/CLAMPbase.md) :
+  CLAMP base matrix factorization
+- [`CLAMPdotplot()`](https://chikinalab.org/CLAMP/reference/CLAMPdotplot.md)
+  : Dot plot of top pathways for a single latent variable
+- [`CLAMPdotplotAll()`](https://chikinalab.org/CLAMP/reference/CLAMPdotplotAll.md)
+  : Dot plot of pathway-LV associations across all latent variables
+- [`CLAMPfull()`](https://chikinalab.org/CLAMP/reference/CLAMPfull.md) :
+  Runs the streamlined full CLAMP model.
+- [`CLAMPfullnVP()`](https://chikinalab.org/CLAMP/reference/CLAMPfullnVP.md)
+  : Full CLAMP model with prior information and cross-validation
+- [`CLAMPplotTopZ()`](https://chikinalab.org/CLAMP/reference/CLAMPplotTopZ.md)
+  : Plot top genes per LV by Z loading
+- [`CLAMPplotU()`](https://chikinalab.org/CLAMP/reference/CLAMPplotU.md)
+  : Plot the U matrix (pathway-LV associations) as a heatmap
+- [`allAgainstAllAUCs()`](https://chikinalab.org/CLAMP/reference/allAgainstAllAUCs.md)
+  : Compute all-vs-all AUC matrix
+- [`binarizeTop()`](https://chikinalab.org/CLAMP/reference/binarizeTop.md)
+  : Binarize matrix by top-k values per column
+- [`celltypeTargets`](https://chikinalab.org/CLAMP/reference/celltypeTargets.md)
+  : Cell-type deconvolution matrix
+- [`cleanFBM()`](https://chikinalab.org/CLAMP/reference/cleanFBM.md) :
+  Clean a Filebacked Big Matrix (FBM) by log-transforming and handling
+  NAs
+- [`commonRows()`](https://chikinalab.org/CLAMP/reference/commonRows.md)
+  : Find common row names between two matrices or data frames
+- [`compareBs()`](https://chikinalab.org/CLAMP/reference/compareBs.md) :
+  Compare two sets of factor loadings or embeddings
+- [`computeRowStatsFBM()`](https://chikinalab.org/CLAMP/reference/computeRowStatsFBM.md)
+  : Compute row-wise sum and sum of squares for a Filebacked Big Matrix
+- [`compute_svd()`](https://chikinalab.org/CLAMP/reference/compute_svd.md)
+  : Compute a truncated SVD for a CLAMP input matrix
+- [`cpmCLAMP()`](https://chikinalab.org/CLAMP/reference/cpmCLAMP.md) :
+  Compute counts-per-million (CPM) for CLAMP pipelines
+- [`cpmCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/cpmCLAMPFBM.md)
+  : Compute CPM on a file-backed matrix for CLAMP (in-place)
+- [`crossVal()`](https://chikinalab.org/CLAMP/reference/crossVal.md) :
+  Cross-validation AUC for CLAMP latent variables and pathways
+- [`cross_ZY()`](https://chikinalab.org/CLAMP/reference/cross_ZY.md) :
+  Cross-product Z^T Y with FBM or dense matrices
+- [`dataWholeBlood`](https://chikinalab.org/CLAMP/reference/dataWholeBlood.md)
+  : Whole-blood reference expression matrix
+- [`differentialLVActivity()`](https://chikinalab.org/CLAMP/reference/differentialLVActivity.md)
+  : Differential latent-variable activity between sample groups
+- [`filterFBM()`](https://chikinalab.org/CLAMP/reference/filterFBM.md) :
+  Filter rows of a Filebacked Big Matrix based on mean and variance
+- [`findSplineMax()`](https://chikinalab.org/CLAMP/reference/findSplineMax.md)
+  : Find the location of the maximum of a smoothing spline
+- [`getAUCstats()`](https://chikinalab.org/CLAMP/reference/getAUCstats.md)
+  : Count number of latent variables exceeding AUC thresholds
+- [`getChat()`](https://chikinalab.org/CLAMP/reference/getChat.md) :
+  Compute Chat matrix from prior annotation
+- [`getGMT()`](https://chikinalab.org/CLAMP/reference/getGMT.md) :
+  Download and read a GMT file from a URL
+- [`getMatchedPathwayMat()`](https://chikinalab.org/CLAMP/reference/getMatchedPathwayMat.md)
+  : Subset and filter pathway matrix to match target genes
+- [`getMatchedPathwayMat2()`](https://chikinalab.org/CLAMP/reference/getMatchedPathwayMat2.md)
+  : Subset and filter multiple pathway matrices to match target genes
+- [`getMatchedPathwayMatList()`](https://chikinalab.org/CLAMP/reference/getMatchedPathwayMatList.md)
+  : Subset and filter multiple pathway matrices to match target genes
+- [`getMatchedPathwayMatOld()`](https://chikinalab.org/CLAMP/reference/getMatchedPathwayMatOld.md)
+  : Subset and filter pathway matrix to match target genes
+- [`getMaxAUC()`](https://chikinalab.org/CLAMP/reference/getMaxAUC.md) :
+  Get maximum AUC per latent variable
+- [`getScaleFromSVs()`](https://chikinalab.org/CLAMP/reference/getScaleFromSVs.md)
+  : Estimate noise scale from singular values with linear tail
+  extrapolation
+- [`gmtListToSparseMat()`](https://chikinalab.org/CLAMP/reference/gmtListToSparseMat.md)
+  : Convert a list of GMT gene sets to a sparse matrix
+- [`majorCellTypes`](https://chikinalab.org/CLAMP/reference/majorCellTypes.md)
+  : Major cell-type annotations
+- [`mat_mult()`](https://chikinalab.org/CLAMP/reference/mat_mult.md) :
+  Matrix multiplication with support for FBM objects
+- [`max_correspondence_greedy()`](https://chikinalab.org/CLAMP/reference/max_correspondence_greedy.md)
+  : Greedy maximum correspondence from correlation matrix
+- [`mymessage()`](https://chikinalab.org/CLAMP/reference/mymessage.md) :
+  Print a concatenated message
+- [`num.pc()`](https://chikinalab.org/CLAMP/reference/num.pc.md) :
+  Estimate number of principal components via elbow or permutation
+  method
+- [`oneToOneMask()`](https://chikinalab.org/CLAMP/reference/oneToOneMask.md)
+  : One-to-one masking of maximum associations
+- [`panDB`](https://chikinalab.org/CLAMP/reference/panDB.md) : panDB
+  gene-set database
+- [`pinv.ridge()`](https://chikinalab.org/CLAMP/reference/pinv.ridge.md)
+  : Ridge-regularized pseudoinverse via SVD
+- [`plotTopZ_Complex()`](https://chikinalab.org/CLAMP/reference/plotTopZ_Complex.md)
+  : ComplexHeatmap visualization of top genes by latent variable
+- [`preprocessCLAMP()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMP.md)
+  : Preprocess an expression matrix for CLAMP
+- [`preprocessCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMPFBM.md)
+  : Preprocess a bigstatsr FBM for CLAMP
+- [`projectCLAMP()`](https://chikinalab.org/CLAMP/reference/projectCLAMP.md)
+  : Project new data into CLAMP latent space
+- [`read_gmt()`](https://chikinalab.org/CLAMP/reference/read_gmt.md) :
+  Read a GMT file into a list
+- [`ridge_B()`](https://chikinalab.org/CLAMP/reference/ridge_B.md) :
+  Ridge regression update for B
+- [`rotateSVD()`](https://chikinalab.org/CLAMP/reference/rotateSVD.md) :
+  Rotate SVD components to make dominant directions positive
+- [`row_cor()`](https://chikinalab.org/CLAMP/reference/row_cor.md) :
+  Row-wise correlation between two matrices
+- [`run_elbow()`](https://chikinalab.org/CLAMP/reference/run_elbow.md) :
+  Run elbow method to estimate number of PCs
+- [`run_permutation()`](https://chikinalab.org/CLAMP/reference/run_permutation.md)
+  : Run permutation method to estimate number of PCs
+- [`select_clamp_k()`](https://chikinalab.org/CLAMP/reference/select_clamp_k.md)
+  : Select default number of CLAMP latent variables from an SVD
+- [`select_svd_k()`](https://chikinalab.org/CLAMP/reference/select_svd_k.md)
+  : Select default number of components for a CLAMP solver SVD
+- [`solveU()`](https://chikinalab.org/CLAMP/reference/solveU.md) : Fit
+  the loading matrix Z using sparse regression of prior information U
+- [`squashZscore()`](https://chikinalab.org/CLAMP/reference/squashZscore.md)
+  : Squash extreme z-scores
+- [`tscale()`](https://chikinalab.org/CLAMP/reference/tscale.md) :
+  Row-wise scaling (mean 0, sd 1)
+- [`winsor_topk()`](https://chikinalab.org/CLAMP/reference/winsor_topk.md)
+  : Winsorize matrix columns by capping the top-k values
+- [`xCell`](https://chikinalab.org/CLAMP/reference/xCell.md) : xCell
+  cell-signature matrix
+- [`zscoreCLAMP()`](https://chikinalab.org/CLAMP/reference/zscoreCLAMP.md)
+  : Z-score a filtered expression matrix for CLAMP
+- [`zscoreCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/zscoreCLAMPFBM.md)
+  : Z-score a filtered FBM in-place
+
+# Articles
+
+### All vignettes
+
+- [Comparing CLAMPbase and
+  CLAMPfull](https://chikinalab.org/CLAMP/articles/comparing_clampbase_clampfull.md):
+- [Analyzing human RNA-Seq data with
+  CLAMP](https://chikinalab.org/CLAMP/articles/get_started.md):

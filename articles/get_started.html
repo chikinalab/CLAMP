@@ -4,85 +4,61 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analyzing human RNA-Seq data with CLAMP • CLAMP</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="../favicon-48x48.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing human RNA-Seq data with CLAMP">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analyzing human RNA-Seq data with CLAMP">
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">CLAMP</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <a class="navbar-brand me-2" href="../index.html">CLAMP</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/comparing_clampbase_clampfull.html">Comparing CLAMPbase and CLAMPfull</a>
-    </li>
-    <li>
-      <a href="../articles/get_started.html">Analyzing human RNA-Seq data with CLAMP</a>
-    </li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.5</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/comparing_clampbase_clampfull.html">Comparing CLAMPbase and CLAMPfull</a></li>
+    <li><a class="dropdown-item" href="../articles/get_started.html">Analyzing human RNA-Seq data with CLAMP</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/chikinalab/CLAMP/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/chikinalab/CLAMP/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><script src="get_started_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="get_started_files/viz-1.8.2/viz.js"></script><link href="get_started_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="get_started_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="get_started_files/viz-1.8.2/viz.js"></script><link href="get_started_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
 <script src="get_started_files/grViz-binding-1.0.12/grViz.js"></script><link href="get_started_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
 <link href="get_started_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
 <script src="get_started_files/datatables-binding-0.34.0/datatables.js"></script><link href="get_started_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -91,21 +67,51 @@
 <script src="get_started_files/nouislider-7.0.10/jquery.nouislider.min.js"></script><link href="get_started_files/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
 <script src="get_started_files/selectize-0.12.0/selectize.min.js"></script><link href="get_started_files/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
 <script src="get_started_files/crosstalk-1.2.2/js/crosstalk.min.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Analyzing human RNA-Seq data with CLAMP</h1>
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Analyzing human RNA-Seq data with CLAMP</h1>
                         <h4 data-toc-skip class="author">Marc
 Subirana-Granés</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/chikinalab/CLAMP/blob/bioconductor_submission/vignettes/get_started.Rmd" class="external-link"><code>vignettes/get_started.Rmd</code></a></small>
-      <div class="hidden name"><code>get_started.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/chikinalab/CLAMP/blob/devel/vignettes/get_started.Rmd" class="external-link"><code>vignettes/get_started.Rmd</code></a></small>
+      <div class="d-none name"><code>get_started.Rmd</code></div>
     </div>
 
     
     
 <p><img src="../reference/figures/clamp.png" class="r-plt" alt="" width="40%" style="display: block; margin: auto;"></p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install the released version of CLAMP from Bioconductor:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"CLAMP"</span><span class="op">)</span></span></code></pre></div>
+<p>The development version can be installed from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"chikinalab/CLAMP"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
+</h2>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chikinalab.github.io/CLAMP/" class="external-link">CLAMP</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pivlab/CLAMPData" class="external-link">CLAMPData</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/erichson/rSVD" class="external-link">rsvd</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glmnet.stanford.edu" class="external-link">glmnet</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Matrix.R-forge.R-project.org" class="external-link">Matrix</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://huber-group-embl.github.io/rhdf5/" class="external-link">rhdf5</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://privefl.github.io/bigstatsr/" class="external-link">bigstatsr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/AnnotationDbi" class="external-link">AnnotationDbi</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rich-iannone.github.io/DiagrammeR/" class="external-link">DiagrammeR</a></span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -153,6 +159,25 @@ datasets.</p>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
+<div class="section level3">
+<h3 id="available-datasets">Available datasets<a class="anchor" aria-label="anchor" href="#available-datasets"></a>
+</h3>
+<p>CLAMPData ships three curated datasets used throughout this vignette.
+You can inspect them with <code><a href="https://rdrr.io/pkg/CLAMPData/man/list_clamp_data.html" class="external-link">list_clamp_data()</a></code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/CLAMPData/man/list_clamp_data.html" class="external-link">list_clamp_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                               name                         accessor</span></span>
+<span><span class="co">#&gt; 1 GSE164416_DP_htseq_counts_txt_gz GSE164416_DP_htseq_counts_txt_gz</span></span>
+<span><span class="co">#&gt; 2           human_gene_v2_5_alz_h5           human_gene_v2_5_alz_h5</span></span>
+<span><span class="co">#&gt; 3              islets_metadata_csv              islets_metadata_csv</span></span>
+<span><span class="co">#&gt;                                                              description   type</span></span>
+<span><span class="co">#&gt; 1 HTSeq-counts (gene-level) text file from GSE164416 for CLAMP examples. TXT.gz</span></span>
+<span><span class="co">#&gt; 2            HDF5 file used in CLAMP vignettes (human_gene_v2.5_alz.h5).   HDF5</span></span>
+<span><span class="co">#&gt; 3               Sample metadata table for islet RNA-seq example (CLAMP).    CSV</span></span>
+<span><span class="co">#&gt;        species   eh_id version</span></span>
+<span><span class="co">#&gt; 1 Homo sapiens EH10279      v1</span></span>
+<span><span class="co">#&gt; 2 Homo sapiens EH10280      v1</span></span>
+<span><span class="co">#&gt; 3 Homo sapiens EH10281      v1</span></span></code></pre></div>
 <p>We provide three examples:</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>Data-frame example (whole blood):</strong><br>
@@ -185,6 +210,7 @@ mean/variance, then z-score).</li>
 pathway priors and variance-adaptive regularization, producing the final
 model and summary statistics.</li>
 </ol>
+</div>
 <div class="section level3">
 <h3 id="computing-the-svd-and-inferring-k">Computing the SVD and inferring k<a class="anchor" aria-label="anchor" href="#computing-the-svd-and-inferring-k"></a>
 </h3>
@@ -207,57 +233,26 @@ memory, enabling analysis of datasets too large for RAM.</p></li>
 <div class="section level2">
 <h2 id="example-1-in-memory-data-frame-whole-blood">Example 1: In-memory data.frame (Whole Blood)<a class="anchor" aria-label="anchor" href="#example-1-in-memory-data-frame-whole-blood"></a>
 </h2>
+<p>This example uses whole-blood RNA-seq data available from GEO under
+accession <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE130824" class="external-link">GSE130824</a>
+(Homo sapiens, 36 samples). It demonstrates the standard in-memory CLAMP
+workflow for bulk transcriptomic data from peripheral blood.</p>
 <div class="section level3">
 <h3 id="load-example-data">Load example data<a class="anchor" aria-label="anchor" href="#load-example-data"></a>
 </h3>
 <p>In this chunk, we load the whole-blood expression matrix.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"dataWholeBlood"</span><span class="op">)</span> <span class="co"># expression matrix</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">data</span><span class="op">(</span><span class="st">"dataWholeBlood"</span><span class="op">)</span> <span class="co"># expression matrix</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span> <span class="co"># genes x samples</span></span>
 <span><span class="co">#&gt; [1] 11530    36</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span> <span class="co"># genes x samples</span></span>
-<span><span class="co">#&gt;             BD8001    BD8002    BD8003    BD8004    BD8005    BD8006    BD8007</span></span>
-<span><span class="co">#&gt; GAS6      7.123563  7.846633  8.356313  7.387916  7.859675  7.057541  8.960098</span></span>
-<span><span class="co">#&gt; MMP14     6.636157  7.523565  7.033673  6.895476  6.860524  7.268107  7.121380</span></span>
-<span><span class="co">#&gt; MARCKSL1 10.632837 11.208832 10.519870 10.804867 10.940891 10.984602 11.258157</span></span>
-<span><span class="co">#&gt; SPARC    12.206811 11.462327 12.391210 12.457026 12.036049 12.010138 11.342475</span></span>
-<span><span class="co">#&gt; CTSD     13.147963 13.218464 12.574546 12.710222 13.151780 13.131948 13.466095</span></span>
-<span><span class="co">#&gt; EPAS1     7.011590  6.196898  6.621782  7.251964  6.792337  6.813567  6.785256</span></span>
-<span><span class="co">#&gt;             BD8008    BD8009    BD8010    BD8011    BD8012    BD8013    BD8015</span></span>
-<span><span class="co">#&gt; GAS6      8.120199  7.061915  7.467680  7.593766  7.980510  7.608529  7.524665</span></span>
-<span><span class="co">#&gt; MMP14     7.196859  6.764261  7.788809  6.925929  6.658480  7.035367  7.105207</span></span>
-<span><span class="co">#&gt; MARCKSL1 10.943532 11.242130 11.001261 11.094241 10.827391 10.850013 11.201983</span></span>
-<span><span class="co">#&gt; SPARC    10.979392 12.464739 11.297043 11.613255 12.116145 12.598474 12.364565</span></span>
-<span><span class="co">#&gt; CTSD     13.326034 12.885950 13.818859 13.065856 12.869455 12.964527 13.407112</span></span>
-<span><span class="co">#&gt; EPAS1     6.434220  6.310941  5.269084  6.223021  6.383971  5.728530  6.633363</span></span>
-<span><span class="co">#&gt;             BD8017    BD8018    BD8019    BD8020    BD8021    BD8024    BD8025</span></span>
-<span><span class="co">#&gt; GAS6      7.939325  8.391950  7.950956  7.560154  7.852542  8.388111  8.465422</span></span>
-<span><span class="co">#&gt; MMP14     6.905814  7.408872  6.958392  7.166190  6.294972  7.360992  7.649716</span></span>
-<span><span class="co">#&gt; MARCKSL1 11.088379 11.074874 10.699760 10.778236 11.107787 11.249868 11.004432</span></span>
-<span><span class="co">#&gt; SPARC    11.935750 12.469152 11.950393 11.285404 12.836662 12.553092 11.980064</span></span>
-<span><span class="co">#&gt; CTSD     13.669278 13.345946 13.097458 12.637596 13.481647 13.920715 13.477684</span></span>
-<span><span class="co">#&gt; EPAS1     7.215680  6.401987  6.834593  6.820674  6.909808  6.242905  6.770166</span></span>
-<span><span class="co">#&gt;             BD8026    BD8027    BD8028    BD8029    BD8030    BD8031    BD8032</span></span>
-<span><span class="co">#&gt; GAS6      7.924237  7.438211  7.562134  7.941111  7.476552  7.837566  7.576831</span></span>
-<span><span class="co">#&gt; MMP14     7.265736  6.875840  7.166484  7.365906  7.163581  7.026309  6.822608</span></span>
-<span><span class="co">#&gt; MARCKSL1 10.861711 10.859864 10.908438 10.817281 10.879364 10.540350 11.192079</span></span>
-<span><span class="co">#&gt; SPARC    11.762774 11.171782 12.461855 11.742365 13.040843 10.445423 11.940918</span></span>
-<span><span class="co">#&gt; CTSD     13.034718 12.819660 12.713603 12.618206 12.903100 12.837019 13.388076</span></span>
-<span><span class="co">#&gt; EPAS1     6.792149  6.321837  7.195378  6.219153  6.971319  7.149990  6.572446</span></span>
-<span><span class="co">#&gt;             BD8033    BD8034    BD8038    BD8041    BD8042    BD8043    BD8044</span></span>
-<span><span class="co">#&gt; GAS6      7.589572  7.751689  7.764586  7.526250  7.144113  7.874906  7.362536</span></span>
-<span><span class="co">#&gt; MMP14     7.197420  7.060375  6.712708  6.758632  6.506008  7.371407  7.299790</span></span>
-<span><span class="co">#&gt; MARCKSL1 10.913452 10.910316 10.731734 10.960063 10.852984 10.863946 11.093211</span></span>
-<span><span class="co">#&gt; SPARC    12.454682 11.457722 11.688371 11.563955 12.331355 11.409792 11.690587</span></span>
-<span><span class="co">#&gt; CTSD     12.851351 12.840063 12.448499 13.271724 12.993058 13.506943 13.312904</span></span>
-<span><span class="co">#&gt; EPAS1     6.573068  5.614770  7.084063  5.418134  6.325518  6.446405  6.739370</span></span>
-<span><span class="co">#&gt;             BD8045</span></span>
-<span><span class="co">#&gt; GAS6      8.315021</span></span>
-<span><span class="co">#&gt; MMP14     7.354577</span></span>
-<span><span class="co">#&gt; MARCKSL1 11.404975</span></span>
-<span><span class="co">#&gt; SPARC    12.448106</span></span>
-<span><span class="co">#&gt; CTSD     14.070121</span></span>
-<span><span class="co">#&gt; EPAS1     6.382976</span></span></code></pre></div>
+<span><span class="va">dataWholeBlood</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="co"># genes x samples</span></span>
+<span><span class="co">#&gt;             BD8001    BD8002    BD8003    BD8004    BD8005    BD8006</span></span>
+<span><span class="co">#&gt; GAS6      7.123563  7.846633  8.356313  7.387916  7.859675  7.057541</span></span>
+<span><span class="co">#&gt; MMP14     6.636157  7.523565  7.033673  6.895476  6.860524  7.268107</span></span>
+<span><span class="co">#&gt; MARCKSL1 10.632837 11.208832 10.519870 10.804867 10.940891 10.984602</span></span>
+<span><span class="co">#&gt; SPARC    12.206811 11.462327 12.391210 12.457026 12.036049 12.010138</span></span>
+<span><span class="co">#&gt; CTSD     13.147963 13.218464 12.574546 12.710222 13.151780 13.131948</span></span>
+<span><span class="co">#&gt; EPAS1     7.011590  6.196898  6.621782  7.251964  6.792337  6.813567</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="preprocess-and-z-score">Preprocess and z-score<a class="anchor" aria-label="anchor" href="#preprocess-and-z-score"></a>
@@ -265,7 +260,7 @@ memory, enabling analysis of datasets too large for RAM.</p></li>
 <p>We first CPM-normalize the data (when needed), filter for genes with
 mean expression ≥ 0.5 and variance ≥ 0.1, and then apply z-score
 normalization.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#  CPM normalization</span></span>
 <span><span class="va">dataWholeBlood_cpm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cpmCLAMP.html">cpmCLAMP</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span></span>
 <span></span>
@@ -275,6 +270,8 @@ normalization.</p>
 <span>    mean_cutoff <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    var_cutoff <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Applying log2 transformation</span></span>
+<span><span class="co">#&gt; No NA values found</span></span>
 <span></span>
 <span><span class="co"># Extract filtered matrix and rowStats</span></span>
 <span><span class="va">wb_Y_filtered</span> <span class="op">&lt;-</span> <span class="va">prep_wb</span><span class="op">$</span><span class="va">Y_filtered</span></span>
@@ -293,7 +290,7 @@ normalization.</p>
 <p>We compute the SVD using <code><a href="../reference/select_svd_k.html">select_svd_k()</a></code> and
 <code><a href="../reference/compute_svd.html">compute_svd()</a></code>, then select <code>clamp_k</code> with
 <code><a href="../reference/select_clamp_k.html">select_clamp_k()</a></code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select SVD rank and compute SVD</span></span>
 <span><span class="va">wb_svd_k</span>   <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_svd_k.html">select_svd_k</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span></span>
 <span><span class="va">wb_svd</span>     <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_svd.html">compute_svd</a></span><span class="op">(</span><span class="va">wb_Y_z</span>, k <span class="op">=</span> <span class="va">wb_svd_k</span><span class="op">)</span></span>
@@ -301,7 +298,7 @@ normalization.</p>
 <span><span class="co"># Select clamp_k (elbow method by default)</span></span>
 <span><span class="va">wb_clamp_k</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span><span class="va">wb_svd</span>, n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span>, svd_k <span class="op">=</span> <span class="va">wb_svd_k</span><span class="op">)</span></span>
 <span><span class="va">wb_clamp_k</span></span>
-<span><span class="co">#&gt; [1] 8</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clampbase-initialization">CLAMPbase initialization<a class="anchor" aria-label="anchor" href="#clampbase-initialization"></a>
@@ -321,7 +318,7 @@ positive contributions. Lower values of <code>adaptive.p</code> (e.g.,
 retain more genes. The default <code>adaptive.p = 0.05</code> typically
 yields interpretable, well-separated latent variables in large
 transcriptomic datasets.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb_baseRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPbase.html">CLAMPbase</a></span><span class="op">(</span></span>
 <span>    Y <span class="op">=</span> <span class="va">wb_Y_z</span>,</span>
 <span>    svdres <span class="op">=</span> <span class="va">wb_svd</span>,</span>
@@ -333,7 +330,7 @@ transcriptomic datasets.</p>
 </h3>
 <p>Next, we build a prior matrix from curated gene sets and compute the
 Chat object for <code>CLAMPfull</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># How to download pathway and cell marker libraries from Enrichr.</span></span>
 <span><span class="co"># Not run during vignette build to avoid network calls; pre-fetched</span></span>
 <span><span class="co"># .rds files are loaded in the next chunk instead.</span></span>
@@ -348,7 +345,7 @@ Chat object for <code>CLAMPfull</code>.</p>
 <span>        <span class="st">"KEGG_2021_Human"</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load pre-fetched gene set libraries bundled with the package</span></span>
 <span><span class="va">gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    CellMarkers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
@@ -363,12 +360,12 @@ Chat object for <code>CLAMPfull</code>.</p>
 <span><span class="va">pathMatCell</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gmtListToSparseMat.html">gmtListToSparseMat</a></span><span class="op">(</span><span class="va">gmtList</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load additional xCell reference matrix</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"xCell"</span><span class="op">)</span></span>
+<span><span class="fu">data</span><span class="op">(</span><span class="st">"xCell"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Match pathways to the gene space of whole blood</span></span>
 <span><span class="va">matchedPathsWB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getMatchedPathwayMatList.html">getMatchedPathwayMatList</a></span><span class="op">(</span></span>
 <span>    <span class="va">pathMatCell</span>, <span class="va">xCell</span>,</span>
-<span>    new.genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span>,</span>
+<span>    new.genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">dataWholeBlood</span><span class="op">)</span>,</span>
 <span>    min.genes <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note</strong>: GMT files can also be loaded from local
@@ -386,7 +383,7 @@ latent variable regularization. In this new version,
 <code>CLAMPfull</code> incorporates <strong>variable priors</strong>
 that adjust the influence of each pathway adaptively, improving
 convergence and stability across heterogeneous datasets.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wb_fullRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPfull.html">CLAMPfull</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_Y_z</span>,</span>
 <span>    priorMat <span class="op">=</span> <span class="va">matchedPathsWB</span>,</span>
@@ -399,14 +396,14 @@ convergence and stability across heterogeneous datasets.</p>
 <div class="section level3">
 <h3 id="display-significant-latent-variables">Display significant latent variables<a class="anchor" aria-label="anchor" href="#display-significant-latent-variables"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display significant latent variables</span></span>
-<span><span class="va">wb_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">wb_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">wb_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">wb_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">LV</span>, <span class="va">pathway</span>, <span class="va">FDR</span>, <span class="va">AUC</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">datatable</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_summary_df</span>,</span>
 <span>    filter <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -415,10 +412,15 @@ convergence and stability across heterogeneous datasets.</p>
 <span>    <span class="op">)</span>,</span>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    class <span class="op">=</span> <span class="st">"stripe hover compact"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">formatSignif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/DT/man/formatCurrency.html" class="external-link">formatSignif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"2.7e-14\" data-max=\"0.026456421388831\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.938562925170068\" data-max=\"1\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV2","LV6","LV6","LV7","LV7"],["Ribosome","xCell:Neutrophils_IRIS_3","xCell:Neutrophils_IRIS_2","xCell:Megakaryocytes_NOVERSHTERN_2","xCell:Platelets_HPCA_3"],[2.759427453737892e-14,0.007639113969723912,0.0264564213888303,0.0264564213888303,0.0264564213888303],[0.938562925170068,0.9888666608680525,1,0.9818474664809334,0.9929479366184921]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"1\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"1\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[[],[],[],[]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script><p>The recovered LVs are biologically coherent for whole blood. LV13
+aligns with neutrophil signatures, LV10 with platelets, LV14 with
+erythrocytes, LV12 with NK cells, and LV11 with plasma cells, covering
+the major cellular constituents of whole blood. Together, these results
+indicate that CLAMP successfully decomposes the bulk transcriptomic
+signal into its dominant blood-cell-type components.</p>
 </div>
 </div>
 <div class="section level2">
@@ -431,8 +433,8 @@ large‑scale transcriptomic datasets.</p>
 <div class="section level3">
 <h3 id="cleanup-old-fbm-files">Cleanup old FBM files<a class="anchor" aria-label="anchor" href="#cleanup-old-fbm-files"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">output_dir</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="op">(</span><span class="st">"output"</span>, <span class="st">"alzFBM"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">output_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"output"</span>, <span class="st">"alzFBM"</span><span class="op">)</span></span>
 <span><span class="va">fbm_base</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_dir</span>, <span class="st">"FBMalz"</span><span class="op">)</span></span>
 <span><span class="va">bk_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">fbm_base</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".bk"</span>, <span class="st">"_preproc.bk"</span>, <span class="st">"_preproc_filtered.bk"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.remove</a></span><span class="op">(</span><span class="va">bk_paths</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">bk_paths</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -446,22 +448,35 @@ large‑scale transcriptomic datasets.</p>
 </div>
 </div>
 <div class="section level3">
+<h3 id="hdf5-schema">HDF5 schema<a class="anchor" aria-label="anchor" href="#hdf5-schema"></a>
+</h3>
+<p>CLAMP HDF5 files follow a fixed layout. You can inspect the expected
+structure with <code><a href="https://rdrr.io/pkg/CLAMPData/man/clamp_h5_schema.html" class="external-link">clamp_h5_schema()</a></code>:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/CLAMPData/man/clamp_h5_schema.html" class="external-link">clamp_h5_schema</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                          path                     type</span></span>
+<span><span class="co">#&gt; 1            /data/expression matrix (samples x genes)</span></span>
+<span><span class="co">#&gt; 2          /meta/genes/symbol                character</span></span>
+<span><span class="co">#&gt; 3 /meta/samples/geo_accession                character</span></span>
+<span><span class="co">#&gt;                                                description</span></span>
+<span><span class="co">#&gt; 1 Expression matrix; transposed to genes x samples at load</span></span>
+<span><span class="co">#&gt; 2                           Gene symbols, length = n_genes</span></span>
+<span><span class="co">#&gt; 3                   Sample identifiers, length = n_samples</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="load-hdf5-expression">Load HDF5 expression<a class="anchor" aria-label="anchor" href="#load-hdf5-expression"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alz_path</span> <span class="op">&lt;-</span> <span class="fu">human_gene_v2_5_alz_h5</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">h5</span> <span class="op">&lt;-</span> <span class="va">H5File</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">alz_path</span>, mode <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span></span>
-<span><span class="va">expr_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">h5</span><span class="op">[[</span><span class="st">"data/expression"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="va">h5</span><span class="op">[[</span><span class="st">"meta/genes/symbol"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="va">h5</span><span class="op">[[</span><span class="st">"meta/samples/geo_accession"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">h5</span><span class="op">$</span><span class="fu">close_all</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">samples</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expr_mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">genes</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/pkg/CLAMPData/man/read_clamp_alz_expression.html" class="external-link">read_clamp_alz_expression()</a></code> downloads the file via
+ExperimentHub, validates it against the schema, and returns a genes ×
+samples matrix with row and column names ready to use.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">expr_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/CLAMPData/man/read_clamp_alz_expression.html" class="external-link">read_clamp_alz_expression</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expr_mat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="construct-filebacked-fbm">Construct file‑backed FBM<a class="anchor" aria-label="anchor" href="#construct-filebacked-fbm"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">output_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">alzFBM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://privefl.github.io/bigstatsr/reference/FBM-class.html" class="external-link">FBM</a></span><span class="op">(</span></span>
 <span>    nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">expr_mat</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">expr_mat</span><span class="op">)</span>,</span>
@@ -477,7 +492,7 @@ large‑scale transcriptomic datasets.</p>
 <div class="section level3">
 <h3 id="cpm-preprocess-and-zscore-fbm">CPM, preprocess and z‑score FBM<a class="anchor" aria-label="anchor" href="#cpm-preprocess-and-zscore-fbm"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prep_alz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocessCLAMPFBM.html">preprocessCLAMPFBM</a></span><span class="op">(</span></span>
 <span>    fbm <span class="op">=</span> <span class="va">alzFBM</span>,</span>
 <span>    mean_cutoff <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -495,7 +510,7 @@ large‑scale transcriptomic datasets.</p>
 <p>For file-backed matrices, <code><a href="../reference/compute_svd.html">compute_svd()</a></code> dispatches to
 <code><a href="https://privefl.github.io/bigstatsr/reference/big_SVD.html" class="external-link">bigstatsr::big_SVD()</a></code> automatically, avoiding loading the
 entire matrix into RAM.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select SVD rank and compute SVD (dispatches to bigstatsr for FBM)</span></span>
 <span><span class="va">alz_svd_k</span>   <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_svd_k.html">select_svd_k</a></span><span class="op">(</span><span class="va">alz_fbm_filt</span><span class="op">)</span></span>
 <span><span class="va">alz_svd</span>     <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_svd.html">compute_svd</a></span><span class="op">(</span><span class="va">alz_fbm_filt</span>, k <span class="op">=</span> <span class="va">alz_svd_k</span><span class="op">)</span></span>
@@ -509,7 +524,7 @@ entire matrix into RAM.</p>
 <div class="section level3">
 <h3 id="clampbase">CLAMPbase<a class="anchor" aria-label="anchor" href="#clampbase"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alz_baseRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPbase.html">CLAMPbase</a></span><span class="op">(</span></span>
 <span>    Y <span class="op">=</span> <span class="va">alz_fbm_filt</span>,</span>
 <span>    svdres <span class="op">=</span> <span class="va">alz_svd</span>,</span>
@@ -519,11 +534,34 @@ entire matrix into RAM.</p>
 <div class="section level3">
 <h3 id="prepare-pathway-priors-1">Prepare pathway priors<a class="anchor" aria-label="anchor" href="#prepare-pathway-priors-1"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># How to fetch the libraries; not run during vignette build.</span></span>
+<span><span class="va">enrichr_url</span> <span class="op">&lt;-</span> <span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary"</span></span>
+<span><span class="va">alz_gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">enrichr_url</span>, <span class="st">"?mode=text&amp;libraryName=GTEx_Tissues_V8_2023"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    BP <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">enrichr_url</span>, <span class="st">"?mode=text&amp;libraryName=GO_Biological_Process_2025"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    MSigDB <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">enrichr_url</span>, <span class="st">"?mode=text&amp;libraryName=MSigDB_Hallmark_2020"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alz_gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=GTEx_Tissues_V8_2023"</span><span class="op">)</span>,</span>
-<span>    BP <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=GO_Biological_Process_2025"</span><span class="op">)</span>,</span>
-<span>    MSigDB <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=MSigDB_Hallmark_2020"</span><span class="op">)</span></span>
+<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GTEx_Tissues_V8_2023.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    BP <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>            <span class="st">"extdata"</span>, <span class="st">"GO_Biological_Process_2025.rds"</span>,</span>
+<span>            package <span class="op">=</span> <span class="st">"CLAMP"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    MSigDB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"MSigDB_Hallmark_2020.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">alz_pathMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gmtListToSparseMat.html">gmtListToSparseMat</a></span><span class="op">(</span><span class="va">alz_gmtList</span><span class="op">)</span></span>
@@ -532,7 +570,7 @@ entire matrix into RAM.</p>
 <div class="section level3">
 <h3 id="clampfull-1">CLAMPfull<a class="anchor" aria-label="anchor" href="#clampfull-1"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alz_fullRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPfull.html">CLAMPfull</a></span><span class="op">(</span></span>
 <span>    <span class="va">alz_fbm_filt</span>,</span>
 <span>    priorMat <span class="op">=</span> <span class="va">alz_matched</span>,</span>
@@ -545,13 +583,13 @@ entire matrix into RAM.</p>
 <div class="section level3">
 <h3 id="display-significant-latent-variables-1">Display significant latent variables<a class="anchor" aria-label="anchor" href="#display-significant-latent-variables-1"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alz_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">alz_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alz_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">alz_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">LV</span>, <span class="va">pathway</span>, <span class="va">FDR</span>, <span class="va">AUC</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">datatable</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span></span>
 <span>    <span class="va">alz_summary_df</span>,</span>
 <span>    filter <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -560,10 +598,17 @@ entire matrix into RAM.</p>
 <span>    <span class="op">)</span>,</span>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    class <span class="op">=</span> <span class="st">"stripe hover compact"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">formatSignif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/DT/man/formatCurrency.html" class="external-link">formatSignif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"2.29e-13\" data-max=\"0.047463879068035\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.760892809409248\" data-max=\"1\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV3","LV3","LV3","LV10","LV10","LV3","LV10","LV10","LV10","LV3","LV3","LV3","LV3","LV4","LV10","LV10","LV4","LV4","LV1","LV4","LV1","LV1","LV4","LV5","LV1","LV1","LV5","LV5","LV6","LV7","LV11","LV9","LV1","LV12","LV4","LV1","LV4"],["Brain - Spinal Cord (Cervical C-1) Female 60-69 Up","Brain - Spinal Cord (Cervical C-1) Male 20-29 Up","Brain - Spinal Cord (Cervical C-1) Male 40-49 Up","Brain - Frontal Cortex (BA9) Male 50-59 Up","Brain - Frontal Cortex (BA9) Male 60-69 Up","Brain - Substantia Nigra Female 40-49 Up","Brain - Frontal Cortex (BA9) Female 40-49 Up","Brain - Frontal Cortex (BA9) Male 40-49 Up","Brain - Frontal Cortex (BA9) Female 50-59 Up","Brain - Spinal Cord (Cervical C-1) Male 50-59 Up","Brain - Spinal Cord (Cervical C-1) Male 60-69 Up","Brain - Spinal Cord (Cervical C-1) Male 70-79 Up","Brain - Spinal Cord (Cervical C-1) Female 40-49 Up","Cytoplasmic Translation (GO:0002181)","Brain - Anterior Cingulate Cortex (BA24) Male 50-59 Up","Brain - Cortex Male 60-69 Up","Whole Blood Male 50-59 Up","Whole Blood Male 40-49 Up","Oxidative Phosphorylation (GO:0006119)","Whole Blood Female 50-59 Up","Cellular Respiration (GO:0045333)","Proton Motive Force-Driven ATP Synthesis (GO:0015986)","Whole Blood Female 60-69 Up","Brain - Caudate (Basal Ganglia) Female 70-79 Up","Aerobic Electron Transport Chain (GO:0019646)","Mitochondrial ATP Synthesis Coupled Electron Transport (GO:0042775)","Brain - Caudate (Basal Ganglia) Female 60-69 Up","Cellular Response to Lectin (GO:1990858)","Carbohydrate Derivative Transport (GO:1901264)","Neural Tube Development (GO:0021915)","Regulation of Chromosome Separation (GO:1905818)","Pentose-Phosphate Shunt (GO:0006098)","Mitochondrial Electron Transport, Cytochrome C to Oxygen (GO:0006123)","Response to L-leucine (GO:0043201)","Regulation of Transforming Growth Factor Beta Production (GO:0071634)","Endosomal Lumen Acidification (GO:0048388)","Formation of Cytoplasmic Translation Initiation Complex (GO:0001732)"],[2.293481791436021e-13,2.293481791436021e-13,2.293481791436021e-13,2.821775045349504e-13,2.821775045349504e-13,1.070576474613034e-12,1.070576474613034e-12,1.070576474613034e-12,1.428681522344064e-12,8.871428749565795e-12,9.735805649112578e-12,1.374172025464169e-11,2.417573407676292e-11,3.563014437816614e-11,3.563014437816614e-11,3.552260772690047e-10,6.474028193673792e-10,5.141534635234931e-08,4.109181803878762e-07,5.595827738824202e-07,7.517785904271555e-07,1.413375514248319e-06,1.611536019940726e-06,4.367944586892716e-06,4.828271396883713e-06,8.137134877114726e-06,0.0001277263879890981,0.00855137359374482,0.00855137359374482,0.009855326108112355,0.02239045429116962,0.02296266313163494,0.02398336469743176,0.02418161739971258,0.02991706001128569,0.03386944683129792,0.04746387906803469],[0.9997306110210545,0.9989669518285655,0.9984937642307656,1,0.9997905655670967,0.9903442921290527,0.998037696106193,0.9992746927379852,0.9807461513481459,0.9567560413406669,0.9550647470554613,0.9511644631429027,0.9452753858118681,0.9401304020337068,0.9474060721866366,0.9240153051859731,0.9479846824686941,0.8974088774597495,0.9560058658845487,0.8780799045915325,0.868757776740879,0.9335320947106043,0.8742572834142601,0.8381142519825359,0.8929013168614555,0.8833766608896592,0.7608928094092489,0.9672992960883899,0.9646733504864993,0.956169167480541,0.9988692297459093,1,0.9992223259121006,0.9918753329781567,0.9691413237924866,0.9669155223747945,0.9296399821109124]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"2.06e-13\" data-max=\"0.047046167182202\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.834727786190284\" data-max=\"1\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV3","LV3","LV3","LV3","LV3","LV10","LV10","LV10","LV10","LV3","LV4","LV3","LV10","LV3","LV4","LV10","LV1","LV4","LV1","LV1","LV1","LV1","LV5","LV4","LV4","LV10","LV5","LV9","LV8","LV11","LV11","LV6","LV1","LV4","LV8","LV1","LV4","LV13","LV5","LV8"],["Brain - Spinal Cord (Cervical C-1) Male 60-69 Up","Brain - Spinal Cord (Cervical C-1) Female 40-49 Up","Brain - Spinal Cord (Cervical C-1) Male 70-79 Up","Brain - Spinal Cord (Cervical C-1) Male 20-29 Up","Brain - Spinal Cord (Cervical C-1) Male 40-49 Up","Brain - Cortex Male 60-69 Up","Brain - Cortex Female 50-59 Up","Brain - Cortex Male 50-59 Up","Brain - Cortex Male 20-29 Up","Brain - Substantia Nigra Female 40-49 Up","Cytoplasmic Translation (GO:0002181)","Brain - Spinal Cord (Cervical C-1) Female 60-69 Up","Brain - Cortex Male 70-79 Up","Brain - Spinal Cord (Cervical C-1) Male 50-59 Up","Whole Blood Female 50-59 Up","Brain - Cortex Female 60-69 Up","Cellular Respiration (GO:0045333)","Whole Blood Male 50-59 Up","Mitochondrial ATP Synthesis Coupled Electron Transport (GO:0042775)","Oxidative Phosphorylation (GO:0006119)","Proton Motive Force-Driven ATP Synthesis (GO:0015986)","Proton Motive Force-Driven Mitochondrial ATP Synthesis (GO:0042776)","Brain - Caudate (Basal Ganglia) Female 70-79 Up","Whole Blood Male 40-49 Up","Whole Blood Female 60-69 Up","Synaptic Transmission, Glutamatergic (GO:0035249)","Cellular Response to Lectin (GO:1990858)","Leukocyte Tethering or Rolling (GO:0050901)","Folic Acid Metabolic Process (GO:0046655)","Positive Regulation of Chromosome Separation (GO:1905820)","Positive Regulation of Spindle Checkpoint (GO:0090232)","Carbohydrate Derivative Transport (GO:1901264)","Mitochondrial Electron Transport, Cytochrome C to Oxygen (GO:0006123)","Ribosomal Small Subunit Assembly (GO:0000028)","Regulation of Nuclear-Transcribed mRNA poly(A) Tail Shortening (GO:0060211)","Endosomal Lumen Acidification (GO:0048388)","Regulation of Telomerase RNA Localization to Cajal Body (GO:1904872)","Wound Healing, Spreading of Epidermal Cells (GO:0035313)","Response to Cadmium Ion (GO:0046686)","Hippo Signaling (GO:0035329)"],[2.069889505938702e-13,2.069889505938702e-13,2.069889505938702e-13,2.320749142865228e-13,2.320749142865228e-13,2.320749142865228e-13,2.806525689324314e-13,8.133141751557857e-13,1.791394766491727e-12,6.375888275466092e-12,8.051304262227328e-12,1.725181653748233e-10,5.628651825298569e-10,6.236802163196178e-10,1.7254681384398e-09,3.417903352264002e-09,4.716970588747191e-08,1.738070728348619e-07,1.946086255581082e-07,2.139869254330441e-07,2.139869254330441e-07,2.139869254330441e-07,3.198946189119951e-07,1.639083887275183e-06,1.931636442793842e-05,0.003590890595886159,0.005870196300359193,0.01693231665232957,0.02262178477622457,0.02262178477622457,0.02262178477622457,0.0231254806370035,0.02867250959919794,0.02918944898376566,0.02918944898376566,0.03026925832227881,0.03414381073497559,0.04217656094640877,0.04541062010237146,0.04704616718220123],[0.9992176355259059,0.9996135025801631,0.9995080941929348,0.9953924822738229,0.9925324013670297,1,0.9968164679698175,0.9865310300463443,0.9916981393919568,0.972183897814767,0.9562380390799889,0.9275129945117366,0.9213613590582755,0.9135440407953883,0.9527557881240962,0.9008409595672651,0.9071511886247501,0.8821657386287401,0.9479078723246686,0.9653773908828341,0.9640524327927127,0.9871450788713619,0.8744741352446245,0.8490708439554542,0.8347277861902845,0.9496609867071104,0.9897312617786286,0.9297607429095318,1,1,1,0.9055437226363744,0.9861586314152411,0.8851320124632884,0.9709836283774791,0.9755609864474561,0.9548280334540901,0.9358553361437764,0.9323776877531942,0.8463404173506662]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script><p>The significant LVs align with brain-relevant transcriptional
+programs implicated in Alzheimer’s disease. LV3 and LV10 are enriched
+for GTEx brain-region signatures, including spinal cord, substantia
+nigra, frontal cortex, and cortex, suggesting that these axes capture
+genuine neural transcriptional variation. LV1 further supports disease
+relevance through enrichment for mitochondrial respiration and oxidative
+phosphorylation pathways, which are linked to impaired brain energy
+metabolism in Alzheimer’s disease.</p>
 </div>
 </div>
 <div class="section level2">
@@ -580,14 +625,10 @@ diabetic (T2D) samples.</p>
 <div class="section level3">
 <h3 id="load-count-data-and-map-gene-symbols">Load count data and map gene symbols<a class="anchor" aria-label="anchor" href="#load-count-data-and-map-gene-symbols"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">islet_file</span> <span class="op">&lt;-</span> <span class="fu">GSE164416_DP_htseq_counts_txt_gz</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">islet_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">gzfile</a></span><span class="op">(</span><span class="va">islet_file</span><span class="op">)</span>,</span>
-<span>    header <span class="op">=</span> <span class="cn">TRUE</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">islet_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/CLAMPData/man/read_islet_counts.html" class="external-link">read_islet_counts</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">islet_df</span><span class="op">$</span><span class="va">symbol</span> <span class="op">&lt;-</span> <span class="fu">mapIds</span><span class="op">(</span><span class="va">org.Hs.eg.db</span>,</span>
+<span><span class="va">islet_df</span><span class="op">$</span><span class="va">symbol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">mapIds</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>    keys <span class="op">=</span> <span class="va">islet_df</span><span class="op">$</span><span class="va">ensembl</span>,</span>
 <span>    column <span class="op">=</span> <span class="st">"SYMBOL"</span>,</span>
 <span>    keytype <span class="op">=</span> <span class="st">"ENSEMBL"</span>,</span>
@@ -599,20 +640,20 @@ diabetic (T2D) samples.</p>
 <div class="section level3">
 <h3 id="aggregate-counts-by-gene-symbol">Aggregate counts by gene symbol<a class="anchor" aria-label="anchor" href="#aggregate-counts-by-gene-symbol"></a>
 </h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sum counts per symbol</span></span>
-<span><span class="fu">setDT</span><span class="op">(</span><span class="va">islet_df</span><span class="op">)</span></span>
-<span><span class="va">num_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">islet_df</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">islet_df</span>, <span class="va">is.numeric</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="va">islet_df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sum</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">symbol</span>, .SDcols <span class="op">=</span> <span class="va">num_cols</span><span class="op">]</span></span>
-<span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span><span class="op">$</span><span class="va">symbol</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">islet_df</span><span class="op">)</span></span>
+<span><span class="va">num_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">islet_df</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">islet_df</span>, <span class="va">is.numeric</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="va">islet_df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sum</span><span class="op">)</span>, by <span class="op">=</span> <span class="va">symbol</span>, .SDcols <span class="op">=</span> <span class="va">num_cols</span><span class="op">]</span></span>
+<span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">expr</span><span class="op">$</span><span class="va">symbol</span></span>
 <span><span class="va">expr</span><span class="op">$</span><span class="va">symbol</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cpm-preprocess-and-z-score">CPM, preprocess and z-score<a class="anchor" aria-label="anchor" href="#cpm-preprocess-and-z-score"></a>
 </h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prep_is</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocessCLAMP.html">preprocessCLAMP</a></span><span class="op">(</span></span>
 <span>    Y <span class="op">=</span> <span class="va">expr</span>,</span>
 <span>    mean_cutoff <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -630,7 +671,7 @@ diabetic (T2D) samples.</p>
 <div class="section level3">
 <h3 id="compute-svd-and-infer-k-2">Compute SVD and infer k<a class="anchor" aria-label="anchor" href="#compute-svd-and-infer-k-2"></a>
 </h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select SVD rank and compute SVD</span></span>
 <span><span class="va">islet_svd_k</span>   <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_svd_k.html">select_svd_k</a></span><span class="op">(</span><span class="va">iso_Yz</span><span class="op">)</span></span>
 <span><span class="va">islet_svd</span>     <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_svd.html">compute_svd</a></span><span class="op">(</span><span class="va">iso_Yz</span>, k <span class="op">=</span> <span class="va">islet_svd_k</span><span class="op">)</span></span>
@@ -639,12 +680,12 @@ diabetic (T2D) samples.</p>
 <span><span class="va">islet_clamp_k</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span><span class="va">islet_svd</span>, n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">iso_Yz</span><span class="op">)</span>,</span>
 <span>                                svd_k <span class="op">=</span> <span class="va">islet_svd_k</span><span class="op">)</span></span>
 <span><span class="va">islet_clamp_k</span></span>
-<span><span class="co">#&gt; [1] 22</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 33</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clampbase-1">CLAMPbase<a class="anchor" aria-label="anchor" href="#clampbase-1"></a>
 </h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">islet_baseRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPbase.html">CLAMPbase</a></span><span class="op">(</span></span>
 <span>    Y <span class="op">=</span> <span class="va">iso_Yz</span>,</span>
 <span>    svdres <span class="op">=</span> <span class="va">islet_svd</span>,</span>
@@ -654,21 +695,47 @@ diabetic (T2D) samples.</p>
 <div class="section level3">
 <h3 id="prepare-pathway-priors-2">Prepare pathway priors<a class="anchor" aria-label="anchor" href="#prepare-pathway-priors-2"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># How to fetch the libraries; not run during vignette build.</span></span>
+<span><span class="va">enrichr_url</span> <span class="op">&lt;-</span> <span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary"</span></span>
+<span><span class="va">islet_gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">enrichr_url</span>, <span class="st">"?mode=text&amp;libraryName=GTEx_Tissues_V8_2023"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    Diabetes_Perturbations <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>            <span class="va">enrichr_url</span>,</span>
+<span>            <span class="st">"?mode=text&amp;libraryName=Diabetes_Perturbations_GEO_2022"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    MSigDB_Hallmark <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">enrichr_url</span>, <span class="st">"?mode=text&amp;libraryName=MSigDB_Hallmark_2020"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">islet_gmtList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=GTEx_Tissues_V8_2023"</span><span class="op">)</span>,</span>
-<span>    Diabetes_Perturbations <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=Diabetes_Perturbations_GEO_2022"</span><span class="op">)</span>,</span>
-<span>    MSigDB_Hallmark <span class="op">=</span> <span class="fu"><a href="../reference/getGMT.html">getGMT</a></span><span class="op">(</span><span class="st">"https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&amp;libraryName=MSigDB_Hallmark_2020"</span><span class="op">)</span></span>
+<span>    GTEx_Tissues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"GTEx_Tissues_V8_2023.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    Diabetes_Perturbations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span>            <span class="st">"extdata"</span>, <span class="st">"Diabetes_Perturbations_GEO_2022.rds"</span>,</span>
+<span>            package <span class="op">=</span> <span class="st">"CLAMP"</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    MSigDB_Hallmark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"MSigDB_Hallmark_2020.rds"</span>, package <span class="op">=</span> <span class="st">"CLAMP"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">islet_pathMat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gmtListToSparseMat.html">gmtListToSparseMat</a></span><span class="op">(</span><span class="va">islet_gmtList</span><span class="op">)</span></span>
-<span><span class="va">islet_matched</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getMatchedPathwayMat.html">getMatchedPathwayMat</a></span><span class="op">(</span><span class="va">islet_pathMat</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">iso_Yz</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">islet_matched</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getMatchedPathwayMat.html">getMatchedPathwayMat</a></span><span class="op">(</span><span class="va">islet_pathMat</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">iso_Yz</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">islet_chatObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getChat.html">getChat</a></span><span class="op">(</span><span class="va">islet_matched</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clampfull-2">CLAMPfull<a class="anchor" aria-label="anchor" href="#clampfull-2"></a>
 </h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">islet_fullRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CLAMPfull.html">CLAMPfull</a></span><span class="op">(</span></span>
 <span>    <span class="va">iso_Yz</span>,</span>
 <span>    priorMat <span class="op">=</span> <span class="va">islet_matched</span>,</span>
@@ -681,13 +748,13 @@ diabetic (T2D) samples.</p>
 <div class="section level3">
 <h3 id="display-significant-latent-variables-2">Display significant latent variables<a class="anchor" aria-label="anchor" href="#display-significant-latent-variables-2"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">islet_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">islet_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">islet_summary_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">islet_fullRes</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">LV</span>, <span class="va">pathway</span>, <span class="va">FDR</span>, <span class="va">AUC</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">datatable</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span></span>
 <span>    <span class="va">islet_summary_df</span>,</span>
 <span>    filter <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -696,65 +763,45 @@ diabetic (T2D) samples.</p>
 <span>    <span class="op">)</span>,</span>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    class <span class="op">=</span> <span class="st">"stripe hover compact"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">formatSignif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/DT/man/formatCurrency.html" class="external-link">formatSignif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-febe03efa1a2d8d52a86" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-febe03efa1a2d8d52a86">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"4e-15\" data-max=\"0.021630869075258\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.700073956423019\" data-max=\"0.993627235092047\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV1","LV20","LV1","LV16","LV21","LV9","LV10","LV7","LV10","LV10","LV21","LV21","LV3","LV3","LV21","LV21","LV21","LV3","LV10","LV9","LV3","LV9","LV21","LV9","LV1","LV9","LV1","LV1","LV21","LV7","LV3","LV3","LV10","LV10","LV10","LV7","LV3","LV11","LV3","LV1","LV22","LV1","LV15","LV9","LV5","LV5","LV5","LV5","LV20","LV20","LV9","LV1","LV5","LV7","LV1","LV3","LV17","LV7","LV9","LV3","LV17","LV20","LV17","LV2","LV18","LV6","LV5","LV7","LV18","LV5","LV5","LV16","LV2","LV18","LV1","LV6"],["Myc Targets V1","GSE120299 Alpha-vs-BetaCells Hs Islet Up","Oxidative Phosphorylation","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","Pancreas Female 30-39 Up","GSE137187 OE-Klf6KO Saline Mm Islet Dn","Artery - Coronary Male 30-39 Up","GSE108971 Diabetic Hs EpicardialAdipose Dn","Artery - Tibial Male 50-59 Up","Artery - Tibial Male 70-79 Up","Pancreas Male 20-29 Up","Pancreas Male 40-49 Up","GSE127251 Ucp1-KO CDiet 30C Mm InterscaBAT Dn","GSE47504 IKK2-CApdx-1 Mm Chip Islets Dn","Pancreas Female 40-49 Up","Pancreas Female 60-69 Up","Pancreas Male 50-59 Up","GSE41203 DBX NonObeseDiab Mm Chip Islets Dn","Artery - Tibial Male 60-69 Up","Cells - EBV-transformed Lymphocytes Male 40-49 Up","Whole Blood Male 30-39 Up","Whole Blood Male 20-29 Up","Pancreas Female 50-59 Up","Cells - EBV-transformed Lymphocytes Male 50-59 Up","Protein Secretion","Cells - EBV-transformed Lymphocytes Female 60-69 Up","GSE110569 wt-vs-SREBP-1 Mm Chip Liver Up","GSE26978 Men1flf-Rbp2flfRIP Mm Chip Islets Dn","Pancreas Female 20-29 Up","TNF-alpha Signaling via NF-kB","Whole Blood Male 20-29 Up","Whole Blood Female 40-49 Up","Artery - Coronary Female 20-29 Up","Artery - Coronary Female 40-49 Up","Artery - Tibial Female 40-49 Up","Adipose - Visceral (Omentum) Male 30-39 Up","Whole Blood Male 40-49 Up","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","GSE134068 HighQual-vs-LowQual Hs Islet Dn","GSE26978 Men1flf-RIP-Cre Mm Chip Islets Dn","GSE162493 IronDeficientDiet Mm Heart Up","GSE40439 Wt-Vs-Ctrl Mm Chip Muscle Up","GSE40439 NCoR1-MKO Mm Chip Muscle Dn","Cells - EBV-transformed Lymphocytes Female 40-49 Up","Adipose - Subcutaneous Male 60-69 Up","Adipose - Subcutaneous Female 50-59 Up","Breast - Mammary Tissue Male 70-79 Up","Adipose - Subcutaneous Male 30-39 Up","GSE41203 6Wks NonObeseDiab Mm Chip Islets Dn","Interferon Alpha Response","Cells - EBV-transformed Lymphocytes Male 30-39 Up","GSE40439 NCoR1-MKO Mm Chip Muscle Up","Adipose - Subcutaneous Male 40-49 Up","Adipose - Visceral (Omentum) Male 20-29 Up","GSE26978 Rbp2flfRIP-Cre Mm Chip Islets Dn","Whole Blood Female 20-29 Up","Whole Blood Female 50-59 Up","Artery - Aorta Female 50-59 Up","Whole Blood Male 50-59 Up","Whole Blood Female 70-79 Up","Whole Blood Female 30-39 Up","GSE94846 PAX8-Overexpression Mm Chip Islet Dn","Whole Blood Male 20-29 Up","Brain - Anterior Cingulate Cortex (BA24) Female 40-49 Up","Brain - Cerebellum Male 70-79 Up","GSE46515 RictorFloxed Mm Chip Liver Dn","Adipose - Visceral (Omentum) Female 60-69 Up","Artery - Aorta Male 40-49 Up","Brain - Cerebellum Female 30-39 Up","Adipose - Visceral (Omentum) Male 60-69 Up","Adipose - Visceral (Omentum) Male 70-79 Up","Brain - Cortex Male 70-79 Up","Brain - Anterior Cingulate Cortex (BA24) Female 50-59 Up","Brain - Cerebellum Female 40-49 Up","Pancreas Beta Cells","Reactive Oxygen Species Pathway"],[4.217399823584726e-15,5.887714535817008e-14,1.252337861767491e-12,1.752095672947459e-12,1.752095672947459e-12,1.888113364120282e-12,5.794824017561257e-12,9.163322807590147e-12,9.163322807590147e-12,9.163322807590147e-12,2.029219459147708e-11,2.029219459147708e-11,2.529216957748217e-11,3.029286706536166e-11,3.233965172885372e-11,5.27637283484411e-11,6.797604907520303e-11,1.131361608631587e-10,1.864429354607894e-10,2.104936147522491e-10,2.864923450788263e-10,3.652459676832009e-10,8.47024948191273e-10,1.10770177392513e-09,1.504337136810392e-09,1.744435248355503e-09,1.766029316440047e-09,2.841231694139958e-09,2.846582348546807e-09,2.958621181861071e-09,1.209029495452505e-08,1.402357673585005e-08,6.406929323275067e-08,6.98801984536486e-08,7.447300451325024e-08,1.27450953172607e-07,2.152164943066072e-07,4.895585141731376e-07,6.397597006905521e-07,7.695672757594174e-07,8.469203492769853e-07,8.656093757951339e-07,1.488378556306465e-06,1.625521519334668e-06,2.18244668347296e-06,2.520382168473894e-06,2.551652234622208e-06,2.639409424994296e-06,2.660625850742927e-06,5.383796665029266e-06,6.41442381066555e-06,6.814927734169837e-06,7.079754641393448e-06,7.480860758154126e-06,1.070168106990143e-05,1.178047653362424e-05,3.943408309000729e-05,5.087189892902916e-05,6.326997187382665e-05,0.0001075393721679729,0.0001438532599863318,0.0001485849976315703,0.0002586392597224613,0.0002674677154984748,0.0003073742707551576,0.0005542086920023891,0.0006855152963033816,0.0007383874988000394,0.0009269352039980323,0.001122228222687261,0.001158028218048742,0.001513423528794529,0.001939878462109304,0.004469290095517532,0.02005250822982129,0.02163086907525797],[0.8859812121148255,0.8319018000418985,0.8473575072506531,0.810771518622098,0.9467884492587846,0.8703066236007256,0.964641852142026,0.8321916545335478,0.9590115295284808,0.9706905663701224,0.9195917917338515,0.9198031081894315,0.8526839574747656,0.8345495811003785,0.9137415415994818,0.9089800305949477,0.9062581827703587,0.8451558242559423,0.935549340849702,0.9243175080748639,0.9274622230185749,0.9069195820399191,0.880922028821727,0.9062480027924035,0.9111495117537211,0.9008586149088782,0.7970277688986306,0.7972999419412498,0.8673334619607411,0.7697579913521878,0.8745449787342393,0.8726353039919275,0.9936272350920462,0.8568845702735656,0.855843806645125,0.84422280053688,0.8407720272729845,0.7125516873416033,0.7522859366600968,0.7507964371190734,0.7370566279969258,0.7610002813503047,0.7435245326496791,0.8180488572285396,0.8716968116941742,0.8054281159842769,0.8049977905333028,0.8043060308029734,0.7183151188135413,0.7909381460418617,0.8066678465554622,0.7336757671583177,0.7900613329446523,0.7894362056728451,0.70420338828257,0.7852334989956525,0.7591841197902368,0.7614163139389709,0.7561251365216723,0.7516644819358915,0.7455500545191996,0.7144683494139344,0.7295529735841682,0.7408843077947121,0.7596893830233168,0.7033436282268944,0.8345916304013363,0.7157018676023809,0.7297127915876856,0.7413481283321716,0.7064093042840518,0.709043265728185,0.7080485264319806,0.7000739564230198,0.7449198593543084,0.7064291247095275]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-febe03efa1a2d8d52a86">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"0.036101967725833\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.700504550850811\" data-max=\"0.996181641790271\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV12","LV19","LV9","LV19","LV19","LV9","LV19","LV19","LV3","LV9","LV1","LV9","LV19","LV27","LV33","LV1","LV8","LV33","LV15","LV33","LV29","LV33","LV1","LV9","LV15","LV15","LV9","LV19","LV4","LV33","LV9","LV3","LV31","LV8","LV31","LV14","LV8","LV33","LV3","LV8","LV8","LV25","LV1","LV3","LV31","LV31","LV4","LV1","LV8","LV15","LV15","LV15","LV9","LV27","LV1","LV25","LV8","LV20","LV7","LV27","LV3","LV3","LV29","LV1","LV29","LV8","LV14","LV33","LV29","LV27","LV29","LV30","LV2","LV30","LV15","LV33","LV29","LV31","LV33","LV3","LV19","LV1","LV25","LV1","LV25","LV14","LV3","LV30","LV30","LV15","LV15","LV29","LV31","LV20","LV17","LV22","LV27","LV31","LV8","LV30","LV17","LV4","LV6","LV25","LV27","LV30","LV14","LV13","LV29","LV14","LV31","LV26","LV24","LV32","LV22","LV27","LV19","LV25","LV6","LV3","LV5","LV21","LV24","LV24"],["GSE120299 Alpha-vs-BetaCells Hs Islet Dn","GSE131320 EscherichiaColi 6Hr Hs Islet Dn","Pancreas Female 60-69 Up","GSE131320 RuminococcusGnavus 24Hr Hs Islet Dn","GSE108971 Diabetic Hs EpicardialAdipose Dn","Pancreas Male 60-69 Up","GSE131320 EscherichiaColi 24Hr Hs Islet Dn","TNF-alpha Signaling via NF-kB","GSE41203 DBX NonObeseDiab Mm Chip Islets Dn","Pancreas Male 40-49 Up","GSE59141 PRLR Mm Chip Islet Dn","Pancreas Male 30-39 Up","GSE131320 BacteroidesDorei 6Hr Hs Islet Dn","Minor Salivary Gland Male 20-29 Up","Whole Blood Male 30-39 Up","Oxidative Phosphorylation","Pancreas Female 50-59 Up","Spleen Female 40-49 Up","Pancreas Female 30-39 Up","Whole Blood Male 50-59 Up","GSE144274 Healthy-vs-(IPAH) Hs Muscle Dn","Whole Blood Female 50-59 Up","Myc Targets V1","Pancreas Female 20-29 Up","Pancreas Male 30-39 Up","Pancreas Male 20-29 Up","Pancreas Male 20-29 Up","GSE131320 BacteroidesDorei 24Hr Hs Islet Dn","GSE120299 Alpha-vs-BetaCells Hs Islet Up","Whole Blood Male 20-29 Up","Pancreas Female 30-39 Up","GSE41203 2Vs18Wk NonObeseDiab Mm Chip Islets Dn","Adipose - Visceral (Omentum) Female 50-59 Up","Pancreas Male 30-39 Up","Adipose - Subcutaneous Female 20-29 Up","Colon - Transverse Male 30-39 Up","Pancreas Female 20-29 Up","Whole Blood Female 20-29 Up","Artery - Coronary Male 50-59 Up","Pancreas Female 40-49 Up","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","Brain - Anterior Cingulate Cortex (BA24) Female 50-59 Up","GSE26978 Men1flf-RIP-Cre Mm Chip Islets Dn","Artery - Coronary Male 40-49 Up","Adipose - Subcutaneous Male 20-29 Up","Adipose - Subcutaneous Female 40-49 Up","GSE44035 Male-vs-Female NoDiabet Hs Islets Dn","GSE59141 Pregnant PRLR Mm Chip Islet Dn","Pancreas Male 40-49 Up","Pancreas Male 60-69 Up","Pancreas Female 40-49 Up","Pancreas Female 20-29 Up","Pancreas Female 40-49 Up","Minor Salivary Gland Male 40-49 Up","GSE110569 wt-vs-SREBP-1 Mm Chip Liver Up","Brain - Anterior Cingulate Cortex (BA24) Male 30-39 Up","Pancreas Female 60-69 Up","Whole Blood Female 70-79 Up","GSE40439 NCoR1-MKO Mm Chip Muscle Dn","Minor Salivary Gland Female 20-29 Up","Artery - Coronary Male 60-69 Up","Artery - Coronary Female 60-69 Up","Cells - EBV-transformed Lymphocytes Female 60-69 Up","Protein Secretion","Cells - EBV-transformed Lymphocytes Female 40-49 Up","Pancreas Male 60-69 Up","Colon - Transverse Female 50-59 Up","Spleen Male 20-29 Up","Cells - Cultured Fibroblasts Female 70-79 Up","Minor Salivary Gland Female 40-49 Up","GSE137187 OE-Klf6KO Saline Mm Islet Dn","Artery - Tibial Male 50-59 Up","GSE149468 Fasting-18Hrs Mm Brain Up","Adipose - Subcutaneous Male 60-69 Up","Pancreas Female 60-69 Up","Spleen Male 40-49 Up","GSE137136 ProInflamCytokine Hs EndoC-OE-H1 Up","Adipose - Visceral (Omentum) Male 40-49 Up","Whole Blood Female 40-49 Up","Artery - Aorta Male 50-59 Up","GSE142025 EarlyDiabetNephropathy Hs Kidney Up","GSE26978 Men1flf-Rbp2flfRIP Mm Chip Islets Dn","Brain - Hypothalamus Male 60-69 Up","GSE40439 Wt-Vs-Ctrl Mm Chip Muscle Up","Brain - Hypothalamus Male 70-79 Up","Colon - Transverse Male 20-29 Up","Whole Blood Female 70-79 Up","Breast - Mammary Tissue Male 50-59 Up","Breast - Mammary Tissue Male 70-79 Up","Pancreas Male 50-59 Up","Pancreas Male 40-49 Up","Cells - EBV-transformed Lymphocytes Male 30-39 Up","Adipose - Subcutaneous Male 70-79 Up","Small Intestine - Terminal Ileum Male 70-79 Up","Brain - Amygdala Male 20-29 Up","Liver Male 70-79 Up","Esophagus - Mucosa Male 60-69 Up","Adipose - Visceral (Omentum) Female 20-29 Up","Pancreas Male 50-59 Up","Artery - Tibial Female 40-49 Up","Brain - Anterior Cingulate Cortex (BA24) Male 40-49 Up","Pancreas Beta Cells","Colon - Transverse Female 40-49 Up","Brain - Anterior Cingulate Cortex (BA24) Female 20-29 Up","Minor Salivary Gland Male 50-59 Up","Adipose - Subcutaneous Male 50-59 Up","Small Intestine - Terminal Ileum Female 50-59 Up","Adipose - Visceral (Omentum) Male 30-39 Up","Cells - EBV-transformed Lymphocytes Male 50-59 Up","Interferon Alpha Response","Adipose - Visceral (Omentum) Female 60-69 Up","Brain - Cerebellum Female 60-69 Up","Testis Male 30-39 Up","Skin - Not Sun Exposed (Suprapubic) Female 40-49 Up","Liver Female 20-29 Up","Minor Salivary Gland Female 50-59 Up","IL-6/JAK/STAT3 Signaling","Brain - Anterior Cingulate Cortex (BA24) Female 40-49 Up","Colon - Transverse Male 20-29 Up","Artery - Coronary Female 30-39 Up","Myc Targets V2","Testis Male 40-49 Up","Testis Male 50-59 Up","Testis Male 40-49 Up"],[9.32893524946096e-20,5.667723440314406e-18,6.071060983137985e-13,6.071060983137985e-13,6.891007605687724e-13,1.222766927587592e-12,1.222766927587592e-12,2.09914339576895e-12,2.989705632173514e-12,2.989705632173514e-12,4.649605709544924e-12,5.707388006634987e-12,5.861834720371862e-12,5.861834720371862e-12,5.861834720371862e-12,1.368400527820241e-11,1.451023872495933e-11,2.890198595237368e-11,3.177768676778095e-11,3.177768676778095e-11,3.582967905397561e-11,3.749639247713644e-11,4.113315908931567e-11,4.63108789685259e-11,4.63108789685259e-11,4.63108789685259e-11,5.762271510236343e-11,8.238209156365301e-11,1.001476371413031e-10,1.82921460277596e-10,2.616769667052073e-10,5.353888255982603e-10,5.64206748307451e-10,6.843710232431396e-10,7.453019581679377e-10,1.229775508950808e-09,2.150776414712598e-09,2.150776414712598e-09,3.093603264812706e-09,3.97126258530761e-09,4.180080883280787e-09,4.281891262479503e-09,8.227006455709415e-09,2.769993065900109e-08,2.769993065900109e-08,2.769993065900109e-08,3.243924307541152e-08,3.726848239091367e-08,8.510087811785726e-08,8.510087811785726e-08,8.510087811785726e-08,8.510087811785726e-08,9.217389961510042e-08,9.217389961510042e-08,9.279718935386968e-08,1.022963002581868e-07,1.753640005759968e-07,2.657906669781426e-07,3.215519248887756e-07,3.375199120743077e-07,4.635374712802758e-07,4.774280796543828e-07,4.774280796543828e-07,8.084112775764446e-07,8.993248561424471e-07,9.73038782558872e-07,9.931840467916044e-07,1.247111728692749e-06,1.639107376999515e-06,1.690019904988882e-06,1.773317181477598e-06,1.877474145566267e-06,1.908052284313094e-06,2.008098253127411e-06,2.060801270735403e-06,2.0764345723496e-06,2.453676462619904e-06,2.674823676681658e-06,3.053240931569154e-06,3.092115551375202e-06,4.232201752529029e-06,5.067068569262411e-06,5.429723893625327e-06,5.499193837729103e-06,6.960466814082395e-06,7.409673848511437e-06,7.934478526755229e-06,1.677641890185079e-05,3.341735374413853e-05,3.399805959948498e-05,3.399805959948498e-05,5.944140940659427e-05,6.29763779476647e-05,0.0001058420711770039,0.0001913196291063295,0.0001929652680442195,0.0001939389248426239,0.0002300406168858992,0.0002554492000497069,0.0002986149330042537,0.0003106886833058528,0.0006254706159975247,0.0006254706159975247,0.0006325584450342587,0.0006510222194185735,0.0007303283957634567,0.001052097731869652,0.001069798997439722,0.001648803656434689,0.001702404157188347,0.001702404157188347,0.00170384355044842,0.001782645453535983,0.002168116511951879,0.002375161505195917,0.002388515040802155,0.002478696360474784,0.003217427246215095,0.003961923989340374,0.00741373203316355,0.01440694239205765,0.0258087849716021,0.03610196772583231,0.03610196772583231],[0.9069028560472744,0.9197507288856206,0.9961816417902705,0.8740368815574794,0.8718421037351867,0.9843504381254766,0.8560164782525388,0.8371537197083531,0.8930026047833294,0.9736657795209414,0.8538659484916209,0.9664544780107184,0.8456960145621767,0.9913005488834679,0.9903241466357824,0.8260768332327332,0.9570661778973479,0.9872759962273049,0.9263881099270892,0.9453654177887539,0.7925530853688544,0.9551075480101653,0.8165748610894936,0.940965899363434,0.920400490226626,0.920387507529964,0.9382525823203789,0.8388672901124304,0.78704474251028,0.9369200136236213,0.9226159904126006,0.8325566343042071,0.9114996993265414,0.9141323557946959,0.9082010245354533,0.9448574561403509,0.9014988226533042,0.9097539888391103,0.9208340878383084,0.8946602476361291,0.7580153598230721,0.9098908492407266,0.7944123017612513,0.9201831241613387,0.8681278648192091,0.8681278648192091,0.7509123506951243,0.7770052382597415,0.8585650005506521,0.8408009804532519,0.8408009804532519,0.8408009804532519,0.8556753980482794,0.8648543485699778,0.7644105019000148,0.8819447726628226,0.8491908035850075,0.8549005642142897,0.7637648171990092,0.8588061784574967,0.9244415502407451,0.8788223222038045,0.8497535702871368,0.8358558638119258,0.8517657992565055,0.8268435046648102,0.8686358754027927,0.8395078852102029,0.8067557906777237,0.8469881778945393,0.7537100766173962,0.8255894481694841,0.7113400786097738,0.8816115417305331,0.799957416754949,0.8312523405966962,0.7180716303197227,0.816740150760916,0.8163352458801645,0.8186623516720604,0.8028156230776212,0.7275456320809921,0.8347622648643539,0.7406316613945966,0.8423122628387776,0.8355850563909775,0.8134417963254447,0.969456174196943,0.775054550153834,0.7612014706798779,0.7612014706798779,0.7858998188923839,0.7623182547465236,0.7735680792972459,0.7560608287824536,0.7842945288896963,0.7783087151167466,0.7414283112132486,0.7423970673840877,0.7457922791995887,0.7467529045660416,0.8662899661528993,0.7574432892249527,0.7355401655888747,0.7450178269844249,0.7355440995928072,0.7538371168305379,0.7110154335464549,0.7161068030300481,0.7005045508508112,0.8366350380288654,0.7275941317214457,0.8042774812225424,0.7401272914087376,0.7294572626280977,0.7169356352036029,0.7146424123395286,0.7009113504556752,0.7142789630029706,0.9397584655458205,0.7068198040360781,0.7485692170568091,0.72702221802321,0.7271403152408396]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script><p>The significant LVs reflect key biological processes relevant to type
+2 diabetes. LV20 and LV16 capture alpha- and beta-cell identity
+programs, highlighting pancreatic islet endocrine biology. LV21 aligns
+with pancreas-specific GTEx tissue signatures, supporting tissue
+relevance, while LV1 captures oxidative phosphorylation, protein
+secretion, and beta-cell-related programs.</p>
 </div>
 <div class="section level3">
 <h3 id="differential-latent-variable-expression-between-conditions">Differential latent-variable expression between conditions<a class="anchor" aria-label="anchor" href="#differential-latent-variable-expression-between-conditions"></a>
 </h3>
 <p>Rows of the B matrix correspond to LVs and columns to samples. By
-grouping samples by condition (ND vs T2D), we compute average LV
-expression per group to identify LVs that differ between healthy and
-diabetic islets</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">B_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">islet_fullRes</span><span class="op">$</span><span class="va">B</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>LV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+grouping samples by condition (ND vs T2D),
+<code><a href="../reference/differentialLVActivity.html">differentialLVActivity()</a></code> computes average LV expression per
+group and tests for LVs that differ between healthy and diabetic
+islets.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">islet_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/CLAMPData/man/read_islet_metadata.html" class="external-link">read_islet_metadata</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">islet_meta</span> <span class="op">&lt;-</span> <span class="fu">islets_metadata_csv</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">iselt_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">islet_meta</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">lv_stats_all_vs_nd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/differentialLVActivity.html">differentialLVActivity</a></span><span class="op">(</span></span>
+<span>    <span class="va">islet_fullRes</span>,</span>
+<span>    metadata <span class="op">=</span> <span class="va">islet_metadata</span>,</span>
+<span>    sample_col <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span>    group_col <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>    reference <span class="op">=</span> <span class="st">"ND"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">sample_types</span> <span class="op">&lt;-</span> <span class="va">iselt_metadata</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>        id   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,</span>
-<span>        type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span></span>
-<span><span class="va">sample_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">B_df</span><span class="op">)</span>, <span class="st">"LV"</span><span class="op">)</span></span>
-<span><span class="va">nd_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">sample_cols</span>, <span class="va">sample_types</span><span class="op">$</span><span class="va">id</span><span class="op">[</span><span class="va">sample_types</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"ND"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">other_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">sample_cols</span>, <span class="va">sample_types</span><span class="op">$</span><span class="va">id</span><span class="op">[</span><span class="va">sample_types</span><span class="op">$</span><span class="va">type</span> <span class="op">!=</span> <span class="st">"ND"</span><span class="op">]</span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">nd_cols</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">other_cols</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"No matching ND or non-ND sample columns found"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">lv_stats_all_vs_nd</span> <span class="op">&lt;-</span> <span class="va">B_df</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>        Mean_ND <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">nd_cols</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>        Mean_All <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">other_cols</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>        Mean_Diff <span class="op">=</span> <span class="va">Mean_All</span> <span class="op">-</span> <span class="va">Mean_ND</span>,</span>
-<span>        P_Value <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></span><span class="op">(</span></span>
-<span>            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">nd_cols</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>            <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/c_across.html" class="external-link">c_across</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="va">other_cols</span><span class="op">)</span><span class="op">)</span></span>
-<span>        <span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
-<span>    <span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>FDR <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">P_Value</span>, method <span class="op">=</span> <span class="st">"fdr"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">LV</span>, <span class="va">Mean_ND</span>, <span class="va">Mean_All</span>, <span class="va">Mean_Diff</span>, <span class="va">P_Value</span>, <span class="va">FDR</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">sig_lv_all_vs_nd</span> <span class="op">&lt;-</span> <span class="va">lv_stats_all_vs_nd</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">sig_lv_all_vs_nd</span> <span class="op">&lt;-</span> <span class="va">lv_stats_all_vs_nd</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">sig_pathway</span> <span class="op">&lt;-</span> <span class="va">islet_summary_df</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">LV</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">sig_lv_all_vs_nd</span><span class="op">$</span><span class="va">LV</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">sig_pathway</span> <span class="op">&lt;-</span> <span class="va">islet_summary_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="va">AUC</span> <span class="op">&gt;</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">LV</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">sig_lv_all_vs_nd</span><span class="op">$</span><span class="va">LV</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">FDR</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">LV</span>, <span class="va">pathway</span>, <span class="va">FDR</span>, <span class="va">AUC</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">datatable</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span></span>
 <span>    <span class="va">sig_pathway</span>,</span>
 <span>    filter <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -763,10 +810,17 @@ diabetic islets</p>
 <span>    <span class="op">)</span>,</span>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    class <span class="op">=</span> <span class="st">"stripe hover compact"</span></span>
-<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>    <span class="fu">formatSignif</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/DT/man/formatCurrency.html" class="external-link">formatSignif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AUC"</span>, <span class="st">"FDR"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-1fb4450895fe099f74a1" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-1fb4450895fe099f74a1">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"5.8e-14\" data-max=\"0.021630869075258\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.703343628226894\" data-max=\"0.993627235092047\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV20","LV16","LV9","LV10","LV7","LV10","LV10","LV3","LV3","LV3","LV10","LV9","LV3","LV9","LV9","LV9","LV7","LV3","LV3","LV10","LV10","LV10","LV7","LV3","LV11","LV3","LV15","LV9","LV5","LV5","LV5","LV5","LV20","LV20","LV9","LV5","LV7","LV3","LV17","LV7","LV9","LV3","LV17","LV20","LV17","LV2","LV6","LV5","LV7","LV5","LV5","LV16","LV2","LV6"],["GSE120299 Alpha-vs-BetaCells Hs Islet Up","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","GSE137187 OE-Klf6KO Saline Mm Islet Dn","Artery - Coronary Male 30-39 Up","GSE108971 Diabetic Hs EpicardialAdipose Dn","Artery - Tibial Male 50-59 Up","Artery - Tibial Male 70-79 Up","GSE127251 Ucp1-KO CDiet 30C Mm InterscaBAT Dn","GSE47504 IKK2-CApdx-1 Mm Chip Islets Dn","GSE41203 DBX NonObeseDiab Mm Chip Islets Dn","Artery - Tibial Male 60-69 Up","Cells - EBV-transformed Lymphocytes Male 40-49 Up","Whole Blood Male 30-39 Up","Whole Blood Male 20-29 Up","Cells - EBV-transformed Lymphocytes Male 50-59 Up","Cells - EBV-transformed Lymphocytes Female 60-69 Up","TNF-alpha Signaling via NF-kB","Whole Blood Male 20-29 Up","Whole Blood Female 40-49 Up","Artery - Coronary Female 20-29 Up","Artery - Coronary Female 40-49 Up","Artery - Tibial Female 40-49 Up","Adipose - Visceral (Omentum) Male 30-39 Up","Whole Blood Male 40-49 Up","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","GSE134068 HighQual-vs-LowQual Hs Islet Dn","GSE40439 NCoR1-MKO Mm Chip Muscle Dn","Cells - EBV-transformed Lymphocytes Female 40-49 Up","Adipose - Subcutaneous Male 60-69 Up","Adipose - Subcutaneous Female 50-59 Up","Breast - Mammary Tissue Male 70-79 Up","Adipose - Subcutaneous Male 30-39 Up","GSE41203 6Wks NonObeseDiab Mm Chip Islets Dn","Interferon Alpha Response","Cells - EBV-transformed Lymphocytes Male 30-39 Up","Adipose - Subcutaneous Male 40-49 Up","Adipose - Visceral (Omentum) Male 20-29 Up","Whole Blood Female 20-29 Up","Whole Blood Female 50-59 Up","Artery - Aorta Female 50-59 Up","Whole Blood Male 50-59 Up","Whole Blood Female 70-79 Up","Whole Blood Female 30-39 Up","GSE94846 PAX8-Overexpression Mm Chip Islet Dn","Whole Blood Male 20-29 Up","Brain - Anterior Cingulate Cortex (BA24) Female 40-49 Up","GSE46515 RictorFloxed Mm Chip Liver Dn","Adipose - Visceral (Omentum) Female 60-69 Up","Artery - Aorta Male 40-49 Up","Adipose - Visceral (Omentum) Male 60-69 Up","Adipose - Visceral (Omentum) Male 70-79 Up","Brain - Cortex Male 70-79 Up","Brain - Anterior Cingulate Cortex (BA24) Female 50-59 Up","Reactive Oxygen Species Pathway"],[5.887714535817008e-14,1.752095672947459e-12,1.888113364120282e-12,5.794824017561257e-12,9.163322807590147e-12,9.163322807590147e-12,9.163322807590147e-12,2.529216957748217e-11,3.029286706536166e-11,1.131361608631587e-10,1.864429354607894e-10,2.104936147522491e-10,2.864923450788263e-10,3.652459676832009e-10,1.10770177392513e-09,1.744435248355503e-09,2.958621181861071e-09,1.209029495452505e-08,1.402357673585005e-08,6.406929323275067e-08,6.98801984536486e-08,7.447300451325024e-08,1.27450953172607e-07,2.152164943066072e-07,4.895585141731376e-07,6.397597006905521e-07,1.488378556306465e-06,1.625521519334668e-06,2.18244668347296e-06,2.520382168473894e-06,2.551652234622208e-06,2.639409424994296e-06,2.660625850742927e-06,5.383796665029266e-06,6.41442381066555e-06,7.079754641393448e-06,7.480860758154126e-06,1.178047653362424e-05,3.943408309000729e-05,5.087189892902916e-05,6.326997187382665e-05,0.0001075393721679729,0.0001438532599863318,0.0001485849976315703,0.0002586392597224613,0.0002674677154984748,0.0005542086920023891,0.0006855152963033816,0.0007383874988000394,0.001122228222687261,0.001158028218048742,0.001513423528794529,0.001939878462109304,0.02163086907525797],[0.8319018000418985,0.810771518622098,0.8703066236007256,0.964641852142026,0.8321916545335478,0.9590115295284808,0.9706905663701224,0.8526839574747656,0.8345495811003785,0.8451558242559423,0.935549340849702,0.9243175080748639,0.9274622230185749,0.9069195820399191,0.9062480027924035,0.9008586149088782,0.7697579913521878,0.8745449787342393,0.8726353039919275,0.9936272350920462,0.8568845702735656,0.855843806645125,0.84422280053688,0.8407720272729845,0.7125516873416033,0.7522859366600968,0.7435245326496791,0.8180488572285396,0.8716968116941742,0.8054281159842769,0.8049977905333028,0.8043060308029734,0.7183151188135413,0.7909381460418617,0.8066678465554622,0.7900613329446523,0.7894362056728451,0.7852334989956525,0.7591841197902368,0.7614163139389709,0.7561251365216723,0.7516644819358915,0.7455500545191996,0.7144683494139344,0.7295529735841682,0.7408843077947121,0.7033436282268944,0.8345916304013363,0.7157018676023809,0.7413481283321716,0.7064093042840518,0.709043265728185,0.7080485264319806,0.7064291247095275]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1fb4450895fe099f74a1">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"0.007413732033164\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.700504550850811\" data-max=\"0.990324146635783\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["LV12","LV19","LV19","LV19","LV19","LV19","LV3","LV19","LV33","LV8","LV33","LV33","LV29","LV33","LV19","LV33","LV3","LV31","LV8","LV31","LV14","LV8","LV33","LV3","LV8","LV8","LV3","LV31","LV31","LV8","LV8","LV7","LV3","LV3","LV29","LV29","LV8","LV14","LV33","LV29","LV29","LV30","LV30","LV33","LV29","LV31","LV33","LV3","LV19","LV14","LV3","LV30","LV30","LV29","LV31","LV17","LV31","LV8","LV30","LV17","LV30","LV14","LV29","LV14","LV31","LV19","LV3"],["GSE120299 Alpha-vs-BetaCells Hs Islet Dn","GSE131320 EscherichiaColi 6Hr Hs Islet Dn","GSE131320 RuminococcusGnavus 24Hr Hs Islet Dn","GSE108971 Diabetic Hs EpicardialAdipose Dn","GSE131320 EscherichiaColi 24Hr Hs Islet Dn","TNF-alpha Signaling via NF-kB","GSE41203 DBX NonObeseDiab Mm Chip Islets Dn","GSE131320 BacteroidesDorei 6Hr Hs Islet Dn","Whole Blood Male 30-39 Up","Pancreas Female 50-59 Up","Spleen Female 40-49 Up","Whole Blood Male 50-59 Up","GSE144274 Healthy-vs-(IPAH) Hs Muscle Dn","Whole Blood Female 50-59 Up","GSE131320 BacteroidesDorei 24Hr Hs Islet Dn","Whole Blood Male 20-29 Up","GSE41203 2Vs18Wk NonObeseDiab Mm Chip Islets Dn","Adipose - Visceral (Omentum) Female 50-59 Up","Pancreas Male 30-39 Up","Adipose - Subcutaneous Female 20-29 Up","Colon - Transverse Male 30-39 Up","Pancreas Female 20-29 Up","Whole Blood Female 20-29 Up","Artery - Coronary Male 50-59 Up","Pancreas Female 40-49 Up","GSE120299 Alpha-vs-BetaCells Hs Islet Dn","Artery - Coronary Male 40-49 Up","Adipose - Subcutaneous Male 20-29 Up","Adipose - Subcutaneous Female 40-49 Up","Pancreas Male 40-49 Up","Pancreas Female 60-69 Up","GSE40439 NCoR1-MKO Mm Chip Muscle Dn","Artery - Coronary Male 60-69 Up","Artery - Coronary Female 60-69 Up","Cells - EBV-transformed Lymphocytes Female 60-69 Up","Cells - EBV-transformed Lymphocytes Female 40-49 Up","Pancreas Male 60-69 Up","Colon - Transverse Female 50-59 Up","Spleen Male 20-29 Up","Cells - Cultured Fibroblasts Female 70-79 Up","GSE137187 OE-Klf6KO Saline Mm Islet Dn","Artery - Tibial Male 50-59 Up","Adipose - Subcutaneous Male 60-69 Up","Spleen Male 40-49 Up","GSE137136 ProInflamCytokine Hs EndoC-OE-H1 Up","Adipose - Visceral (Omentum) Male 40-49 Up","Whole Blood Female 40-49 Up","Artery - Aorta Male 50-59 Up","GSE142025 EarlyDiabetNephropathy Hs Kidney Up","Colon - Transverse Male 20-29 Up","Whole Blood Female 70-79 Up","Breast - Mammary Tissue Male 50-59 Up","Breast - Mammary Tissue Male 70-79 Up","Cells - EBV-transformed Lymphocytes Male 30-39 Up","Adipose - Subcutaneous Male 70-79 Up","Brain - Amygdala Male 20-29 Up","Adipose - Visceral (Omentum) Female 20-29 Up","Pancreas Male 50-59 Up","Artery - Tibial Female 40-49 Up","Brain - Anterior Cingulate Cortex (BA24) Male 40-49 Up","Adipose - Subcutaneous Male 50-59 Up","Small Intestine - Terminal Ileum Female 50-59 Up","Cells - EBV-transformed Lymphocytes Male 50-59 Up","Interferon Alpha Response","Adipose - Visceral (Omentum) Female 60-69 Up","IL-6/JAK/STAT3 Signaling","Artery - Coronary Female 30-39 Up"],[9.32893524946096e-20,5.667723440314406e-18,6.071060983137985e-13,6.891007605687724e-13,1.222766927587592e-12,2.09914339576895e-12,2.989705632173514e-12,5.861834720371862e-12,5.861834720371862e-12,1.451023872495933e-11,2.890198595237368e-11,3.177768676778095e-11,3.582967905397561e-11,3.749639247713644e-11,8.238209156365301e-11,1.82921460277596e-10,5.353888255982603e-10,5.64206748307451e-10,6.843710232431396e-10,7.453019581679377e-10,1.229775508950808e-09,2.150776414712598e-09,2.150776414712598e-09,3.093603264812706e-09,3.97126258530761e-09,4.180080883280787e-09,2.769993065900109e-08,2.769993065900109e-08,2.769993065900109e-08,8.510087811785726e-08,1.753640005759968e-07,3.215519248887756e-07,4.635374712802758e-07,4.774280796543828e-07,4.774280796543828e-07,8.993248561424471e-07,9.73038782558872e-07,9.931840467916044e-07,1.247111728692749e-06,1.639107376999515e-06,1.773317181477598e-06,1.877474145566267e-06,2.008098253127411e-06,2.0764345723496e-06,2.453676462619904e-06,2.674823676681658e-06,3.053240931569154e-06,3.092115551375202e-06,4.232201752529029e-06,7.409673848511437e-06,7.934478526755229e-06,1.677641890185079e-05,3.341735374413853e-05,5.944140940659427e-05,6.29763779476647e-05,0.0001913196291063295,0.0002300406168858992,0.0002554492000497069,0.0002986149330042537,0.0003106886833058528,0.0007303283957634567,0.001052097731869652,0.001648803656434689,0.001702404157188347,0.001702404157188347,0.002478696360474784,0.00741373203316355],[0.9069028560472744,0.9197507288856206,0.8740368815574794,0.8718421037351867,0.8560164782525388,0.8371537197083531,0.8930026047833294,0.8456960145621767,0.9903241466357824,0.9570661778973479,0.9872759962273049,0.9453654177887539,0.7925530853688544,0.9551075480101653,0.8388672901124304,0.9369200136236213,0.8325566343042071,0.9114996993265414,0.9141323557946959,0.9082010245354533,0.9448574561403509,0.9014988226533042,0.9097539888391103,0.9208340878383084,0.8946602476361291,0.7580153598230721,0.9201831241613387,0.8681278648192091,0.8681278648192091,0.8585650005506521,0.8491908035850075,0.7637648171990092,0.9244415502407451,0.8788223222038045,0.8497535702871368,0.8517657992565055,0.8268435046648102,0.8686358754027927,0.8395078852102029,0.8067557906777237,0.7537100766173962,0.8255894481694841,0.8816115417305331,0.8312523405966962,0.7180716303197227,0.816740150760916,0.8163352458801645,0.8186623516720604,0.8028156230776212,0.8355850563909775,0.8134417963254447,0.969456174196943,0.775054550153834,0.7858998188923839,0.7623182547465236,0.7560608287824536,0.7414283112132486,0.7423970673840877,0.7457922791995887,0.7467529045660416,0.7355440995928072,0.7538371168305379,0.7161068030300481,0.7005045508508112,0.8366350380288654,0.7146424123395286,0.9397584655458205]],"container":"<table class=\"stripe hover compact\">\n  <thead>\n    <tr>\n      <th>LV<\/th>\n      <th>pathway<\/th>\n      <th>FDR<\/th>\n      <th>AUC<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"autoWidth":true,"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3]},{"name":"LV","targets":0},{"name":"pathway","targets":1},{"name":"FDR","targets":2},{"name":"AUC","targets":3}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script><p>The top differentially active LVs highlight biological axes
+distinguishing T2D from ND islets. LV7 links to diabetic adipose tissue
+and TNF-alpha signaling via NF-kB, consistent with inflammation and
+metabolic dysfunction. LV20 and LV16 map to alpha- and beta-cell
+programs. LV9 and LV3 are associated with islet perturbation and
+diabetic mouse islet signatures, supporting disease-relevant changes in
+islet transcriptional states, while LV10 suggests a vascular component
+relevant to T2D.</p>
 </div>
 </div>
 <div class="section level2">
@@ -781,11 +835,11 @@ genes automatically before solving for <strong>B</strong>.</p>
 <p>Here we project the whole-blood expression matrix from Example 1 into
 the full latent-variable space learned from the pancreatic islet model
 in Example 3.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">islet_model_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">islet_fullRes</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span></span>
-<span><span class="va">wb_project_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">islet_model_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">islet_fullRes</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">wb_project_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">islet_model_genes</span>, <span class="va">wb_project_genes</span><span class="op">)</span></span>
+<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">islet_model_genes</span>, <span class="va">wb_project_genes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Overlapping genes:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">common_genes</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">islet_model_genes</span><span class="op">)</span>,</span>
 <span>    <span class="st">"islet model genes"</span>,</span>
@@ -794,25 +848,25 @@ in Example 3.</p>
 <span>        <span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">common_genes</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">islet_model_genes</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Overlapping genes: 10574 / 23039 islet model genes (45.9%)</span></span>
+<span><span class="co">#&gt; Overlapping genes: 21 / 21536 islet model genes (0.1%)</span></span>
 <span></span>
 <span><span class="co"># projectCLAMP aligns common row names in the model's gene order</span></span>
 <span><span class="va">wb_projected_B</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/projectCLAMP.html">projectCLAMP</a></span><span class="op">(</span><span class="va">islet_fullRes</span>, <span class="va">wb_Y_z</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 10574 common rows found</span></span>
+<span><span class="co">#&gt; 21 common rows found</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">wb_projected_B</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 22 36</span></span>
+<span><span class="co">#&gt; [1] 33 36</span></span>
 <span><span class="va">wb_projected_B</span><span class="op">[</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">wb_projected_B</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wb_projected_B</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    drop <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">]</span></span>
-<span><span class="co">#&gt;          BD8001      BD8002      BD8003     BD8004       BD8005</span></span>
-<span><span class="co">#&gt; LV1  0.97896016  1.03960205  0.19335222  0.8965237  0.134445388</span></span>
-<span><span class="co">#&gt; LV2  0.03004691  0.00195568 -0.01522676  0.1494566  0.053114251</span></span>
-<span><span class="co">#&gt; LV3  0.06035660 -0.07010830 -0.26182537  0.2571496  0.079665666</span></span>
-<span><span class="co">#&gt; LV4 -0.96482705 -0.25713350 -0.74440114 -1.4791361 -0.041513449</span></span>
-<span><span class="co">#&gt; LV5 -0.06463274 -0.04950971 -0.28226109  0.1214686 -0.005432352</span></span></code></pre></div>
+<span><span class="co">#&gt;            BD8001        BD8002        BD8003      BD8004        BD8005</span></span>
+<span><span class="co">#&gt; LV1 -0.0086141846  0.0050438987  0.0002623414 0.007088495  0.0076722693</span></span>
+<span><span class="co">#&gt; LV2 -0.0028244888 -0.0005383735  0.0029513408 0.001485294  0.0024573333</span></span>
+<span><span class="co">#&gt; LV3  0.0002618891 -0.0021622381 -0.0012102150 0.005807649 -0.0057635152</span></span>
+<span><span class="co">#&gt; LV4  0.0094253464  0.0003710496  0.0268225180 0.010241497 -0.0244710418</span></span>
+<span><span class="co">#&gt; LV5 -0.0021738481 -0.0015852748 -0.0001650534 0.009662626 -0.0002933533</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="choosing-the-number-of-latent-variables-clamp_k">Choosing the Number of Latent Variables (CLAMP_K)<a class="anchor" aria-label="anchor" href="#choosing-the-number-of-latent-variables-clamp_k"></a>
@@ -831,14 +885,14 @@ returns a list with <code>$clamp_k</code> (number of LVs) and
 scree plot and returns the index at which curvature is maximised. This
 is the fastest option and works well when the signal-to-noise boundary
 is clear.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_svd</span>,</span>
 <span>    n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span>,</span>
 <span>    svd_k     <span class="op">=</span> <span class="va">wb_svd_k</span>,</span>
 <span>    method    <span class="op">=</span> <span class="st">"elbow"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 8</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="permutation-method">Permutation method<a class="anchor" aria-label="anchor" href="#permutation-method"></a>
@@ -849,7 +903,7 @@ null distribution of singular values. The number of components whose
 observed singular value exceeds the 95th percentile of the null is
 returned. This is more conservative and slower, but robust to smooth
 scree plots.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_svd</span>,</span>
 <span>    n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span>,</span>
@@ -867,7 +921,7 @@ the singular-value cutoff below which components are statistically
 indistinguishable from noise, given matrix dimensions and an estimate of
 the noise level. <strong>PCAtools</strong> implements this via
 <code>chooseGavishDonoho()</code>.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_clamp_k.html">select_clamp_k</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_svd</span>,</span>
 <span>    n_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">wb_Y_z</span><span class="op">)</span>,</span>
@@ -891,14 +945,13 @@ the noise level. <strong>PCAtools</strong> implements this via
 <strong>U</strong> after filtering by AUC and FDR. Only the
 top-<code>top</code> pathways per LV are shown, making it easy to scan
 which pathways drive each latent variable.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/CLAMPplotU.html">CLAMPplotU</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_fullRes</span>,</span>
 <span>    auc.cutoff <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>    fdr.cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>    top        <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="get_started_files/figure-html/plot-U-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="top-gene-loading-plot-clampplottopz">Top-gene loading plot (<code>CLAMPplotTopZ</code>)<a class="anchor" aria-label="anchor" href="#top-gene-loading-plot-clampplottopz"></a>
@@ -906,7 +959,7 @@ which pathways drive each latent variable.</p>
 <p><code>CLAMPplotTopZ</code> ranks genes by their Z loading for each
 selected LV and plots the top genes as loading-versus-rank scatter
 plots. The highest-loading genes are labelled directly.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use the first few LVs that have pathway support</span></span>
 <span><span class="va">lv_with_paths</span> <span class="op">&lt;-</span> <span class="va">wb_fullRes</span><span class="op">$</span><span class="va">withPrior</span><span class="op">[</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">wb_fullRes</span><span class="op">$</span><span class="va">withPrior</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -920,7 +973,7 @@ plots. The highest-loading genes are labelled directly.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="get_started_files/figure-html/plot-topZ-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
 <p>Only one LV:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use the first few LVs that have pathway support</span></span>
 <span><span class="va">lv_with_paths</span> <span class="op">&lt;-</span> <span class="va">wb_fullRes</span><span class="op">$</span><span class="va">withPrior</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span></span>
@@ -938,7 +991,7 @@ as a lollipop chart. Dot size encodes AUC; dot colour encodes
 <code>order.by</code> to choose whether the x-axis and pathway ranking
 use AUC or <code>-log10(FDR)</code>.</p>
 <p>Plot order by AUC:</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/CLAMPdotplot.html">CLAMPdotplot</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_fullRes</span>,</span>
 <span>    lv         <span class="op">=</span> <span class="st">"LV2"</span>,</span>
@@ -948,9 +1001,8 @@ use AUC or <code>-log10(FDR)</code>.</p>
 <span>    x.axis     <span class="op">=</span> <span class="st">"AUC"</span>,</span>
 <span>    order.by   <span class="op">=</span> <span class="st">"AUC"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="get_started_files/figure-html/plot-dot-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p>Plot order by FDR:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/CLAMPdotplot.html">CLAMPdotplot</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_fullRes</span>,</span>
 <span>    lv         <span class="op">=</span> <span class="st">"LV2"</span>,</span>
@@ -960,7 +1012,6 @@ use AUC or <code>-log10(FDR)</code>.</p>
 <span>    x.axis     <span class="op">=</span> <span class="st">"-log10(FDR)"</span>,</span>
 <span>    order.by   <span class="op">=</span> <span class="st">"-log10(FDR)"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="get_started_files/figure-html/plot-dot-fdr-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="all-lv-pathway-dot-plot-clampdotplotall">All-LV pathway dot plot (<code>CLAMPdotplotAll</code>)<a class="anchor" aria-label="anchor" href="#all-lv-pathway-dot-plot-clampdotplotall"></a>
@@ -968,14 +1019,13 @@ use AUC or <code>-log10(FDR)</code>.</p>
 <p><code>CLAMPdotplotAll</code> gives a compact overview of all
 significant pathway–LV associations across every latent variable. Dot
 size encodes AUC and dot colour encodes <code>-log10(FDR)</code>.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/CLAMPdotplotAll.html">CLAMPdotplotAll</a></span><span class="op">(</span></span>
 <span>    <span class="va">wb_fullRes</span>,</span>
 <span>    auc.cutoff <span class="op">=</span> <span class="fl">0.65</span>,</span>
 <span>    fdr.cutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>    top.per.lv <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="get_started_files/figure-html/plot-dotAll-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -999,9 +1049,9 @@ parameter:</p>
 <div class="section level2">
 <h2 id="session-information">Session Information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1024,72 +1074,66 @@ parameter:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt;  [1] DiagrammeR_1.0.12    DT_0.34.0            org.Hs.eg.db_3.23.1 </span></span>
-<span><span class="co">#&gt;  [4] AnnotationDbi_1.74.0 IRanges_2.46.0       S4Vectors_0.50.0    </span></span>
-<span><span class="co">#&gt;  [7] Biobase_2.72.0       BiocGenerics_0.58.0  generics_0.1.4      </span></span>
+<span><span class="co">#&gt;  [4] AnnotationDbi_1.75.2 IRanges_2.47.2       S4Vectors_0.51.6    </span></span>
+<span><span class="co">#&gt;  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      </span></span>
 <span><span class="co">#&gt; [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.4   </span></span>
-<span><span class="co">#&gt; [13] hdf5r_1.3.12         glmnet_5.0           Matrix_1.7-5        </span></span>
-<span><span class="co">#&gt; [16] rsvd_1.0.5           CLAMPData_0.99.4     CLAMP_0.99.0        </span></span>
-<span><span class="co">#&gt; [19] dplyr_1.2.1          BiocStyle_2.40.0    </span></span>
+<span><span class="co">#&gt; [13] rhdf5_2.57.9         glmnet_5.0           Matrix_1.7-5        </span></span>
+<span><span class="co">#&gt; [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    </span></span>
+<span><span class="co">#&gt; [19] CLAMP_0.99.5         BiocStyle_2.41.0    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] DBI_1.3.0             httr2_1.2.2           rlang_1.2.0          </span></span>
+<span><span class="co">#&gt;   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          </span></span>
 <span><span class="co">#&gt;   [4] magrittr_2.0.5        clue_0.3-68           GetoptLong_1.1.1     </span></span>
-<span><span class="co">#&gt;   [7] otel_0.2.0            matrixStats_1.5.0     compiler_4.6.0       </span></span>
-<span><span class="co">#&gt;  [10] RSQLite_2.4.6         png_0.1-9             systemfonts_1.3.2    </span></span>
+<span><span class="co">#&gt;   [7] otel_0.2.0            matrixStats_1.5.0     compiler_4.6.1       </span></span>
+<span><span class="co">#&gt;  [10] RSQLite_3.53.3        png_0.1-9             systemfonts_1.3.2    </span></span>
 <span><span class="co">#&gt;  [13] vctrs_0.7.3           pkgconfig_2.0.3       shape_1.4.6.1        </span></span>
-<span><span class="co">#&gt;  [16] crayon_1.5.3          fastmap_1.2.0         XVector_0.52.0       </span></span>
-<span><span class="co">#&gt;  [19] dbplyr_2.5.2          labeling_0.4.3        rmarkdown_2.31       </span></span>
+<span><span class="co">#&gt;  [16] crayon_1.5.3          fastmap_1.2.0         XVector_0.53.0       </span></span>
+<span><span class="co">#&gt;  [19] dbplyr_2.6.0          labeling_0.4.3        rmarkdown_2.31       </span></span>
 <span><span class="co">#&gt;  [22] ps_1.9.3              ragg_1.5.2            purrr_1.2.2          </span></span>
-<span><span class="co">#&gt;  [25] bit_4.6.0             xfun_0.57             cachem_1.1.0         </span></span>
+<span><span class="co">#&gt;  [25] bit_4.6.0             xfun_0.60             cachem_1.1.0         </span></span>
 <span><span class="co">#&gt;  [28] rmio_0.4.0            jsonlite_2.0.0        blob_1.3.0           </span></span>
-<span><span class="co">#&gt;  [31] irlba_2.3.7           parallel_4.6.0        cluster_2.1.8.2      </span></span>
-<span><span class="co">#&gt;  [34] R6_2.6.1              bslib_0.10.0          RColorBrewer_1.1-3   </span></span>
-<span><span class="co">#&gt;  [37] jquerylib_0.1.4       Seqinfo_1.2.0         Rcpp_1.1.1-1.1       </span></span>
-<span><span class="co">#&gt;  [40] bookdown_0.46         iterators_1.0.14      knitr_1.51           </span></span>
-<span><span class="co">#&gt;  [43] splines_4.6.0         tidyselect_1.2.1      rstudioapi_0.18.0    </span></span>
-<span><span class="co">#&gt;  [46] yaml_2.3.12           doParallel_1.0.17     codetools_0.2-20     </span></span>
-<span><span class="co">#&gt;  [49] curl_7.1.0            lattice_0.22-9        tibble_3.3.1         </span></span>
-<span><span class="co">#&gt;  [52] withr_3.0.2           KEGGREST_1.52.0       S7_0.2.2             </span></span>
-<span><span class="co">#&gt;  [55] evaluate_1.0.5        desc_1.4.3            survival_3.8-6       </span></span>
-<span><span class="co">#&gt;  [58] BiocFileCache_3.2.0   circlize_0.4.18       ExperimentHub_3.2.0  </span></span>
-<span><span class="co">#&gt;  [61] Biostrings_2.80.0     pillar_1.11.1         BiocManager_1.30.27  </span></span>
-<span><span class="co">#&gt;  [64] filelock_1.0.3        foreach_1.5.2         bigassertr_0.1.7     </span></span>
-<span><span class="co">#&gt;  [67] rprojroot_2.1.1       BiocVersion_3.23.1    ggplot2_4.0.3        </span></span>
-<span><span class="co">#&gt;  [70] scales_1.4.0          ff_4.5.2              glue_1.8.1           </span></span>
-<span><span class="co">#&gt;  [73] tools_4.6.0           AnnotationHub_4.2.0   RSpectra_0.16-2      </span></span>
-<span><span class="co">#&gt;  [76] visNetwork_2.1.4      fs_2.1.0              cowplot_1.2.0        </span></span>
-<span><span class="co">#&gt;  [79] grid_4.6.0            crosstalk_1.2.2       colorspace_2.1-2     </span></span>
-<span><span class="co">#&gt;  [82] patchwork_1.3.2       flock_0.7             cli_3.6.6            </span></span>
-<span><span class="co">#&gt;  [85] rappdirs_0.3.4        textshaping_1.0.5     bigparallelr_0.3.2   </span></span>
-<span><span class="co">#&gt;  [88] ComplexHeatmap_2.28.0 gtable_0.3.6          sass_0.4.10          </span></span>
-<span><span class="co">#&gt;  [91] digest_0.6.39         ggrepel_0.9.8         rjson_0.2.23         </span></span>
-<span><span class="co">#&gt;  [94] htmlwidgets_1.6.4     farver_2.1.2          memoise_2.0.1        </span></span>
-<span><span class="co">#&gt;  [97] htmltools_0.5.9       pkgdown_2.2.0         lifecycle_1.0.5      </span></span>
-<span><span class="co">#&gt; [100] httr_1.4.8            GlobalOptions_0.1.4   bit64_4.8.0</span></span></code></pre></div>
+<span><span class="co">#&gt;  [31] rhdf5filters_1.25.4   Rhdf5lib_2.1.0        irlba_2.3.7          </span></span>
+<span><span class="co">#&gt;  [34] parallel_4.6.1        cluster_2.1.8.2       R6_2.6.1             </span></span>
+<span><span class="co">#&gt;  [37] bslib_0.12.0          RColorBrewer_1.1-3    jquerylib_0.1.4      </span></span>
+<span><span class="co">#&gt;  [40] Seqinfo_1.3.0         Rcpp_1.1.2            bookdown_0.47        </span></span>
+<span><span class="co">#&gt;  [43] iterators_1.0.14      knitr_1.51            BiocBaseUtils_1.15.1 </span></span>
+<span><span class="co">#&gt;  [46] splines_4.6.1         tidyselect_1.2.1      rstudioapi_0.19.0    </span></span>
+<span><span class="co">#&gt;  [49] yaml_2.3.12           doParallel_1.0.17     codetools_0.2-20     </span></span>
+<span><span class="co">#&gt;  [52] curl_7.1.0            lattice_0.22-9        tibble_3.3.1         </span></span>
+<span><span class="co">#&gt;  [55] withr_3.0.3           KEGGREST_1.53.6       S7_0.2.2             </span></span>
+<span><span class="co">#&gt;  [58] evaluate_1.0.5        desc_1.4.3            survival_3.8-6       </span></span>
+<span><span class="co">#&gt;  [61] BiocFileCache_3.3.0   circlize_0.4.18       ExperimentHub_3.3.0  </span></span>
+<span><span class="co">#&gt;  [64] Biostrings_2.81.6     pillar_1.11.1         BiocManager_1.30.27  </span></span>
+<span><span class="co">#&gt;  [67] filelock_1.0.3        foreach_1.5.2         bigassertr_0.2.0     </span></span>
+<span><span class="co">#&gt;  [70] rprojroot_2.1.1       BiocVersion_3.24.0    ggplot2_4.0.3        </span></span>
+<span><span class="co">#&gt;  [73] scales_1.4.0          ff_4.5.3              glue_1.8.1           </span></span>
+<span><span class="co">#&gt;  [76] tools_4.6.1           AnnotationHub_4.3.2   RSpectra_0.16-2      </span></span>
+<span><span class="co">#&gt;  [79] visNetwork_2.1.4      fs_2.1.0              cowplot_1.2.0        </span></span>
+<span><span class="co">#&gt;  [82] grid_4.6.1            crosstalk_1.2.2       colorspace_2.1-3     </span></span>
+<span><span class="co">#&gt;  [85] patchwork_1.3.2       flock_0.7             cli_3.6.6            </span></span>
+<span><span class="co">#&gt;  [88] rappdirs_0.3.4        textshaping_1.0.5     bigparallelr_0.3.2   </span></span>
+<span><span class="co">#&gt;  [91] ComplexHeatmap_2.29.0 gtable_0.3.6          sass_0.4.10          </span></span>
+<span><span class="co">#&gt;  [94] digest_0.6.39         ggrepel_0.9.8         rjson_0.2.23         </span></span>
+<span><span class="co">#&gt;  [97] htmlwidgets_1.6.4     farver_2.1.2          memoise_2.0.1        </span></span>
+<span><span class="co">#&gt; [100] htmltools_0.5.9       pkgdown_2.2.1         lifecycle_1.0.5      </span></span>
+<span><span class="co">#&gt; [103] httr_1.4.8            GlobalOptions_0.1.4   bit64_4.8.2</span></span></code></pre></div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Marc Subirana-Granes, Maria Chikina, National Human Genome Research Institute, Eunice Kennedy Shriver National Institute of Child Health and Human Development, National Science Foundation, National Eye Institute.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Marc Subirana-Granes, Maria Chikina, National Human Genome Research Institute, Eunice Kennedy Shriver National Institute of Child Health and Human Development, National Science Foundation, National Eye Institute.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 
