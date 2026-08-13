@@ -433,8 +433,11 @@ CLAMPplotU <- function(clampRes, auc.cutoff = 0.6, fdr.cutoff = 0.05,
     U <- as.matrix(clampRes$U)
 
     pval.cutoff <- if (!is.null(clampRes$summary) &&
-        any(clampRes$summary[, 5] < fdr.cutoff)) {
-        max(clampRes$summary[clampRes$summary[, 5] < fdr.cutoff, 4])
+        any(clampRes$summary[, 5] < fdr.cutoff, na.rm = TRUE)) {
+        max(
+            clampRes$summary[clampRes$summary[, 5] < fdr.cutoff, 4],
+            na.rm = TRUE
+        )
     } else {
         Inf
     }

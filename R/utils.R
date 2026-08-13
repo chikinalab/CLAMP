@@ -869,8 +869,10 @@ zscoreCLAMPFBM <- function(fbm_filtered, rowStats,
 
 #' Preprocess an expression matrix for CLAMP
 #'
-#' Filters genes by mean expression and variance, returning the filtered matrix
-#' and per-gene statistics.
+#' Cleans an expression matrix, filters genes by mean expression and variance,
+#' and returns the filtered matrix and per-gene statistics. To match
+#' [preprocessCLAMPFBM()], values are transformed with `log2(Y + 1)` when the
+#' maximum value is at least 100, and missing values are replaced with zero.
 #'
 #' @param Y Numeric matrix of gene expression (rows = genes, cols = samples)
 #' @param mean_cutoff Numeric. Minimum row-mean required to keep a gene
@@ -905,6 +907,22 @@ preprocessCLAMP <- function(Y, mean_cutoff = 0, var_cutoff = 0) {
     if (!is.matrix(Y) || !is.numeric(Y)) {
         stop("`Y` must be a numeric matrix (genes x samples).")
     }
+
+    max_value <- if (all(is.na(Y))) NA_real_ else max(Y, na.rm = TRUE)
+    if (!is.na(max_value) && max_value >= 100) {
+        message("Applying log2 transformation")
+        Y <- log2(Y + 1)
+    } else {
+        message("Already on log scale or all NA")
+    }
+
+    if (anyNA(Y)) {
+        message("Filling NAs with 0")
+        Y[is.na(Y)] <- 0
+    } else {
+        message("No NA values found")
+    }
+
     # Compute per‐gene statistics
     row_mean <- rowMeans(Y, na.rm = TRUE)
     row_var <- apply(Y, 1, stats::var, na.rm = TRUE)

@@ -1,3 +1,11 @@
+# CLAMP 0.99.4
+
+## Bug fixes
+- Made `preprocessCLAMP()` conditionally log2-transform and replace missing
+  values before filtering, matching `preprocessCLAMPFBM()`.
+- Made `CLAMPplotU()` handle missing FDR values when no pathways pass the
+  requested thresholds.
+
 # CLAMP 0.99.0
 
 ## New features

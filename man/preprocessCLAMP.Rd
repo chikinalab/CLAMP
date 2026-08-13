@@ -24,8 +24,10 @@ A list with components:
 }
 }
 \description{
-Filters genes by mean expression and variance, returning the filtered matrix
-and per-gene statistics.
+Cleans an expression matrix, filters genes by mean expression and variance,
+and returns the filtered matrix and per-gene statistics. To match
+\code{\link[=preprocessCLAMPFBM]{preprocessCLAMPFBM()}}, values are transformed with \code{log2(Y + 1)} when the
+maximum value is at least 100, and missing values are replaced with zero.
 }
 \examples{
 # construct a small example matrix

@@ -53,3 +53,26 @@ test_that("CLAMPplotTopZ returns a loading plot for selected LVs", {
     expect_equal(p$labels$title, "LV2")
     expect_equal(p$theme$plot.title$hjust, 0.5)
 })
+
+test_that("CLAMPplotU handles missing FDR values", {
+    pathways <- c("Path1", "Path2")
+    lvs <- "LV1"
+    clampRes <- list(
+        U = matrix(1, 2, 1, dimnames = list(pathways, lvs)),
+        Uauc = matrix(0.5, 2, 1, dimnames = list(pathways, lvs)),
+        Up = matrix(1, 2, 1, dimnames = list(pathways, lvs)),
+        summary = data.frame(
+            pathway = pathways,
+            LV = rep(lvs, 2),
+            AUC = 0.5,
+            p_value = c(0.5, 0.6),
+            FDR = c(NA, 1)
+        )
+    )
+
+    expect_message(
+        result <- CLAMPplotU(clampRes),
+        "No entries pass the AUC/FDR thresholds"
+    )
+    expect_null(result)
+})
