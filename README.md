@@ -1,4 +1,4 @@
-# CLAMP <img src="man/figures/clamp.png" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
+# CLAMP <img src="man/figures/clamp.png" alt="CLAMP logo" width="121px" height="140px" align="right" style="padding-left:10px;background-color:white;" />
 
 <!-- badges: start -->
 [![GitHub issues](https://img.shields.io/github/issues/chikinalab/CLAMP)](https://github.com/chikinalab/CLAMP/issues)
@@ -12,8 +12,8 @@
 
 |      Branch      |    R CMD check   | Last updated |
 |:----------------:|:----------------:|:------------:|
-| [_devel_](http://bioconductor.org/packages/devel/bioc/html/CLAMP.html) | [![Bioconductor-devel Build Status](http://bioconductor.org/shields/build/devel/bioc/CLAMP.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/CLAMP) | ![](http://bioconductor.org/shields/lastcommit/devel/bioc/CLAMP.svg) |
-| [_release_](http://bioconductor.org/packages/release/bioc/html/CLAMP.html) | [![Bioconductor-release Build Status](http://bioconductor.org/shields/build/release/bioc/CLAMP.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/CLAMP) | ![](http://bioconductor.org/shields/lastcommit/release/bioc/CLAMP.svg) |
+| [_devel_](https://bioconductor.org/packages/devel/bioc/html/CLAMP.html) | [![Bioconductor-devel Build Status](https://bioconductor.org/shields/build/devel/bioc/CLAMP.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/CLAMP) | ![Bioconductor-devel last commit](https://bioconductor.org/shields/lastcommit/devel/bioc/CLAMP.svg) |
+| [_release_](https://bioconductor.org/packages/release/bioc/html/CLAMP.html) | [![Bioconductor-release Build Status](https://bioconductor.org/shields/build/release/bioc/CLAMP.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/CLAMP) | ![Bioconductor-release last commit](https://bioconductor.org/shields/lastcommit/release/bioc/CLAMP.svg) |
 
 The goal of CLAMP (**C**urated **L**atent-variable **A**nalysis with **M**olecular **P**riors) is to provide an easy-to-use package to extract interpretable latent variables from large transcriptomic datasets using biological priors.
 
