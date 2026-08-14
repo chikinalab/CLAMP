@@ -909,24 +909,31 @@ select_clamp_k(
 ## Visualization
 
 CLAMP provides dedicated plotting functions built on **ggplot2**,
-prefixed `CLAMPplot` or `CLAMPdotplot`. The examples below use the
-whole-blood result `wb_fullRes` computed in Example 1.
+prefixed `CLAMPplot` or `CLAMPdotplot`. The heatmap and gene-loading
+plots use the whole-blood result `wb_fullRes` computed in Example 1. The
+pathway dot plots use the Alzheimer’s result `alz_fullRes`, which
+contains associations passing the displayed AUC and FDR thresholds.
 
 ### Pathway–LV association heatmap (`CLAMPplotU`)
 
 `CLAMPplotU` displays the pathway loading matrix **U** after filtering
 by AUC and FDR. Only the top-`top` pathways per LV are shown, making it
-easy to scan which pathways drive each latent variable.
+easy to scan which pathways drive each latent variable. This overview
+uses permissive cutoffs so it remains populated across reproducible
+vignette builds; use more selective cutoffs for an analysis-specific
+figure.
 
 ``` r
 
 CLAMPplotU(
     wb_fullRes,
-    auc.cutoff = 0.6,
-    fdr.cutoff = 0.05,
+    auc.cutoff = 0,
+    fdr.cutoff = 1,
     top        = 3
 )
 ```
+
+![](get_started_files/figure-html/plot-U-1.png)
 
 ### Top-gene loading plot (`CLAMPplotTopZ`)
 
@@ -955,7 +962,7 @@ Only one LV:
 
 ``` r
 
-# Use the first few LVs that have pathway support
+# Use the first LV that has pathway support
 lv_with_paths <- wb_fullRes$withPrior[1]
 
 CLAMPplotTopZ(
@@ -966,8 +973,9 @@ CLAMPplotTopZ(
 )
 ```
 
-![](get_started_files/figure-html/plot-topZ1-1.png) \## Single-LV
-pathway dot plot (`CLAMPdotplot`)
+![](get_started_files/figure-html/plot-topZ1-1.png)
+
+### Single-LV pathway dot plot (`CLAMPdotplot`)
 
 `CLAMPdotplot` shows the top pathways for one selected LV as a lollipop
 chart. Dot size encodes AUC; dot colour encodes `-log10(FDR)`. Use
@@ -979,30 +987,34 @@ Plot order by AUC:
 ``` r
 
 CLAMPdotplot(
-    wb_fullRes,
-    lv         = "LV2",
+    alz_fullRes,
+    lv         = "LV3",
     top        = 15,
-    auc.cutoff = 0.6,
-    fdr.cutoff = 0.1,
+    auc.cutoff = 0.65,
+    fdr.cutoff = 0.05,
     x.axis     = "AUC",
     order.by   = "AUC"
 )
 ```
+
+![](get_started_files/figure-html/plot-dot-1.png)
 
 Plot order by FDR:
 
 ``` r
 
 CLAMPdotplot(
-    wb_fullRes,
-    lv         = "LV2",
+    alz_fullRes,
+    lv         = "LV3",
     top        = 15,
-    auc.cutoff = 0.6,
-    fdr.cutoff = 0.1,
+    auc.cutoff = 0.65,
+    fdr.cutoff = 0.05,
     x.axis     = "-log10(FDR)",
     order.by   = "-log10(FDR)"
 )
 ```
+
+![](get_started_files/figure-html/plot-dot-fdr-1.png)
 
 ### All-LV pathway dot plot (`CLAMPdotplotAll`)
 
@@ -1013,12 +1025,14 @@ colour encodes `-log10(FDR)`.
 ``` r
 
 CLAMPdotplotAll(
-    wb_fullRes,
+    alz_fullRes,
     auc.cutoff = 0.65,
     fdr.cutoff = 0.05,
     top.per.lv = 5
 )
 ```
+
+![](get_started_files/figure-html/plot-dotAll-1.png)
 
 ## Parallelization in CLAMP
 
@@ -1067,9 +1081,9 @@ sessionInfo()
 #>  [4] AnnotationDbi_1.75.2 IRanges_2.47.2       S4Vectors_0.51.6    
 #>  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      
 #> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.4   
-#> [13] rhdf5_2.57.9         glmnet_5.0           Matrix_1.7-5        
+#> [13] rhdf5_2.57.10        glmnet_5.0           Matrix_1.7-5        
 #> [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    
-#> [19] CLAMP_0.99.5         BiocStyle_2.41.0    
+#> [19] CLAMP_0.99.6         BiocStyle_2.41.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          
@@ -1092,7 +1106,7 @@ sessionInfo()
 #>  [52] curl_7.1.0            lattice_0.22-9        tibble_3.3.1         
 #>  [55] withr_3.0.3           KEGGREST_1.53.6       S7_0.2.2             
 #>  [58] evaluate_1.0.5        desc_1.4.3            survival_3.8-6       
-#>  [61] BiocFileCache_3.3.0   circlize_0.4.18       ExperimentHub_3.3.0  
+#>  [61] BiocFileCache_3.3.0   circlize_0.4.18       ExperimentHub_3.3.2  
 #>  [64] Biostrings_2.81.6     pillar_1.11.1         BiocManager_1.30.27  
 #>  [67] filelock_1.0.3        foreach_1.5.2         bigassertr_0.2.0     
 #>  [70] rprojroot_2.1.1       BiocVersion_3.24.0    ggplot2_4.0.3        
