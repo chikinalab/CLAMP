@@ -11,7 +11,7 @@ FBM plus stats and indices."><meta property="og:image" content="https://chikinal
 
     <a class="navbar-brand me-2" href="../index.html">CLAMP</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,8 @@ FBM plus stats and indices.</p>
 <span>  var_cutoff <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  backingfile <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  block_size <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  ncores <span class="op">=</span> <span class="fl">1</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  log2_transform <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,6 +92,12 @@ Default is 1000.</p></dd>
 <dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
 <dd><p>Integer; number of cores to use for parallel operations
 (default 1).</p></dd>
+
+
+<dt id="arg-log-transform">log2_transform<a class="anchor" aria-label="anchor" href="#arg-log-transform"></a></dt>
+<dd><p>Logical; enable automatic <code>log2(x + 1)</code> transformation
+when the maximum value is at least 100 (default TRUE). Set to FALSE to
+skip transformation. Missing values are still replaced with zero.</p></dd>
 
 </dl></div>
     <div class="section level2">

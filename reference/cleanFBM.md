@@ -2,13 +2,14 @@
 
 This function inspects an FBM to determine if log-transformation is
 needed (based on value range) and whether NA values are present. If the
-maximum value is \>= 100, it applies a log2(x + 1) transformation
-in-place. If any NA values are detected, they are replaced with 0.
+maximum value is \>= 100 and `log2_transform = TRUE`, it applies a
+log2(x + 1) transformation in-place. If any NA values are detected, they
+are replaced with 0.
 
 ## Usage
 
 ``` r
-cleanFBM(fbm, ncores = 1)
+cleanFBM(fbm, ncores = 1, log2_transform = TRUE)
 ```
 
 ## Arguments
@@ -22,6 +23,12 @@ cleanFBM(fbm, ncores = 1)
 - ncores:
 
   Integer; number of cores to use for parallel operations (default 1).
+
+- log2_transform:
+
+  Logical; enable automatic `log2(x + 1)` transformation when the
+  maximum value is at least 100 (default TRUE). Set to FALSE to skip
+  transformation. Missing values are still replaced with zero.
 
 ## Value
 

@@ -5,12 +5,15 @@ variance, and returns the filtered matrix and per-gene statistics. To
 match
 [`preprocessCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMPFBM.md),
 values are transformed with `log2(Y + 1)` when the maximum value is at
-least 100, and missing values are replaced with zero.
+least 100 and `log2_transform = TRUE`. Missing values are replaced with
+zero regardless of `log2_transform`. Row variances use population
+variance (dividing by the number of samples), matching
+[`preprocessCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMPFBM.md).
 
 ## Usage
 
 ``` r
-preprocessCLAMP(Y, mean_cutoff = 0, var_cutoff = 0)
+preprocessCLAMP(Y, mean_cutoff = 0, var_cutoff = 0, log2_transform = TRUE)
 ```
 
 ## Arguments
@@ -26,6 +29,12 @@ preprocessCLAMP(Y, mean_cutoff = 0, var_cutoff = 0)
 - var_cutoff:
 
   Numeric. Minimum row-variance required to keep a gene (default 0).
+
+- log2_transform:
+
+  Logical; enable automatic `log2(x + 1)` transformation when the
+  maximum value is at least 100 (default TRUE). Set to FALSE to skip
+  transformation. Missing values are still replaced with zero.
 
 ## Value
 

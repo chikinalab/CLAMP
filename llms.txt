@@ -56,13 +56,13 @@ set.seed(1)
 # Load example dataset (genes × samples)
 data("dataWholeBlood")
 
-# CPM-normalize, filter low-expressed genes, log2 and z-score normalizations
-dataWholeBlood_cpm <- cpmCLAMP(dataWholeBlood)
+# The example data are already normalized; filter and z-score directly.
 
 prep <- preprocessCLAMP(
-    dataWholeBlood_cpm,
+    dataWholeBlood,
     mean_cutoff = 0.5,
-    var_cutoff = 0.1
+    var_cutoff = 0.1,
+    log2_transform = FALSE
 )
 
 Y_z <- zscoreCLAMP(

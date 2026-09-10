@@ -252,7 +252,7 @@ sessionInfo()
 
     ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.4 LTS
+    ## Running under: Ubuntu 24.04.5 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -271,7 +271,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] bigstatsr_1.6.2  CLAMP_0.99.6     BiocStyle_2.41.0
+    ## [1] bigstatsr_1.6.2  CLAMP_0.99.8     BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
@@ -282,7 +282,7 @@ sessionInfo()
     ## [16] generics_0.1.4        stats4_4.6.1          parallel_4.6.1       
     ## [19] tibble_3.3.1          cluster_2.1.8.2       pkgconfig_2.0.3      
     ## [22] Matrix_1.7-5          RColorBrewer_1.1-3    S7_0.2.2             
-    ## [25] desc_1.4.3            S4Vectors_0.51.6      lifecycle_1.0.5      
+    ## [25] desc_1.4.3            S4Vectors_0.51.9      lifecycle_1.0.5      
     ## [28] compiler_4.6.1        farver_2.1.2          textshaping_1.0.5    
     ## [31] bigparallelr_0.3.2    codetools_0.2-20      ComplexHeatmap_2.29.0
     ## [34] clue_0.3-68           htmltools_0.5.9       sass_0.4.10          
@@ -290,15 +290,15 @@ sessionInfo()
     ## [40] pillar_1.11.1         crayon_1.5.3          jquerylib_0.1.4      
     ## [43] cachem_1.1.0          iterators_1.0.14      foreach_1.5.2        
     ## [46] rsvd_1.0.5            tidyselect_1.2.1      digest_0.6.39        
-    ## [49] dplyr_1.2.1           bookdown_0.47         labeling_0.4.3       
+    ## [49] dplyr_1.2.1           bookdown_0.48         labeling_0.4.3       
     ## [52] splines_4.6.1         cowplot_1.2.0         fastmap_1.2.0        
     ## [55] grid_4.6.1            colorspace_2.1-3      cli_3.6.6            
     ## [58] magrittr_2.0.5        survival_3.8-6        withr_3.0.3          
-    ## [61] scales_1.4.0          rmarkdown_2.31        matrixStats_1.5.0    
+    ## [61] scales_1.4.0          rmarkdown_2.32        matrixStats_1.5.0    
     ## [64] rmio_0.4.0            bit_4.6.0             otel_0.2.0           
     ## [67] ragg_1.5.2            png_0.1-9             GetoptLong_1.1.1     
-    ## [70] evaluate_1.0.5        ff_4.5.3              knitr_1.51           
-    ## [73] IRanges_2.47.2        doParallel_1.0.17     irlba_2.3.7          
+    ## [70] evaluate_1.0.5        ff_4.5.3              knitr_1.52           
+    ## [73] IRanges_2.47.5        doParallel_1.0.17     irlba_2.3.7          
     ## [76] rlang_1.3.0           Rcpp_1.1.2            glue_1.8.1           
     ## [79] BiocManager_1.30.27   BiocGenerics_0.59.12  jsonlite_2.0.0       
     ## [82] R6_2.6.1              systemfonts_1.3.2     fs_2.1.0             

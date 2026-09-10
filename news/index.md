@@ -1,5 +1,35 @@
 # Changelog
 
+## CLAMP 0.99.8
+
+### Bug fixes
+
+- Fixed whole-blood examples in the introductory vignette and README to
+  use the supplied normalized expression values directly, avoiding
+  redundant CPM normalization and log2 transformation that caused the
+  pkgdown build to fail during
+  [`CLAMPfull()`](https://chikinalab.org/CLAMP/reference/CLAMPfull.md).
+
+## CLAMP 0.99.7
+
+### Improvements
+
+- Added `log2_transform = TRUE` to
+  [`preprocessCLAMP()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMP.md),
+  [`preprocessCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMPFBM.md),
+  and
+  [`cleanFBM()`](https://chikinalab.org/CLAMP/reference/cleanFBM.md).
+  Set it to `FALSE` to skip log2 transformation while retaining
+  missing-value handling and filtering.
+
+### Bug fixes
+
+- Changed
+  [`preprocessCLAMP()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMP.md)
+  to use population variance, matching
+  [`preprocessCLAMPFBM()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMPFBM.md)
+  for variance filtering and downstream scaling.
+
 ## CLAMP 0.99.6
 
 ### Bug fixes

@@ -173,22 +173,22 @@ dataWholeBlood[1:6, 1:6] # genes x samples
 
 ### Preprocess and z-score
 
-We first CPM-normalize the data (when needed), filter for genes with
-mean expression ≥ 0.5 and variance ≥ 0.1, and then apply z-score
-normalization.
+The bundled whole-blood matrix already contains normalized expression
+values. We use these values directly, disable log2 transformation,
+filter for genes with mean expression ≥ 0.5 and variance ≥ 0.1, and then
+apply z-score normalization. CPM normalization is appropriate for raw
+counts.
 
 ``` r
 
-#  CPM normalization
-dataWholeBlood_cpm <- cpmCLAMP(dataWholeBlood)
-
-# Filter and compute row statistics
+# Filter the normalized expression values and compute row statistics
 prep_wb <- preprocessCLAMP(
-    Y = dataWholeBlood_cpm,
+    Y = dataWholeBlood,
     mean_cutoff = 0.5,
-    var_cutoff = 0.1
+    var_cutoff = 0.1,
+    log2_transform = FALSE
 )
-#> Applying log2 transformation
+#> Skipping log2 transformation
 #> No NA values found
 
 # Extract filtered matrix and rowStats
@@ -221,7 +221,7 @@ wb_svd     <- compute_svd(wb_Y_z, k = wb_svd_k)
 # Select clamp_k (elbow method by default)
 wb_clamp_k <- select_clamp_k(wb_svd, n_samples = ncol(wb_Y_z), svd_k = wb_svd_k)
 wb_clamp_k
-#> [1] 7
+#> [1] 8
 ```
 
 ### CLAMPbase initialization
@@ -637,7 +637,7 @@ islet_svd     <- compute_svd(iso_Yz, k = islet_svd_k)
 islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz),
                                 svd_k = islet_svd_k)
 islet_clamp_k
-#> [1] 33
+#> [1] 32
 ```
 
 ### CLAMPbase
@@ -817,25 +817,25 @@ cat(
         100 * length(common_genes) / length(islet_model_genes)
     )
 )
-#> Overlapping genes: 21 / 21536 islet model genes (0.1%)
+#> Overlapping genes: 4985 / 21536 islet model genes (23.1%)
 
 # projectCLAMP aligns common row names in the model's gene order
 wb_projected_B <- projectCLAMP(islet_fullRes, wb_Y_z)
-#> 21 common rows found
+#> 4985 common rows found
 
 dim(wb_projected_B)
-#> [1] 33 36
+#> [1] 32 36
 wb_projected_B[
     seq_len(min(5, nrow(wb_projected_B))),
     seq_len(min(5, ncol(wb_projected_B))),
     drop = FALSE
 ]
-#>            BD8001        BD8002        BD8003      BD8004        BD8005
-#> LV1 -0.0086141846  0.0050438987  0.0002623414 0.007088495  0.0076722693
-#> LV2 -0.0028244888 -0.0005383735  0.0029513408 0.001485294  0.0024573333
-#> LV3  0.0002618891 -0.0021622381 -0.0012102150 0.005807649 -0.0057635152
-#> LV4  0.0094253464  0.0003710496  0.0268225180 0.010241497 -0.0244710418
-#> LV5 -0.0021738481 -0.0015852748 -0.0001650534 0.009662626 -0.0002933533
+#>           BD8001      BD8002      BD8003      BD8004       BD8005
+#> LV1  0.896577075  0.58066081  0.94869314  1.79254492  0.307931055
+#> LV2 -0.055465542 -0.53323873  0.66257102 -0.19653068 -0.123096671
+#> LV3 -0.001884137 -0.08527485 -0.28175606  0.12754066 -0.042002371
+#> LV4 -0.037710271 -0.01153589 -0.02722026 -0.07539023 -0.009166932
+#> LV5 -0.585312728 -0.33208246 -0.40738995 -1.01980229 -0.132492988
 ```
 
 ## Choosing the Number of Latent Variables (CLAMP_K)
@@ -864,7 +864,7 @@ select_clamp_k(
     svd_k     = wb_svd_k,
     method    = "elbow"
 )
-#> [1] 7
+#> [1] 8
 ```
 
 ### Permutation method
@@ -1057,7 +1057,7 @@ The following CLAMP functions accept an `ncores` parameter:
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1078,12 +1078,12 @@ sessionInfo()
 #> 
 #> other attached packages:
 #>  [1] DiagrammeR_1.0.12    DT_0.34.0            org.Hs.eg.db_3.23.1 
-#>  [4] AnnotationDbi_1.75.2 IRanges_2.47.2       S4Vectors_0.51.6    
+#>  [4] AnnotationDbi_1.75.2 IRanges_2.47.5       S4Vectors_0.51.9    
 #>  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      
-#> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.4   
-#> [13] rhdf5_2.57.10        glmnet_5.0           Matrix_1.7-5        
+#> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.6.1 
+#> [13] rhdf5_2.57.12        glmnet_5.0           Matrix_1.7-5        
 #> [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    
-#> [19] CLAMP_0.99.6         BiocStyle_2.41.0    
+#> [19] CLAMP_0.99.8         BiocStyle_2.41.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          
@@ -1092,22 +1092,22 @@ sessionInfo()
 #>  [10] RSQLite_3.53.3        png_0.1-9             systemfonts_1.3.2    
 #>  [13] vctrs_0.7.3           pkgconfig_2.0.3       shape_1.4.6.1        
 #>  [16] crayon_1.5.3          fastmap_1.2.0         XVector_0.53.0       
-#>  [19] dbplyr_2.6.0          labeling_0.4.3        rmarkdown_2.31       
+#>  [19] dbplyr_2.6.0          labeling_0.4.3        rmarkdown_2.32       
 #>  [22] ps_1.9.3              ragg_1.5.2            purrr_1.2.2          
 #>  [25] bit_4.6.0             xfun_0.60             cachem_1.1.0         
 #>  [28] rmio_0.4.0            jsonlite_2.0.0        blob_1.3.0           
 #>  [31] rhdf5filters_1.25.4   Rhdf5lib_2.1.0        irlba_2.3.7          
 #>  [34] parallel_4.6.1        cluster_2.1.8.2       R6_2.6.1             
 #>  [37] bslib_0.12.0          RColorBrewer_1.1-3    jquerylib_0.1.4      
-#>  [40] Seqinfo_1.3.0         Rcpp_1.1.2            bookdown_0.47        
-#>  [43] iterators_1.0.14      knitr_1.51            BiocBaseUtils_1.15.1 
+#>  [40] Seqinfo_1.3.2         Rcpp_1.1.2            bookdown_0.48        
+#>  [43] iterators_1.0.14      knitr_1.52            BiocBaseUtils_1.15.1 
 #>  [46] splines_4.6.1         tidyselect_1.2.1      rstudioapi_0.19.0    
 #>  [49] yaml_2.3.12           doParallel_1.0.17     codetools_0.2-20     
-#>  [52] curl_7.1.0            lattice_0.22-9        tibble_3.3.1         
+#>  [52] curl_8.0.0            lattice_0.22-9        tibble_3.3.1         
 #>  [55] withr_3.0.3           KEGGREST_1.53.6       S7_0.2.2             
 #>  [58] evaluate_1.0.5        desc_1.4.3            survival_3.8-6       
 #>  [61] BiocFileCache_3.3.0   circlize_0.4.18       ExperimentHub_3.3.2  
-#>  [64] Biostrings_2.81.6     pillar_1.11.1         BiocManager_1.30.27  
+#>  [64] Biostrings_2.81.9     pillar_1.11.1         BiocManager_1.30.27  
 #>  [67] filelock_1.0.3        foreach_1.5.2         bigassertr_0.2.0     
 #>  [70] rprojroot_2.1.1       BiocVersion_3.24.0    ggplot2_4.0.3        
 #>  [73] scales_1.4.0          ff_4.5.3              glue_1.8.1           
@@ -1120,5 +1120,5 @@ sessionInfo()
 #>  [94] digest_0.6.39         ggrepel_0.9.8         rjson_0.2.23         
 #>  [97] htmlwidgets_1.6.4     farver_2.1.2          memoise_2.0.1        
 #> [100] htmltools_0.5.9       pkgdown_2.2.1         lifecycle_1.0.5      
-#> [103] httr_1.4.8            GlobalOptions_0.1.4   bit64_4.8.2
+#> [103] httr_1.4.9            GlobalOptions_0.1.4   bit64_4.8.6
 ```
