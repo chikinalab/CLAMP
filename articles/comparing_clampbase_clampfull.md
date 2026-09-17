@@ -271,11 +271,11 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] bigstatsr_1.6.2  CLAMP_0.99.8     BiocStyle_2.41.0
+    ## [1] bigstatsr_1.6.2  CLAMP_0.99.9     BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
-    ##  [4] rjson_0.2.23          xfun_0.60             bslib_0.12.0         
+    ##  [4] rjson_0.2.23          xfun_0.61             bslib_0.12.0         
     ##  [7] ggplot2_4.0.3         htmlwidgets_1.6.4     GlobalOptions_0.1.4  
     ## [10] ggrepel_0.9.8         lattice_0.22-9        bigassertr_0.2.0     
     ## [13] ps_1.9.3              vctrs_0.7.3           tools_4.6.1          
