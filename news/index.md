@@ -1,5 +1,13 @@
 # Changelog
 
+## CLAMP 0.99.10
+
+### Improvements
+
+- Updated the package hex logo to use a fully opaque hexagon background
+  and refreshed `man/figures/clamp.png` and `man/figures/logo.png`
+  accordingly.
+
 ## CLAMP 0.99.8
 
 ### Bug fixes

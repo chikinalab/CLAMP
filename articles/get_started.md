@@ -1078,12 +1078,12 @@ sessionInfo()
 #> 
 #> other attached packages:
 #>  [1] DiagrammeR_1.0.12    DT_0.34.0            org.Hs.eg.db_3.23.1 
-#>  [4] AnnotationDbi_1.75.2 IRanges_2.47.5       S4Vectors_0.51.9    
+#>  [4] AnnotationDbi_1.75.2 IRanges_2.47.5       S4Vectors_0.51.10   
 #>  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      
 #> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.6.1 
-#> [13] rhdf5_2.57.15        glmnet_5.0           Matrix_1.7-5        
+#> [13] rhdf5_2.57.16        glmnet_5.0           Matrix_1.7-5        
 #> [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    
-#> [19] CLAMP_0.99.9         BiocStyle_2.41.0    
+#> [19] CLAMP_0.99.10        BiocStyle_2.41.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          

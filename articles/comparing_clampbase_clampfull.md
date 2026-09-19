@@ -271,7 +271,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] bigstatsr_1.6.2  CLAMP_0.99.9     BiocStyle_2.41.0
+    ## [1] bigstatsr_1.6.2  CLAMP_0.99.10    BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
@@ -282,7 +282,7 @@ sessionInfo()
     ## [16] generics_0.1.4        stats4_4.6.1          parallel_4.6.1       
     ## [19] tibble_3.3.1          cluster_2.1.8.2       pkgconfig_2.0.3      
     ## [22] Matrix_1.7-5          RColorBrewer_1.1-3    S7_0.2.2             
-    ## [25] desc_1.4.3            S4Vectors_0.51.9      lifecycle_1.0.5      
+    ## [25] desc_1.4.3            S4Vectors_0.51.10     lifecycle_1.0.5      
     ## [28] compiler_4.6.1        farver_2.1.2          textshaping_1.0.5    
     ## [31] bigparallelr_0.3.2    codetools_0.2-20      ComplexHeatmap_2.29.0
     ## [34] clue_0.3-68           htmltools_0.5.9       sass_0.4.10          
