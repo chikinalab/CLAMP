@@ -271,7 +271,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] bigstatsr_1.6.2  CLAMP_0.99.10    BiocStyle_2.41.0
+    ## [1] bigstatsr_1.6.2  CLAMP_0.99.11    BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
@@ -286,7 +286,7 @@ sessionInfo()
     ## [28] compiler_4.6.1        farver_2.1.2          textshaping_1.0.5    
     ## [31] bigparallelr_0.3.2    codetools_0.2-20      ComplexHeatmap_2.29.0
     ## [34] clue_0.3-68           htmltools_0.5.9       sass_0.4.10          
-    ## [37] yaml_2.3.12           glmnet_5.0            pkgdown_2.2.1        
+    ## [37] yaml_2.3.12           glmnet_5.1            pkgdown_2.2.1        
     ## [40] pillar_1.11.1         crayon_1.5.3          jquerylib_0.1.4      
     ## [43] cachem_1.1.0          iterators_1.0.14      foreach_1.5.2        
     ## [46] rsvd_1.0.5            tidyselect_1.2.1      digest_0.6.39        
@@ -298,7 +298,7 @@ sessionInfo()
     ## [64] rmio_0.4.0            bit_4.6.0             otel_0.2.0           
     ## [67] ragg_1.5.2            png_0.1-9             GetoptLong_1.1.1     
     ## [70] evaluate_1.0.5        ff_4.5.3              knitr_1.52           
-    ## [73] IRanges_2.47.5        doParallel_1.0.17     irlba_2.3.7          
+    ## [73] IRanges_2.47.5        doParallel_1.0.17     irlba_2.4.1          
     ## [76] rlang_1.3.0           Rcpp_1.1.2            glue_1.8.1           
     ## [79] BiocManager_1.30.27   BiocGenerics_0.59.12  jsonlite_2.0.0       
     ## [82] R6_2.6.1              systemfonts_1.3.2     fs_2.1.0             

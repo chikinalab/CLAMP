@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CLAMP</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,9 +88,9 @@
 <td align="center"><img src="https://bioconductor.org/shields/lastcommit/devel/bioc/CLAMP.svg" alt="Bioconductor-devel last commit"></td>
 </tr>
 <tr>
-<td align="center"><a href="https://bioconductor.org/packages/release/bioc/html/CLAMP.html" class="external-link"><em>release</em></a></td>
-<td align="center"><a href="https://bioconductor.org/checkResults/release/bioc-LATEST/CLAMP" class="external-link"><img src="https://bioconductor.org/shields/build/release/bioc/CLAMP.svg" alt="Bioconductor-release Build Status"></a></td>
-<td align="center"><img src="https://bioconductor.org/shields/lastcommit/release/bioc/CLAMP.svg" alt="Bioconductor-release last commit"></td>
+<td align="center"><em>release</em></td>
+<td align="center">Not yet released</td>
+<td align="center">—</td>
 </tr>
 </tbody>
 </table>
@@ -99,14 +99,16 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the latest release of <code>CLAMP</code> from Bioconductor:</p>
+<p><code>CLAMP</code> is available in the <a href="https://bioconductor.org/packages/devel/bioc/html/CLAMP.html" class="external-link">development branch of Bioconductor</a> and has not yet entered a Bioconductor release. It requires R &gt;= 4.6.0 and an R version compatible with Bioconductor devel (see the <a href="https://bioconductor.org/install/" class="external-link">Bioconductor installation guide</a>).</p>
+<p>To install from Bioconductor devel, first switch your R library to the development version of Bioconductor:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"devel"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"CLAMP"</span><span class="op">)</span></span></code></pre></div>
-<p>If you want to test the development version, you can install it from the github repository:</p>
+<p>Alternatively, with Bioconductor devel configured, you can install the latest source from GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"chikinalab/CLAMP"</span><span class="op">)</span></span></code></pre></div>
 <p>Now you can load the package using:</p>
@@ -220,7 +222,6 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.bioconductor.org/packages/CLAMP" class="external-link">View on Bioconductor</a></li>
 <li><a href="https://github.com/chikinalab/CLAMP/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/chikinalab/CLAMP/issues" class="external-link">Report a bug</a></li>
 </ul>

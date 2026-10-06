@@ -1081,9 +1081,9 @@ sessionInfo()
 #>  [4] AnnotationDbi_1.75.2 IRanges_2.47.5       S4Vectors_0.51.10   
 #>  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      
 #> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.6.1 
-#> [13] rhdf5_2.57.16        glmnet_5.0           Matrix_1.7-5        
+#> [13] rhdf5_2.57.18        glmnet_5.1           Matrix_1.7-5        
 #> [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    
-#> [19] CLAMP_0.99.10        BiocStyle_2.41.0    
+#> [19] CLAMP_0.99.11        BiocStyle_2.41.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          
@@ -1096,7 +1096,7 @@ sessionInfo()
 #>  [22] ps_1.9.3              ragg_1.5.2            purrr_1.2.2          
 #>  [25] bit_4.6.0             xfun_0.61             cachem_1.1.0         
 #>  [28] rmio_0.4.0            jsonlite_2.0.0        blob_1.3.0           
-#>  [31] rhdf5filters_1.25.4   Rhdf5lib_2.1.0        irlba_2.3.7          
+#>  [31] rhdf5filters_1.25.4   Rhdf5lib_2.1.0        irlba_2.4.1          
 #>  [34] parallel_4.6.1        cluster_2.1.8.2       R6_2.6.1             
 #>  [37] bslib_0.12.0          RColorBrewer_1.1-3    jquerylib_0.1.4      
 #>  [40] Seqinfo_1.3.2         Rcpp_1.1.2            bookdown_0.48        

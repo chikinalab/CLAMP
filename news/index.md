@@ -1,5 +1,15 @@
 # Changelog
 
+## CLAMP 0.99.11
+
+### Bug fixes
+
+- Kept a single documentation URL in DESCRIPTION to avoid a merged
+  hyperlink on the Bioconductor package page.
+- Replaced unavailable Bioconductor release badges with “Not yet
+  released” and clarified installation from Bioconductor devel in the
+  README.
+
 ## CLAMP 0.99.10
 
 ### Improvements
