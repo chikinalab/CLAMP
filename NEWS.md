@@ -1,3 +1,9 @@
+# CLAMP 0.99.12
+
+## Documentation
+- Completed NEWS entries for earlier submission versions ahead of the
+  Bioconductor 3.24 release.
+
 # CLAMP 0.99.11
 
 ## Bug fixes
@@ -11,6 +17,11 @@
 ## Improvements
 - Updated the package hex logo to use a fully opaque hexagon background and
   refreshed `man/figures/clamp.png` and `man/figures/logo.png` accordingly.
+
+# CLAMP 0.99.9
+
+## Documentation
+- Added Alexander McKim as a contributor.
 
 # CLAMP 0.99.8
 
@@ -50,6 +61,45 @@
   values before filtering, matching `preprocessCLAMPFBM()`.
 - Made `CLAMPplotU()` handle missing FDR values when no pathways pass the
   requested thresholds.
+
+# CLAMP 0.99.3
+
+## New features
+- Added `differentialLVActivity()` to test latent variable activity between
+  sample groups.
+
+## Improvements
+- Added input validation with informative error messages for argument types
+  and ranges across the solvers and utility functions.
+- Documented the source (NCBI GEO GSE130824) and processing of the
+  `dataWholeBlood` example dataset.
+- Replaced `hdf5r` with `rhdf5` for HDF5 access.
+- Updated the introductory vignette to load data with the CLAMPData reader
+  functions and to summarize the model results.
+
+# CLAMP 0.99.2
+
+## Other changes
+- Build housekeeping only; no user-visible changes.
+
+# CLAMP 0.99.1
+
+## New features
+- Renamed the package API from PLIER2 to CLAMP: `CLAMPbase()`,
+  `CLAMPfull()`, `CLAMPfullnVP()`, `projectCLAMP()`, `preprocessCLAMP()`,
+  `cpmCLAMP()`, `zscoreCLAMP()` and their FBM variants.
+- Added plotting functions `CLAMPplotU()`, `CLAMPdotplot()`,
+  `CLAMPdotplotAll()`, `CLAMPplotTopZ()` and `plotTopZ_Complex()`.
+- Added SVD and rank selection helpers, including the Gavish-Donoho method:
+  `compute_svd()`, `select_svd_k()` and `select_clamp_k()`.
+- Exported `read_gmt()` for reading pathway GMT files.
+- Added `keep_samples_idx` to `filterFBM()`.
+- Added a vignette comparing CLAMPbase and CLAMPfull.
+
+## Improvements
+- Moved the Z update to C++ via Rcpp.
+- Added `src/Makevars` and `src/Makevars.win` for cross-platform
+  BLAS/LAPACK linking.
 
 # CLAMP 0.99.0
 
