@@ -1,5 +1,12 @@
 # Changelog
 
+## CLAMP 0.99.12
+
+### Documentation
+
+- Completed NEWS entries for earlier submission versions ahead of the
+  Bioconductor 3.24 release.
+
 ## CLAMP 0.99.11
 
 ### Bug fixes
@@ -17,6 +24,12 @@
 - Updated the package hex logo to use a fully opaque hexagon background
   and refreshed `man/figures/clamp.png` and `man/figures/logo.png`
   accordingly.
+
+## CLAMP 0.99.9
+
+### Documentation
+
+- Added Alexander McKim as a contributor.
 
 ## CLAMP 0.99.8
 
@@ -75,6 +88,69 @@
   [`CLAMPplotU()`](https://chikinalab.org/CLAMP/reference/CLAMPplotU.md)
   handle missing FDR values when no pathways pass the requested
   thresholds.
+
+## CLAMP 0.99.3
+
+### New features
+
+- Added
+  [`differentialLVActivity()`](https://chikinalab.org/CLAMP/reference/differentialLVActivity.md)
+  to test latent variable activity between sample groups.
+
+### Improvements
+
+- Added input validation with informative error messages for argument
+  types and ranges across the solvers and utility functions.
+- Documented the source (NCBI GEO GSE130824) and processing of the
+  `dataWholeBlood` example dataset.
+- Replaced `hdf5r` with `rhdf5` for HDF5 access.
+- Updated the introductory vignette to load data with the CLAMPData
+  reader functions and to summarize the model results.
+
+## CLAMP 0.99.2
+
+### Other changes
+
+- Build housekeeping only; no user-visible changes.
+
+## CLAMP 0.99.1
+
+### New features
+
+- Renamed the package API from PLIER2 to CLAMP:
+  [`CLAMPbase()`](https://chikinalab.org/CLAMP/reference/CLAMPbase.md),
+  [`CLAMPfull()`](https://chikinalab.org/CLAMP/reference/CLAMPfull.md),
+  [`CLAMPfullnVP()`](https://chikinalab.org/CLAMP/reference/CLAMPfullnVP.md),
+  [`projectCLAMP()`](https://chikinalab.org/CLAMP/reference/projectCLAMP.md),
+  [`preprocessCLAMP()`](https://chikinalab.org/CLAMP/reference/preprocessCLAMP.md),
+  [`cpmCLAMP()`](https://chikinalab.org/CLAMP/reference/cpmCLAMP.md),
+  [`zscoreCLAMP()`](https://chikinalab.org/CLAMP/reference/zscoreCLAMP.md)
+  and their FBM variants.
+- Added plotting functions
+  [`CLAMPplotU()`](https://chikinalab.org/CLAMP/reference/CLAMPplotU.md),
+  [`CLAMPdotplot()`](https://chikinalab.org/CLAMP/reference/CLAMPdotplot.md),
+  [`CLAMPdotplotAll()`](https://chikinalab.org/CLAMP/reference/CLAMPdotplotAll.md),
+  [`CLAMPplotTopZ()`](https://chikinalab.org/CLAMP/reference/CLAMPplotTopZ.md)
+  and
+  [`plotTopZ_Complex()`](https://chikinalab.org/CLAMP/reference/plotTopZ_Complex.md).
+- Added SVD and rank selection helpers, including the Gavish-Donoho
+  method:
+  [`compute_svd()`](https://chikinalab.org/CLAMP/reference/compute_svd.md),
+  [`select_svd_k()`](https://chikinalab.org/CLAMP/reference/select_svd_k.md)
+  and
+  [`select_clamp_k()`](https://chikinalab.org/CLAMP/reference/select_clamp_k.md).
+- Exported
+  [`read_gmt()`](https://chikinalab.org/CLAMP/reference/read_gmt.md) for
+  reading pathway GMT files.
+- Added `keep_samples_idx` to
+  [`filterFBM()`](https://chikinalab.org/CLAMP/reference/filterFBM.md).
+- Added a vignette comparing CLAMPbase and CLAMPfull.
+
+### Improvements
+
+- Moved the Z update to C++ via Rcpp.
+- Added `src/Makevars` and `src/Makevars.win` for cross-platform
+  BLAS/LAPACK linking.
 
 ## CLAMP 0.99.0
 

@@ -279,6 +279,7 @@ full <- CLAMPfullnVP(
 #> using provided CLAMPbase result
 #> CLAMP k is set to 5
 #> L1=0.903063161872916; L2=2.70918948561875
-#> Converged at 8 / 350 | Bdiff=0.000000, minCor=1.000000
+#> 
+Converged at 8 / 350 | Bdiff=0.000000, minCor=1.000000
 #> Not using cross-validation. No AUCs or p-values
 ```

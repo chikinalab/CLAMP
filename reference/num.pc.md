@@ -38,7 +38,7 @@ mat <- matrix(rnorm(5 * 10), nrow = 5)
 # fast elbow estimate
 num.pc(mat, method = "elbow")
 #> Computing SVD
-#> [1] 2
+#> [1] 3
 # slower permutation estimate (use fewer perms for example speed)
 num.pc(mat, method = "permutation", B = 5)
 #> Computing SVD

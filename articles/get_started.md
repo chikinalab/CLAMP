@@ -637,7 +637,7 @@ islet_svd     <- compute_svd(iso_Yz, k = islet_svd_k)
 islet_clamp_k <- select_clamp_k(islet_svd, n_samples = ncol(iso_Yz),
                                 svd_k = islet_svd_k)
 islet_clamp_k
-#> [1] 32
+#> [1] 33
 ```
 
 ### CLAMPbase
@@ -817,25 +817,25 @@ cat(
         100 * length(common_genes) / length(islet_model_genes)
     )
 )
-#> Overlapping genes: 4985 / 21536 islet model genes (23.1%)
+#> Overlapping genes: 4981 / 21468 islet model genes (23.2%)
 
 # projectCLAMP aligns common row names in the model's gene order
 wb_projected_B <- projectCLAMP(islet_fullRes, wb_Y_z)
-#> 4985 common rows found
+#> 4981 common rows found
 
 dim(wb_projected_B)
-#> [1] 32 36
+#> [1] 33 36
 wb_projected_B[
     seq_len(min(5, nrow(wb_projected_B))),
     seq_len(min(5, ncol(wb_projected_B))),
     drop = FALSE
 ]
-#>           BD8001      BD8002      BD8003      BD8004       BD8005
-#> LV1  0.896577075  0.58066081  0.94869314  1.79254492  0.307931055
-#> LV2 -0.055465542 -0.53323873  0.66257102 -0.19653068 -0.123096671
-#> LV3 -0.001884137 -0.08527485 -0.28175606  0.12754066 -0.042002371
-#> LV4 -0.037710271 -0.01153589 -0.02722026 -0.07539023 -0.009166932
-#> LV5 -0.585312728 -0.33208246 -0.40738995 -1.01980229 -0.132492988
+#>          BD8001      BD8002      BD8003      BD8004      BD8005
+#> LV1  0.95004450  0.63170334  1.00571029  1.81556060  0.31553056
+#> LV2  0.06781266 -0.26392546  0.48274887  0.02568273 -0.08804136
+#> LV3  0.09877356 -0.01672994 -0.23388281  0.28445566  0.07248089
+#> LV4 -0.01471986 -0.02594451 -0.01194201 -0.07121156 -0.01116246
+#> LV5 -0.59836163 -0.32449826 -0.44044890 -1.11078262 -0.14900108
 ```
 
 ## Choosing the Number of Latent Variables (CLAMP_K)
@@ -1055,13 +1055,13 @@ The following CLAMP functions accept an `ncores` parameter:
 ``` r
 
 sessionInfo()
-#> R version 4.6.1 (2026-06-24)
+#> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -1077,43 +1077,43 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] DiagrammeR_1.0.12    DT_0.34.0            org.Hs.eg.db_3.23.1 
+#>  [1] DiagrammeR_1.0.12    DT_0.34.0            org.Hs.eg.db_3.24.6 
 #>  [4] AnnotationDbi_1.75.2 IRanges_2.47.5       S4Vectors_0.51.10   
-#>  [7] Biobase_2.73.2       BiocGenerics_0.59.12 generics_0.1.4      
+#>  [7] Biobase_2.73.2       BiocGenerics_0.59.13 generics_0.1.4      
 #> [10] here_1.0.2           bigstatsr_1.6.2      data.table_1.18.6.1 
-#> [13] rhdf5_2.57.18        glmnet_5.1           Matrix_1.7-5        
-#> [16] rsvd_1.0.5           dplyr_1.2.1          CLAMPData_0.99.5    
-#> [19] CLAMP_0.99.11        BiocStyle_2.41.0    
+#> [13] rhdf5_2.57.20        glmnet_5.2           Matrix_1.7-6        
+#> [16] rsvd_2.0.0           dplyr_1.2.1          CLAMPData_0.99.5    
+#> [19] CLAMP_0.99.12        BiocStyle_2.41.0    
 #> 
 #> loaded via a namespace (and not attached):
 #>   [1] DBI_1.3.0             httr2_1.3.0           rlang_1.3.0          
 #>   [4] magrittr_2.0.5        clue_0.3-68           GetoptLong_1.1.1     
-#>   [7] otel_0.2.0            matrixStats_1.5.0     compiler_4.6.1       
-#>  [10] RSQLite_3.53.3        png_0.1-9             systemfonts_1.3.2    
+#>   [7] otel_0.3.0            matrixStats_1.5.0     compiler_4.6.2       
+#>  [10] RSQLite_3.53.3        png_0.1-9             systemfonts_1.3.3    
 #>  [13] vctrs_0.7.3           pkgconfig_2.0.3       shape_1.4.6.1        
 #>  [16] crayon_1.5.3          fastmap_1.2.0         XVector_0.53.0       
 #>  [19] dbplyr_2.6.0          labeling_0.4.3        rmarkdown_2.32       
 #>  [22] ps_1.9.3              ragg_1.5.2            purrr_1.2.2          
-#>  [25] bit_4.6.0             xfun_0.61             cachem_1.1.0         
+#>  [25] bit_4.6.0             xfun_0.62             cachem_1.1.0         
 #>  [28] rmio_0.4.0            jsonlite_2.0.0        blob_1.3.0           
-#>  [31] rhdf5filters_1.25.4   Rhdf5lib_2.1.0        irlba_2.4.1          
-#>  [34] parallel_4.6.1        cluster_2.1.8.2       R6_2.6.1             
+#>  [31] rhdf5filters_1.25.5   Rhdf5lib_2.1.0        irlba_2.4.1          
+#>  [34] parallel_4.6.2        cluster_2.1.8.3       R6_2.6.1             
 #>  [37] bslib_0.12.0          RColorBrewer_1.1-3    jquerylib_0.1.4      
 #>  [40] Seqinfo_1.3.2         Rcpp_1.1.2            bookdown_0.48        
 #>  [43] iterators_1.0.14      knitr_1.52            BiocBaseUtils_1.15.1 
-#>  [46] splines_4.6.1         tidyselect_1.2.1      rstudioapi_0.19.0    
+#>  [46] splines_4.6.2         tidyselect_1.2.1      rstudioapi_0.19.0    
 #>  [49] yaml_2.3.12           doParallel_1.0.17     codetools_0.2-20     
-#>  [52] curl_8.0.0            lattice_0.22-9        tibble_3.3.1         
-#>  [55] withr_3.0.3           KEGGREST_1.53.6       S7_0.2.2             
-#>  [58] evaluate_1.0.5        desc_1.4.3            survival_3.8-6       
-#>  [61] BiocFileCache_3.3.0   circlize_0.4.18       ExperimentHub_3.3.2  
+#>  [52] curl_8.1.0            lattice_0.23-1        tibble_3.3.1         
+#>  [55] withr_3.0.3           KEGGREST_1.53.6       S7_1.0.0             
+#>  [58] evaluate_1.0.5        desc_1.4.3            survival_3.8-12      
+#>  [61] BiocFileCache_3.3.3   circlize_0.4.18       ExperimentHub_3.3.2  
 #>  [64] Biostrings_2.81.9     pillar_1.11.1         BiocManager_1.30.27  
 #>  [67] filelock_1.0.3        foreach_1.5.2         bigassertr_0.2.0     
-#>  [70] rprojroot_2.1.1       BiocVersion_3.24.0    ggplot2_4.0.3        
+#>  [70] rprojroot_2.1.1       BiocVersion_3.24.0    ggplot2_4.0.4        
 #>  [73] scales_1.4.0          ff_4.5.3              glue_1.8.1           
-#>  [76] tools_4.6.1           AnnotationHub_4.3.2   RSpectra_0.16-2      
+#>  [76] tools_4.6.2           AnnotationHub_4.3.3   RSpectra_0.16-2      
 #>  [79] visNetwork_2.1.4      fs_2.1.0              cowplot_1.2.0        
-#>  [82] grid_4.6.1            crosstalk_1.2.2       colorspace_2.1-3     
+#>  [82] grid_4.6.2            crosstalk_1.2.2       colorspace_2.1-4     
 #>  [85] patchwork_1.3.2       flock_0.7             cli_3.6.6            
 #>  [88] rappdirs_0.3.4        textshaping_1.0.5     bigparallelr_0.3.2   
 #>  [91] ComplexHeatmap_2.29.0 gtable_0.3.6          sass_0.4.10          

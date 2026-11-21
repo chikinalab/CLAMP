@@ -28,13 +28,13 @@ Source:
 [`DESCRIPTION`](https://github.com/chikinalab/CLAMP/blob/devel/DESCRIPTION)
 
 Subirana-Granes M, Chikina M (2026). *CLAMP: Curated Latent-variable
-Analysis with Molecular Priors*. R package version 0.99.11,
+Analysis with Molecular Priors*. R package version 0.99.12,
 <https://chikinalab.github.io/CLAMP/>.
 
     @Manual{,
       title = {CLAMP: Curated Latent-variable Analysis with Molecular Priors},
       author = {Marc Subirana-Granes and Maria Chikina},
       year = {2026},
-      note = {R package version 0.99.11},
+      note = {R package version 0.99.12},
       url = {https://chikinalab.github.io/CLAMP/},
     }
